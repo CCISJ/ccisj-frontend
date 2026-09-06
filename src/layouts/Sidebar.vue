@@ -14,6 +14,8 @@ import {
 } from 'lucide-vue-next';
 
 import logoVerde from '@/assets/CCISJ logo sin fondo - Letras verdes.png';
+import { useAuthStore } from '@/stores/auth';
+import { useRouter } from 'vue-router';
 
 const items = [
   { label: 'Inicio', icon: LayoutDashboard },
@@ -27,6 +29,14 @@ const items = [
   { label: 'Comprobantes', icon: FileText },
   { label: 'Configuración', icon: Settings },
 ];
+
+const store = useAuthStore();
+const router = useRouter();
+
+const handleLogout = () => {
+  store.logout();
+  router.push('/login');
+};
 </script>
 
 <template>
@@ -71,6 +81,7 @@ const items = [
     <div class="border-t border-slate-100 p-3">
       <button
         class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 transition-colors hover:bg-red-50 hover:text-red-600"
+        @click="handleLogout"
       >
         <LogOut class="h-4.5 w-4.5" />
         Cerrar sesión
