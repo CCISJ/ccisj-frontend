@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-export type UserRole = 'BACKOFFICE' | 'SOCIO' | 'POSTULANTE';
+export type UserRole = 'ADMIN' | 'SOCIO' | 'POSTULANTE';
 
 type FakeUser = {
   email: string;
@@ -13,7 +13,7 @@ const fakeUsers: FakeUser[] = [
   {
     email: 'admin@ccisj.uy',
     password: '1234',
-    role: 'BACKOFFICE',
+    role: 'ADMIN',
     name: 'Martín Alonso',
   },
   {
