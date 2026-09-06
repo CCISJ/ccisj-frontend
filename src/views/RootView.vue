@@ -11,7 +11,7 @@ const auth = useAuthStore();
 
 const layout = computed(() => {
   switch (auth.role) {
-    case 'BACKOFFICE':
+    case 'ADMIN':
       return AdminLayout;
 
     case 'SOCIO':

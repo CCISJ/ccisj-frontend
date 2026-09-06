@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+
 import {
   LayoutDashboard,
   Users,
@@ -10,33 +12,70 @@ import {
   Wallet,
   FileText,
   Settings,
-  LogOut,
+  FileUser,
+  ClipboardList,
 } from 'lucide-vue-next';
 
-import logoVerde from '@/assets/CCISJ logo sin fondo - Letras verdes.png';
 import { useAuthStore } from '@/stores/auth';
-import { useRouter } from 'vue-router';
 
-const items = [
-  { label: 'Inicio', icon: LayoutDashboard },
-  { label: 'Socios', icon: Users },
-  { label: 'Empresas', icon: Building2 },
-  { label: 'Ofertas laborales', icon: Briefcase },
-  { label: 'Buscar candidatos', icon: UserRoundSearch },
-  { label: 'Postulantes', icon: UserRound },
-  { label: 'Notificaciones', icon: Bell },
-  { label: 'Caja', icon: Wallet },
-  { label: 'Comprobantes', icon: FileText },
-  { label: 'Configuración', icon: Settings },
-];
+import logoVerde from '@/assets/CCISJ logo sin fondo - Letras verdes.png';
 
-const store = useAuthStore();
-const router = useRouter();
+const auth = useAuthStore();
 
-const handleLogout = () => {
-  store.logout();
-  router.push('/login');
-};
+const items = computed(() => {
+  switch (auth.role) {
+    case 'ADMIN':
+      return [
+        { label: 'Inicio', icon: LayoutDashboard },
+        { label: 'Socios', icon: Users },
+        { label: 'Ofertas laborales', icon: Briefcase },
+        { label: 'Buscar candidatos', icon: UserRoundSearch },
+        { label: 'Postulantes', icon: UserRound },
+        { label: 'Notificaciones', icon: Bell },
+        { label: 'Caja', icon: Wallet },
+        { label: 'Comprobantes', icon: FileText },
+        { label: 'Configuración', icon: Settings },
+      ];
+
+    case 'SOCIO':
+      return [
+        { label: 'Inicio', icon: LayoutDashboard },
+        { label: 'Mis ofertas', icon: Briefcase },
+        { label: 'Postulantes', icon: UserRoundSearch },
+        { label: 'Notificaciones', icon: Bell },
+        { label: 'Mi empresa', icon: Building2 },
+      ];
+
+    case 'POSTULANTE':
+      return [
+        { label: 'Inicio', icon: LayoutDashboard },
+        { label: 'Ofertas laborales', icon: Briefcase },
+        { label: 'Mis postulaciones', icon: ClipboardList },
+        { label: 'Mi CV', icon: FileUser },
+        { label: 'Notificaciones', icon: Bell },
+        { label: 'Mi perfil', icon: UserRound },
+      ];
+
+    default:
+      return [];
+  }
+});
+
+const sectionTitle = computed(() => {
+  switch (auth.role) {
+    case 'ADMIN':
+      return 'Administración';
+
+    case 'SOCIO':
+      return 'Portal de socios';
+
+    case 'POSTULANTE':
+      return 'Postulante';
+
+    default:
+      return '';
+  }
+});
 </script>
 
 <template>
@@ -55,14 +94,14 @@ const handleLogout = () => {
       <p
         class="mb-1 px-3 text-[11px] font-semibold uppercase tracking-wide text-slate-400"
       >
-        Backoffice
+        {{ sectionTitle }}
       </p>
 
       <div class="space-y-1">
         <button
           v-for="(item, index) in items"
           :key="item.label"
-          class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors"
+          class="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors"
           :class="
             index === 0
               ? 'bg-ccisj-light text-ccisj ring-1 ring-emerald-100'
@@ -77,15 +116,5 @@ const handleLogout = () => {
         </button>
       </div>
     </nav>
-
-    <div class="border-t border-slate-100 p-3">
-      <button
-        class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 transition-colors hover:bg-red-50 hover:text-red-600"
-        @click="handleLogout"
-      >
-        <LogOut class="h-4.5 w-4.5" />
-        Cerrar sesión
-      </button>
-    </div>
   </aside>
 </template>

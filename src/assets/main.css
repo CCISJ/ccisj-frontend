@@ -5,3 +5,7 @@
     --color-ccisj-dark: #007a37;
     --color-ccisj-light: #eaf7ef;
 }
+
+button {
+    cursor: pointer;
+}

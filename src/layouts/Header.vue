@@ -1,6 +1,62 @@
-<!-- Header.vue -->
 <script setup lang="ts">
-import { Search, Bell, ChevronDown } from 'lucide-vue-next';
+import { useAuthStore } from '@/stores/auth';
+import { Search, Bell, ChevronDown, LogOut } from 'lucide-vue-next';
+
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+
+import { useRouter } from 'vue-router';
+
+const userMenuOpen = ref(false);
+const userMenuRef = ref<HTMLElement | null>(null);
+
+const auth = useAuthStore();
+const user = computed(() => auth.user);
+const router = useRouter();
+
+const initials = computed(() => {
+  const name = user.value?.name;
+
+  if (!name) return '';
+
+  const words = name.trim().split(/\s+/);
+  const first = words.at(0);
+  const last = words.at(-1);
+
+  if (!first) return '';
+
+  if (!last || first === last) {
+    return first.slice(0, 2).toUpperCase();
+  }
+
+  return `${first.charAt(0)}${last.charAt(0)}`.toUpperCase();
+});
+
+function handleLogout() {
+  userMenuOpen.value = false;
+
+  auth.logout();
+  router.push('/login');
+}
+
+function handleClickOutside(event: MouseEvent) {
+  const target = event.target as Node;
+
+  if (
+    userMenuOpen.value &&
+    userMenuRef.value &&
+    !userMenuRef.value.contains(target)
+  ) {
+    userMenuOpen.value = false;
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
 </script>
 
 <template>
@@ -28,25 +84,46 @@ import { Search, Bell, ChevronDown } from 'lucide-vue-next';
         <span class="absolute right-2 top-2 h-2 w-2 rounded-full bg-ccisj" />
       </button>
 
-      <button
-        class="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 transition hover:bg-slate-50"
-      >
-        <div
-          class="flex h-8 w-8 items-center justify-center rounded-lg bg-ccisj text-xs font-bold text-white"
+      <!-- Usuario + dropdown -->
+      <div ref="userMenuRef" class="relative">
+        <button
+          class="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 transition hover:bg-slate-50"
+          @click="userMenuOpen = !userMenuOpen"
         >
-          MA
+          <div
+            class="flex h-8 w-8 items-center justify-center rounded-lg bg-ccisj text-xs font-bold text-white"
+          >
+            {{ initials }}
+          </div>
+
+          <div class="hidden text-left md:block">
+            <p
+              class="max-w-40 truncate text-xs font-semibold leading-tight text-slate-800"
+            >
+              {{ user?.name }}
+            </p>
+          </div>
+
+          <ChevronDown
+            class="h-4 w-4 text-slate-400 transition-transform"
+            :class="{ 'rotate-180': userMenuOpen }"
+          />
+        </button>
+
+        <!-- Dropdown -->
+        <div
+          v-if="userMenuOpen"
+          class="absolute right-0 top-[calc(100%+6px)] z-50 min-w-40 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-md"
+        >
+          <button
+            class="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-slate-600 transition hover:bg-red-50 hover:text-red-600"
+            @click="handleLogout"
+          >
+            <LogOut class="h-4 w-4 shrink-0" />
+            Cerrar sesión
+          </button>
         </div>
-
-        <div class="hidden text-left md:block">
-          <p class="text-xs font-semibold leading-tight text-slate-800">
-            Martín Alonso
-          </p>
-
-          <p class="text-[11px] leading-tight text-slate-400">Personal CCISJ</p>
-        </div>
-
-        <ChevronDown class="h-4 w-4 text-slate-400" />
-      </button>
+      </div>
     </div>
   </header>
 </template>
