@@ -1,13 +1,17 @@
 import { defineStore } from 'pinia';
 
 export type UserRole = 'ADMIN' | 'SOCIO' | 'POSTULANTE';
+export type MemberType = 'COMUN' | 'DIRECTIVO';
 
 type FakeUser = {
   email: string;
   password: string;
   role: UserRole;
   name: string;
+  memberType?: MemberType;
 };
+
+type AuthUser = Omit<FakeUser, 'password'>;
 
 const fakeUsers: FakeUser[] = [
   {
@@ -17,9 +21,17 @@ const fakeUsers: FakeUser[] = [
     name: 'Martín Alonso',
   },
   {
+    email: 'directivo@ccisj.uy',
+    password: '1234',
+    role: 'SOCIO',
+    memberType: 'DIRECTIVO',
+    name: 'Empresa Directiva',
+  },
+  {
     email: 'socio@ccisj.uy',
     password: '1234',
     role: 'SOCIO',
+    memberType: 'COMUN',
     name: 'Empresa de Prueba',
   },
   {
@@ -30,13 +42,29 @@ const fakeUsers: FakeUser[] = [
   },
 ];
 
+function getStoredUser(): AuthUser | null {
+  const storedUser = localStorage.getItem('authUser');
+
+  if (!storedUser) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(storedUser) as AuthUser;
+  } catch {
+    localStorage.removeItem('authUser');
+    return null;
+  }
+}
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: null as Omit<FakeUser, 'password'> | null,
+    user: getStoredUser(),
   }),
 
   getters: {
     isAuthenticated: (state) => state.user !== null,
+
     role: (state) => state.user?.role ?? null,
   },
 
@@ -54,11 +82,14 @@ export const useAuthStore = defineStore('auth', {
 
       this.user = user;
 
+      localStorage.setItem('authUser', JSON.stringify(user));
+
       return user;
     },
 
     logout() {
       this.user = null;
+      localStorage.removeItem('authUser');
     },
   },
 });
