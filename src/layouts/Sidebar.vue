@@ -26,34 +26,53 @@ const items = computed(() => {
   switch (auth.role) {
     case 'ADMIN':
       return [
-        { label: 'Inicio', icon: LayoutDashboard },
-        { label: 'Socios', icon: Users },
-        { label: 'Ofertas laborales', icon: Briefcase },
-        { label: 'Buscar candidatos', icon: UserRoundSearch },
-        { label: 'Postulantes', icon: UserRound },
-        { label: 'Notificaciones', icon: Bell },
-        { label: 'Caja', icon: Wallet },
-        { label: 'Comprobantes', icon: FileText },
-        { label: 'Configuración', icon: Settings },
+        { label: 'Inicio', icon: LayoutDashboard, to: '/' },
+        { label: 'Socios', icon: Users, to: '/socios' },
+        { label: 'Ofertas laborales', icon: Briefcase, to: '/ofertas' },
+        {
+          label: 'Buscar candidatos',
+          icon: UserRoundSearch,
+          to: '/candidatos',
+        },
+        { label: 'Postulantes', icon: UserRound, to: '/postulantes' },
+        { label: 'Notificaciones', icon: Bell, to: '/notificaciones' },
+        { label: 'Caja', icon: Wallet, to: '/caja' },
+        { label: 'Comprobantes', icon: FileText, to: '/comprobantes' },
+        { label: 'Configuración', icon: Settings, to: '/configuracion' },
       ];
 
-    case 'SOCIO':
-      return [
-        { label: 'Inicio', icon: LayoutDashboard },
-        { label: 'Mis ofertas', icon: Briefcase },
-        { label: 'Postulantes', icon: UserRoundSearch },
-        { label: 'Notificaciones', icon: Bell },
-        { label: 'Mi empresa', icon: Building2 },
+    case 'SOCIO': {
+      const socioItems = [
+        { label: 'Inicio', icon: LayoutDashboard, to: '/' },
+        { label: 'Mis ofertas', icon: Briefcase, to: '/mis-ofertas' },
+        { label: 'Postulantes', icon: UserRoundSearch, to: '/postulantes' },
+        { label: 'Notificaciones', icon: Bell, to: '/notificaciones' },
+        { label: 'Mi empresa', icon: Building2, to: '/mi-empresa' },
       ];
+
+      if (auth.user?.memberType === 'DIRECTIVO') {
+        socioItems.splice(1, 0, {
+          label: 'Socios',
+          icon: Users,
+          to: '/socios',
+        });
+      }
+
+      return socioItems;
+    }
 
     case 'POSTULANTE':
       return [
-        { label: 'Inicio', icon: LayoutDashboard },
-        { label: 'Ofertas laborales', icon: Briefcase },
-        { label: 'Mis postulaciones', icon: ClipboardList },
-        { label: 'Mi CV', icon: FileUser },
-        { label: 'Notificaciones', icon: Bell },
-        { label: 'Mi perfil', icon: UserRound },
+        { label: 'Inicio', icon: LayoutDashboard, to: '/' },
+        { label: 'Ofertas laborales', icon: Briefcase, to: '/ofertas' },
+        {
+          label: 'Mis postulaciones',
+          icon: ClipboardList,
+          to: '/mis-postulaciones',
+        },
+        { label: 'Mi CV', icon: FileUser, to: '/mi-cv' },
+        { label: 'Notificaciones', icon: Bell, to: '/notificaciones' },
+        { label: 'Mi perfil', icon: UserRound, to: '/mi-perfil' },
       ];
 
     default:
@@ -98,22 +117,17 @@ const sectionTitle = computed(() => {
       </p>
 
       <div class="space-y-1">
-        <button
-          v-for="(item, index) in items"
-          :key="item.label"
-          class="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors"
-          :class="
-            index === 0
-              ? 'bg-ccisj-light text-ccisj ring-1 ring-emerald-100'
-              : 'text-slate-500 hover:bg-ccisj-light hover:text-ccisj'
-          "
+        <RouterLink
+          v-for="item in items"
+          :key="item.to"
+          :to="item.to"
+          class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-ccisj-light hover:text-ccisj"
+          exact-active-class="bg-ccisj-light text-ccisj ring-1 ring-emerald-100"
         >
-          <component :is="item.icon" class="h-4.5 w-4.5 shrink-0" />
+          <component :is="item.icon" class="h-5 w-5" />
 
-          <span class="text-left">
-            {{ item.label }}
-          </span>
-        </button>
+          {{ item.label }}
+        </RouterLink>
       </div>
     </nav>
   </aside>

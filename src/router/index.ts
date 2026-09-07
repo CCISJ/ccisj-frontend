@@ -13,8 +13,23 @@ const router = createRouter({
 
     {
       path: '/',
-      name: 'home',
       component: () => import('@/views/RootView.vue'),
+      children: [
+        {
+          path: '',
+          name: 'home',
+          component: () => import('@/views/HomeView.vue'),
+        },
+        {
+          path: 'socios',
+          name: 'socios',
+          component: () => import('@/views/members/MembersView.vue'),
+          meta: {
+            roles: ['ADMIN', 'SOCIO'],
+            directivoOnly: true,
+          },
+        },
+      ],
     },
   ],
 });
@@ -27,6 +42,20 @@ router.beforeEach((to) => {
   }
 
   if (auth.isAuthenticated && to.path === '/login') {
+    return '/';
+  }
+
+  const roles = to.meta.roles as string[] | undefined;
+
+  if (roles && auth.role && !roles.includes(auth.role)) {
+    return '/';
+  }
+
+  if (
+    to.meta.directivoOnly &&
+    auth.role === 'SOCIO' &&
+    auth.user?.memberType !== 'DIRECTIVO'
+  ) {
     return '/';
   }
 });
