@@ -29,6 +29,14 @@ const router = createRouter({
             directivoOnly: true,
           },
         },
+        {
+          path: 'socios/nuevo',
+          name: 'socio-nuevo',
+          component: () => import('@/views/members/CreateMemberView.vue'),
+          meta: {
+            roles: ['ADMIN'],
+          },
+        },
       ],
     },
   ],

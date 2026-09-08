@@ -7,6 +7,8 @@ import AdminLayout from '@/layouts/AdminLayout.vue';
 import MemberLayout from '@/layouts/MemberLayout.vue';
 import ApplicantLayout from '@/layouts/ApplicantLayout.vue';
 
+import AppToast from '@/components/ui/AppToast.vue';
+
 const auth = useAuthStore();
 
 const layout = computed(() => {
@@ -28,4 +30,5 @@ const layout = computed(() => {
 
 <template>
   <component v-if="layout" :is="layout" />
+  <AppToast />
 </template>
