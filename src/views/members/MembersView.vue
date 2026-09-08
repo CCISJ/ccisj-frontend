@@ -4,8 +4,10 @@ import { Plus, Search } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { getMembers } from '@/services/membersService';
 import type { Member } from '@/types/member.type';
+import { useRouter } from 'vue-router';
 
 const auth = useAuthStore();
+const router = useRouter();
 
 const socios = ref<Member[]>([]);
 const loading = ref(true);
@@ -75,7 +77,7 @@ const filteredSocios = computed(() => {
 
     const matchesSearch =
       !query ||
-      socio.nombre.toLowerCase().includes(query) ||
+      socio.razonSocial.toLowerCase().includes(query) ||
       socio.rut.toLowerCase().includes(query) ||
       socio.email?.toLowerCase().includes(query) ||
       socio.telefono?.toLowerCase().includes(query) ||
@@ -96,7 +98,7 @@ const filteredSocios = computed(() => {
 });
 
 function handleAddMember() {
-  console.log('Agregar socio');
+  router.push('/socios/nuevo');
 }
 </script>
 
@@ -254,12 +256,12 @@ function handleAddMember() {
                   <div
                     class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ccisj-light text-xs font-bold text-ccisj"
                   >
-                    {{ socio.nombre.slice(0, 2).toUpperCase() }}
+                    {{ socio.razonSocial.slice(0, 2).toUpperCase() }}
                   </div>
 
                   <div class="text-left">
                     <p class="font-semibold text-slate-900">
-                      {{ socio.nombre }}
+                      {{ socio.razonSocial }}
                     </p>
 
                     <p class="text-xs text-slate-400">

@@ -1,9 +1,13 @@
-import type { Member } from '@/types/member.type';
+import type { CreateMemberData, Member } from '@/types/member.type';
 import { apiFetch } from './api';
 
-console.log('GET MEMBERS EJECUTADO');
-
 export function getMembers() {
-  console.log('MEMBERS SERVICE CARGADO');
   return apiFetch<Member[]>('/socios');
+}
+
+export function createMember(data: CreateMemberData) {
+  return apiFetch<Member>('/socios', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
 }
