@@ -80,7 +80,7 @@ function handleLogin() {
           </p>
         </div>
 
-        <form class="space-y-5" @submit.prevent>
+        <form class="space-y-5" @submit.prevent="handleLogin">
           <!-- Email -->
           <div>
             <label
@@ -155,7 +155,6 @@ function handleLogin() {
           <button
             type="submit"
             class="w-full rounded-xl bg-ccisj px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ccisj focus:ring-offset-2"
-            @click="handleLogin"
           >
             Iniciar sesión
           </button>
@@ -165,7 +164,7 @@ function handleLogin() {
           <p class="text-sm text-slate-500">
             ¿Todavía no tenés una cuenta?
 
-            <button class="font-semibold text-ccisj hover:underline">
+            <button type="button" class="font-semibold text-ccisj hover:underline">
               Registrarse
             </button>
           </p>
