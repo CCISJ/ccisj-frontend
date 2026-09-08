@@ -7,10 +7,10 @@ import Sidebar from './Sidebar.vue';
   <div class="min-h-screen bg-slate-50">
     <Sidebar />
 
-    <div class="pl-64">
+    <div class="lg:pl-64">
       <Header />
 
-      <main class="p-6">
+      <main class="mx-auto w-full max-w-7xl p-4 md:p-6">
         <RouterView />
       </main>
     </div>

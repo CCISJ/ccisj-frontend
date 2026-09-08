@@ -37,6 +37,23 @@ const router = createRouter({
             roles: ['ADMIN'],
           },
         },
+        {
+          path: 'socios/:id',
+          name: 'socio-detalle',
+          component: () => import('@/views/members/MemberDetailView.vue'),
+          meta: {
+            roles: ['ADMIN', 'SOCIO'],
+            directivoOnly: true,
+          },
+        },
+
+        // Cualquier otra URL dentro del sistema cae acá en vez de dejar la
+        // pantalla en blanco.
+        {
+          path: ':pathMatch(.*)*',
+          name: 'not-found',
+          component: () => import('@/views/NotFoundView.vue'),
+        },
       ],
     },
   ],
