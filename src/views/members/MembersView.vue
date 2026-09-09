@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { computed, ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { Plus, Search, X, RefreshCw } from 'lucide-vue-next';
+import { Plus, Search, X, RefreshCw, UserX, Pencil } from 'lucide-vue-next';
 
 import { useAuthStore } from '@/stores/auth';
-import { getMembers } from '@/services/membersService';
+import { deleteMember, getMembers } from '@/services/membersService';
 import type { Member } from '@/types/member.type';
+import { useToastStore } from '@/stores/toast';
+import ConfirmModal from '@/components/ui/ConfirmModal.vue';
 
 const auth = useAuthStore();
+const toast = useToastStore();
 const router = useRouter();
 
 const socios = ref<Member[]>([]);
@@ -17,6 +20,9 @@ const error = ref('');
 const search = ref('');
 const typeFilter = ref('TODOS');
 const statusFilter = ref('TODOS');
+
+const memberToDelete = ref<Member | null>(null);
+const deleting = ref(false);
 
 const PAGE_SIZE = 10;
 const page = ref(1);
@@ -68,7 +74,9 @@ const filteredSocios = computed(() => {
 
     const matchesStatus =
       statusFilter.value === 'TODOS' ||
-      (statusFilter.value === 'ACTIVO' ? socio.activo : !socio.activo);
+      (statusFilter.value === 'ACTIVO'
+        ? socio.usuario.activo
+        : !socio.usuario.activo);
 
     return matchesSearch && matchesType && matchesStatus;
   });
@@ -92,7 +100,8 @@ const rangeEnd = computed(() =>
   Math.min(page.value * PAGE_SIZE, filteredSocios.value.length),
 );
 
-// Al cambiar los filtros el resultado se acorta: volver siempre a la pagina 1.
+// Al cambiar los filtros el resultado se acorta:
+// volver siempre a la página 1.
 watch([search, typeFilter, statusFilter], () => {
   page.value = 1;
 });
@@ -102,11 +111,52 @@ function goToPage(next: number) {
 }
 
 function openMember(id: number) {
-  router.push({ name: 'socio-detalle', params: { id } });
+  router.push({
+    name: 'socio-detalle',
+    params: { id },
+  });
 }
 
 function handleAddMember() {
-  router.push({ name: 'socio-nuevo' });
+  router.push({
+    name: 'socio-nuevo',
+  });
+}
+
+function editMember(id: number) {
+  router.push({
+    name: 'socio-editar',
+    params: { id },
+  });
+}
+
+function handleDelete(socio: Member) {
+  memberToDelete.value = socio;
+}
+
+function closeDeleteModal() {
+  if (deleting.value) return;
+  memberToDelete.value = null;
+}
+
+async function confirmDelete() {
+  if (!memberToDelete.value) return;
+
+  try {
+    deleting.value = true;
+    await deleteMember(memberToDelete.value.id);
+    toast.success('Socio desactivado correctamente');
+    await loadMembers();
+  } catch (err) {
+    toast.error(
+      err instanceof Error
+        ? err.message
+        : 'No se pudo desactivar el socio. Intenta nuevamente.',
+    );
+  } finally {
+    deleting.value = false;
+    memberToDelete.value = null;
+  }
 }
 </script>
 
@@ -154,7 +204,9 @@ function handleAddMember() {
         class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 outline-none transition focus:border-ccisj"
       >
         <option value="TODOS">Todos los tipos</option>
+
         <option value="DIRECTIVO">Directivo</option>
+
         <option value="COMUN">Común</option>
       </select>
 
@@ -163,7 +215,9 @@ function handleAddMember() {
         class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 outline-none transition focus:border-ccisj"
       >
         <option value="TODOS">Todos los estados</option>
+
         <option value="ACTIVO">Activo</option>
+
         <option value="INACTIVO">Inactivo</option>
       </select>
 
@@ -191,7 +245,9 @@ function handleAddMember() {
       v-else-if="error"
       class="rounded-xl border border-red-200 bg-red-50 p-6 text-center"
     >
-      <p class="text-sm text-red-600">{{ error }}</p>
+      <p class="text-sm text-red-600">
+        {{ error }}
+      </p>
 
       <button
         type="button"
@@ -227,10 +283,18 @@ function handleAddMember() {
               class="text-xs font-semibold uppercase tracking-wide text-slate-500"
             >
               <th class="px-5 py-3">Empresa</th>
+
               <th class="px-5 py-3">RUT</th>
+
               <th class="px-5 py-3">Tipo</th>
+
               <th class="px-5 py-3">Contacto</th>
+
               <th class="px-5 py-3">Estado</th>
+
+              <th v-if="auth.role === 'ADMIN'" class="px-5 py-3 text-center">
+                Acciones
+              </th>
             </tr>
           </thead>
 
@@ -299,19 +363,48 @@ function handleAddMember() {
                 <span
                   class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
                   :class="
-                    socio.activo
+                    socio.usuario.activo
                       ? 'bg-emerald-50 text-emerald-700'
                       : 'bg-red-50 text-red-600'
                   "
                 >
-                  {{ socio.activo ? 'Activo' : 'Inactivo' }}
+                  {{ socio.usuario.activo ? 'Activo' : 'Inactivo' }}
                 </span>
+              </td>
+
+              <!-- Acciones -->
+              <td v-if="auth.role === 'ADMIN'" class="px-5 py-3.5" @click.stop>
+                <div class="flex items-center justify-center gap-1">
+                  <!-- Editar -->
+                  <button
+                    type="button"
+                    class="rounded-lg p-2 text-slate-400 transition hover:bg-ccisj-light hover:text-ccisj"
+                    title="Editar socio"
+                    @click="editMember(socio.id)"
+                  >
+                    <Pencil class="h-4 w-4" />
+                  </button>
+
+                  <!-- Desactivar -->
+                  <button
+                    v-if="socio.usuario.activo"
+                    type="button"
+                    class="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                    title="Desactivar socio"
+                    @click="handleDelete(socio)"
+                  >
+                    <UserX class="h-4 w-4" />
+                  </button>
+                </div>
               </td>
             </tr>
 
             <!-- Sin resultados para los filtros actuales -->
             <tr v-if="filteredSocios.length === 0">
-              <td colspan="5" class="px-5 py-12 text-center">
+              <td
+                :colspan="auth.role === 'ADMIN' ? 6 : 5"
+                class="px-5 py-12 text-center"
+              >
                 <p class="text-sm text-slate-500">
                   Ningún socio coincide con esos filtros.
                 </p>
@@ -377,4 +470,18 @@ function handleAddMember() {
       </div>
     </div>
   </div>
+  <ConfirmModal
+    :open="memberToDelete !== null"
+    title="Desactivar socio"
+    :message="
+      memberToDelete
+        ? `¿Seguro que querés desactivar a ${memberToDelete.razonSocial}? El socio conservará sus datos pero no podrá acceder al sistema.`
+        : ''
+    "
+    confirm-text="Desactivar"
+    :danger="true"
+    :loading="deleting"
+    @cancel="closeDeleteModal"
+    @confirm="confirmDelete"
+  />
 </template>

@@ -17,7 +17,6 @@ export type Member = {
   telefono: string;
   email: string;
   observaciones: string | null;
-  activo: boolean;
 
   usuario: {
     id: number;
@@ -43,10 +42,6 @@ export type CreateMemberData = {
   observaciones?: string;
 };
 
-/**
- * `POST /socios` no devuelve el socio pelado: devuelve el socio creado junto
- * con la contraseña inicial que hay que entregarle.
- */
 export type CreateMemberResponse = {
   socio: Member;
   passwordInicial: string;
