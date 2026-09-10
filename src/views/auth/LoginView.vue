@@ -3,8 +3,7 @@ import logoVerde from '@/assets/CCISJ logo sin fondo - Letras verdes.png';
 
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-vue-next';
-
+import { Mail, Lock, Eye, EyeOff, LoaderCircle } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 
 const router = useRouter();
@@ -14,17 +13,22 @@ const email = ref('');
 const password = ref('');
 const error = ref('');
 const showPassword = ref(false);
+const loading = ref(false);
 
-function handleLogin() {
+async function handleLogin() {
+  if (loading.value) return;
+
   error.value = '';
+  loading.value = true;
 
   try {
-    auth.login(email.value, password.value);
-
-    router.push('/');
+    await auth.login(email.value.trim(), password.value);
+    await router.push('/');
   } catch (err) {
     error.value =
       err instanceof Error ? err.message : 'Error al iniciar sesión';
+  } finally {
+    loading.value = false;
   }
 }
 </script>
@@ -100,7 +104,10 @@ function handleLogin() {
                 id="email"
                 type="email"
                 placeholder="correo@ejemplo.com"
-                class="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100"
+                autocomplete="email"
+                :disabled="loading"
+                @input="error = ''"
+                class="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70"
               />
             </div>
           </div>
@@ -130,12 +137,16 @@ function handleLogin() {
                 id="password"
                 :type="showPassword ? 'text' : 'password'"
                 placeholder="••••••••"
-                class="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-11 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100"
+                autocomplete="current-password"
+                :disabled="loading"
+                @input="error = ''"
+                class="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-11 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70"
               />
 
               <button
                 type="button"
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-600"
+                :disabled="loading"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
                 @click="showPassword = !showPassword"
               >
                 <EyeOff v-if="showPassword" class="h-4.5 w-4.5" />
@@ -144,6 +155,7 @@ function handleLogin() {
             </div>
           </div>
 
+          <!-- Error -->
           <p
             v-if="error"
             class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600"
@@ -154,9 +166,12 @@ function handleLogin() {
           <!-- Login -->
           <button
             type="submit"
-            class="w-full rounded-xl bg-ccisj px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ccisj focus:ring-offset-2"
+            :disabled="loading"
+            class="flex w-full items-center justify-center gap-2 rounded-xl bg-ccisj px-4 py-3 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Iniciar sesión
+            <LoaderCircle v-if="loading" class="h-4 w-4 animate-spin" />
+
+            {{ loading ? 'Iniciando sesión...' : 'Iniciar sesión' }}
           </button>
         </form>
 
@@ -164,7 +179,10 @@ function handleLogin() {
           <p class="text-sm text-slate-500">
             ¿Todavía no tenés una cuenta?
 
-            <button type="button" class="font-semibold text-ccisj hover:underline">
+            <button
+              type="button"
+              class="font-semibold text-ccisj hover:underline"
+            >
               Registrarse
             </button>
           </p>

@@ -1,95 +1,73 @@
 import { defineStore } from 'pinia';
+import { apiFetch } from '@/services/api';
 
-export type UserRole = 'ADMIN' | 'SOCIO' | 'POSTULANTE';
-export type MemberType = 'COMUN' | 'DIRECTIVO';
-
-type FakeUser = {
-  email: string;
-  password: string;
-  role: UserRole;
-  name: string;
-  memberType?: MemberType;
-};
-
-type AuthUser = Omit<FakeUser, 'password'>;
-
-const fakeUsers: FakeUser[] = [
-  {
-    email: 'admin@ccisj.uy',
-    password: '1234',
-    role: 'ADMIN',
-    name: 'Martín Alonso',
-  },
-  {
-    email: 'directivo@ccisj.uy',
-    password: '1234',
-    role: 'SOCIO',
-    memberType: 'DIRECTIVO',
-    name: 'Empresa Directiva',
-  },
-  {
-    email: 'socio@ccisj.uy',
-    password: '1234',
-    role: 'SOCIO',
-    memberType: 'COMUN',
-    name: 'Empresa de Prueba',
-  },
-  {
-    email: 'postulante@ccisj.uy',
-    password: '1234',
-    role: 'POSTULANTE',
-    name: 'Juan Pérez',
-  },
-];
-
-function getStoredUser(): AuthUser | null {
-  const storedUser = localStorage.getItem('authUser');
-
-  if (!storedUser) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(storedUser) as AuthUser;
-  } catch {
-    localStorage.removeItem('authUser');
-    return null;
-  }
-}
+import type { AuthUser, MeResponse } from '@/types/auth.type';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: getStoredUser(),
+    user: null as AuthUser | null,
+    initialized: false,
   }),
 
   getters: {
     isAuthenticated: (state) => state.user !== null,
-
     role: (state) => state.user?.role ?? null,
   },
 
   actions: {
-    login(email: string, password: string) {
-      const foundUser = fakeUsers.find(
-        (user) => user.email === email && user.password === password,
-      );
+    async login(email: string, password: string) {
+      await apiFetch('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
-      if (!foundUser) {
-        throw new Error('Correo o contraseña incorrectos');
-      }
+      await this.fetchMe();
 
-      const { password: _password, ...user } = foundUser;
-
-      this.user = user;
-
-      localStorage.setItem('authUser', JSON.stringify(user));
-
-      return user;
+      return this.user;
     },
 
-    logout() {
-      this.user = null;
-      localStorage.removeItem('authUser');
+    async fetchMe() {
+      try {
+        const data = await apiFetch<MeResponse>('/auth/me');
+
+        this.user = {
+          id: data.user.id,
+          displayName: data.user.displayName,
+          email: data.user.email,
+          role: data.user.tipo,
+          memberType: data.user.memberType,
+        };
+
+        return this.user;
+      } catch (error) {
+        this.user = null;
+
+        return null;
+      }
+    },
+
+    async initialize() {
+      if (this.initialized) {
+        return;
+      }
+
+      await this.fetchMe();
+
+      this.initialized = true;
+    },
+
+    async logout() {
+      try {
+        await apiFetch('/auth/logout', {
+          method: 'POST',
+        });
+      } finally {
+        this.user = null;
+        this.initialized = false;
+      }
     },
   },
 });

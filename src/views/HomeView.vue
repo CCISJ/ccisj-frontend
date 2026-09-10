@@ -29,8 +29,12 @@ const areaLabel = computed(() => {
  * marcado como pendiente en el Sidebar, así que acá no se ofrece.
  */
 const shortcuts = computed(() => {
-  const items: { label: string; description: string; icon: typeof Users; to: string }[] =
-    [];
+  const items: {
+    label: string;
+    description: string;
+    icon: typeof Users;
+    to: string;
+  }[] = [];
 
   const puedeVerSocios =
     auth.role === 'ADMIN' ||
@@ -65,10 +69,6 @@ const shortcuts = computed(() => {
     >
       {{ areaLabel }}
     </span>
-
-    <h1 class="mt-4 text-2xl font-bold text-slate-900">
-      Hola, {{ auth.user?.name }}
-    </h1>
 
     <p class="mt-1 text-sm text-slate-500">
       Bienvenido al sistema de gestión del CCISJ.
