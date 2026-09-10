@@ -31,7 +31,7 @@ const roleLabel = computed(() => {
 });
 
 const initials = computed(() => {
-  const name = user.value?.name;
+  const name = user.value?.displayName;
 
   if (!name) return '';
 
@@ -48,11 +48,12 @@ const initials = computed(() => {
   return `${first.charAt(0)}${last.charAt(0)}`.toUpperCase();
 });
 
-function handleLogout() {
+async function handleLogout() {
   userMenuOpen.value = false;
 
-  auth.logout();
-  router.push('/login');
+  await auth.logout();
+
+  await router.replace('/login');
 }
 
 function handleClickOutside(event: MouseEvent) {
@@ -105,7 +106,7 @@ onBeforeUnmount(() => {
           <p
             class="max-w-40 truncate text-xs font-semibold leading-tight text-slate-800"
           >
-            {{ user?.name }}
+            {{ user?.displayName }}
           </p>
 
           <p class="text-[11px] leading-tight text-slate-400">
@@ -126,7 +127,7 @@ onBeforeUnmount(() => {
       >
         <div class="border-b border-slate-100 px-3 py-2.5">
           <p class="truncate text-sm font-semibold text-slate-800">
-            {{ user?.name }}
+            {{ user?.displayName }}
           </p>
 
           <p class="truncate text-xs text-slate-400">
