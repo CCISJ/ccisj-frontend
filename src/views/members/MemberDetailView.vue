@@ -81,10 +81,9 @@ const sections = computed(() => {
         },
         { label: 'Fecha de afiliación', value: formatDate(data.fechaAfiliacion) },
         { label: 'Email de la cuenta', value: data.usuario.email },
-        {
-          label: 'Cuenta de acceso',
-          value: data.usuario.activo ? 'Habilitada' : 'Deshabilitada',
-        },
+        // El estado de la cuenta ya lo dice la etiqueta del encabezado: desde
+        // que `Member.activo` se fue, el socio está activo si su usuario lo
+        // está, y repetirlo acá es decir lo mismo dos veces.
       ],
     },
   ];
@@ -169,12 +168,12 @@ function goBack() {
           <span
             class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
             :class="
-              socio.activo
+              socio.usuario.activo
                 ? 'bg-emerald-50 text-emerald-700'
                 : 'bg-red-50 text-red-600'
             "
           >
-            {{ socio.activo ? 'Activo' : 'Inactivo' }}
+            {{ socio.usuario.activo ? 'Activo' : 'Inactivo' }}
           </span>
         </div>
       </div>
