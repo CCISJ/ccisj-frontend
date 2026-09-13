@@ -1,16 +1,22 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { ChevronDown, LogOut, Menu } from 'lucide-vue-next';
+import { Bell, ChevronDown, LogOut, Menu } from 'lucide-vue-next';
+import { storeToRefs } from 'pinia';
 
 import { useAuthStore } from '@/stores/auth';
 import { useUiStore } from '@/stores/ui';
+import { useNotificationsStore } from '@/stores/notifications';
 
 const userMenuOpen = ref(false);
 const userMenuRef = ref<HTMLElement | null>(null);
 
 const auth = useAuthStore();
 const ui = useUiStore();
+const notificationsStore = useNotificationsStore();
+
+const { unreadCount } = storeToRefs(notificationsStore);
+
 const user = computed(() => auth.user);
 const router = useRouter();
 
@@ -48,8 +54,14 @@ const initials = computed(() => {
   return `${first.charAt(0)}${last.charAt(0)}`.toUpperCase();
 });
 
+async function handleNotifications() {
+  await router.push('/notificaciones');
+}
+
 async function handleLogout() {
   userMenuOpen.value = false;
+
+  notificationsStore.clear();
 
   await auth.logout();
 
@@ -68,8 +80,16 @@ function handleClickOutside(event: MouseEvent) {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   document.addEventListener('click', handleClickOutside);
+
+  if (!auth.isAdmin) {
+    try {
+      await notificationsStore.fetchMine();
+    } catch {
+      // No bloqueamos el header si falla la carga de notificaciones.
+    }
+  }
 });
 
 onBeforeUnmount(() => {
@@ -90,58 +110,78 @@ onBeforeUnmount(() => {
       <Menu class="h-5 w-5" />
     </button>
 
-    <!-- Usuario + dropdown -->
-    <div ref="userMenuRef" class="relative ml-auto">
+    <div class="ml-auto flex items-center gap-2">
       <button
-        class="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 transition hover:bg-slate-50"
-        @click="userMenuOpen = !userMenuOpen"
+        v-if="!auth.isAdmin"
+        type="button"
+        class="relative flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:bg-slate-50 hover:text-ccisj"
+        aria-label="Notificaciones"
+        title="Notificaciones"
+        @click="handleNotifications"
       >
-        <div
-          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-ccisj text-xs font-bold text-white"
+        <Bell class="h-5 w-5" />
+
+        <span
+          v-if="unreadCount > 0"
+          class="absolute -right-1 -top-1 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold leading-none text-white"
         >
-          {{ initials }}
-        </div>
-
-        <div class="hidden text-left md:block">
-          <p
-            class="max-w-40 truncate text-xs font-semibold leading-tight text-slate-800"
-          >
-            {{ user?.displayName }}
-          </p>
-
-          <p class="text-[11px] leading-tight text-slate-400">
-            {{ roleLabel }}
-          </p>
-        </div>
-
-        <ChevronDown
-          class="h-4 w-4 text-slate-400 transition-transform"
-          :class="{ 'rotate-180': userMenuOpen }"
-        />
+          {{ unreadCount > 99 ? '99+' : unreadCount }}
+        </span>
       </button>
 
-      <!-- Dropdown -->
-      <div
-        v-if="userMenuOpen"
-        class="absolute right-0 top-[calc(100%+6px)] z-50 min-w-56 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-md"
-      >
-        <div class="border-b border-slate-100 px-3 py-2.5">
-          <p class="truncate text-sm font-semibold text-slate-800">
-            {{ user?.displayName }}
-          </p>
-
-          <p class="truncate text-xs text-slate-400">
-            {{ user?.email }}
-          </p>
-        </div>
-
+      <!-- Usuario + dropdown -->
+      <div ref="userMenuRef" class="relative">
         <button
-          class="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-slate-600 transition hover:bg-red-50 hover:text-red-600"
-          @click="handleLogout"
+          class="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 transition hover:bg-slate-50"
+          @click="userMenuOpen = !userMenuOpen"
         >
-          <LogOut class="h-4 w-4 shrink-0" />
-          Cerrar sesión
+          <div
+            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-ccisj text-xs font-bold text-white"
+          >
+            {{ initials }}
+          </div>
+
+          <div class="hidden text-left md:block">
+            <p
+              class="max-w-40 truncate text-xs font-semibold leading-tight text-slate-800"
+            >
+              {{ user?.displayName }}
+            </p>
+
+            <p class="text-[11px] leading-tight text-slate-400">
+              {{ roleLabel }}
+            </p>
+          </div>
+
+          <ChevronDown
+            class="h-4 w-4 text-slate-400 transition-transform"
+            :class="{ 'rotate-180': userMenuOpen }"
+          />
         </button>
+
+        <!-- Dropdown -->
+        <div
+          v-if="userMenuOpen"
+          class="absolute right-0 top-[calc(100%+6px)] z-50 min-w-56 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-md"
+        >
+          <div class="border-b border-slate-100 px-3 py-2.5">
+            <p class="truncate text-sm font-semibold text-slate-800">
+              {{ user?.displayName }}
+            </p>
+
+            <p class="truncate text-xs text-slate-400">
+              {{ user?.email }}
+            </p>
+          </div>
+
+          <button
+            class="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-slate-600 transition hover:bg-red-50 hover:text-red-600"
+            @click="handleLogout"
+          >
+            <LogOut class="h-4 w-4 shrink-0" />
+            Cerrar sesión
+          </button>
+        </div>
       </div>
     </div>
   </header>

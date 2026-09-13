@@ -46,6 +46,12 @@ const router = createRouter({
             directivoOnly: true,
           },
         },
+        {
+          path: 'notificaciones',
+          name: 'notificaciones',
+          component: () =>
+            import('@/views/notifications/NotificationsView.vue'),
+        },
 
         // Cualquier otra URL dentro del sistema cae acá en vez de dejar la
         // pantalla en blanco.

@@ -29,15 +29,15 @@ const toastClasses = computed(() => {
 <template>
   <Transition
     enter-active-class="transition duration-200 ease-out"
-    enter-from-class="translate-y-2 opacity-0"
+    enter-from-class="-translate-y-2 opacity-0"
     enter-to-class="translate-y-0 opacity-100"
     leave-active-class="transition duration-150 ease-in"
-    leave-from-class="translate-y-0 opacity-100"
+    leave-from-class="-translate-y-0 opacity-100"
     leave-to-class="translate-y-2 opacity-0"
   >
     <div
       v-if="toast.visible"
-      class="fixed bottom-6 right-6 z-50 flex min-w-80 max-w-md items-center gap-3 rounded-xl border px-4 py-3 shadow-lg"
+      class="fixed top-6 right-6 z-50 flex min-w-80 max-w-md items-center gap-3 rounded-xl border px-4 py-3 shadow-lg"
       :class="toastClasses"
     >
       <component :is="icon" class="h-5 w-5 shrink-0" />
