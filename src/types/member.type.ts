@@ -45,6 +45,26 @@ export type MemberDirectoryEntry = Pick<
   | 'fechaAfiliacion'
 >;
 
+/**
+ * La empresa del socio de la sesión (`GET /socios/me`): toda la ficha menos
+ * las observaciones internas. `usuario.email` es el email con el que inicia
+ * sesión, que el socio no puede cambiar.
+ */
+export type OwnMember = Omit<
+  Member,
+  'usuarioId' | 'observaciones' | 'usuario'
+> & {
+  usuario: { email: string };
+};
+
+// Lo único que el socio puede modificar de su empresa.
+export type OwnMemberEditableField =
+  'telefono' | 'celular' | 'email' | 'direccion' | 'ciudad' | 'numeroBps';
+
+export type UpdateOwnMemberData = Partial<
+  Pick<OwnMember, OwnMemberEditableField>
+>;
+
 export type CreateMemberData = {
   razonSocial: string;
   titular: string;

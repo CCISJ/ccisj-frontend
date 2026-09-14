@@ -47,6 +47,14 @@ const router = createRouter({
           },
         },
         {
+          path: 'mi-empresa',
+          name: 'mi-empresa',
+          component: () => import('@/views/members/MyCompanyView.vue'),
+          meta: {
+            roles: ['SOCIO'],
+          },
+        },
+        {
           path: 'notificaciones',
           name: 'notificaciones',
           component: () =>

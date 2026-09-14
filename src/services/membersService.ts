@@ -3,6 +3,8 @@ import type {
   CreateMemberResponse,
   Member,
   MemberDirectoryEntry,
+  OwnMember,
+  UpdateOwnMemberData,
 } from '@/types/member.type';
 import { apiFetch } from './api';
 
@@ -20,6 +22,17 @@ export function getMembers() {
 
 export function getMember(id: number) {
   return apiFetch<Member | MemberDirectoryEntry>(`/socios/${id}`);
+}
+
+export function getMyCompany() {
+  return apiFetch<OwnMember>('/socios/me');
+}
+
+export function updateMyCompany(data: UpdateOwnMemberData) {
+  return apiFetch<OwnMember>('/socios/me', {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
 }
 
 export function createMember(data: CreateMemberData) {
