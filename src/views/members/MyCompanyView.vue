@@ -122,11 +122,8 @@ function validate(field: OwnMemberEditableField, raw: string) {
 
     case 'numeroBps':
       if (!value) return 'El número de BPS es obligatorio';
-      if (value.length > 20) {
-        return 'El número de BPS no puede superar los 20 dígitos';
-      }
-      if (!/^\d+$/.test(value)) {
-        return 'El número de BPS solo puede tener números';
+      if (!/^\d{7,12}$/.test(value)) {
+        return 'El número de BPS debe tener entre 7 y 12 números';
       }
 
       return '';
@@ -225,6 +222,7 @@ const editableFields: {
   type: string;
   autocomplete: string;
   inputmode?: 'numeric' | 'tel' | 'email';
+  maxlength?: number;
   hint?: string;
   wide?: boolean;
 }[] = [
@@ -268,7 +266,8 @@ const editableFields: {
     type: 'text',
     autocomplete: 'off',
     inputmode: 'numeric',
-    hint: 'Número de empresa en el Banco de Previsión Social.',
+    maxlength: 12,
+    hint: 'Número de empresa en el Banco de Previsión Social, de 7 a 12 números.',
   },
 ];
 
@@ -398,6 +397,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
               :type="item.type"
               :autocomplete="item.autocomplete"
               :inputmode="item.inputmode"
+              :maxlength="item.maxlength"
               :aria-invalid="!!visibleError(item.field)"
               :aria-describedby="`mi-empresa-${item.field}-ayuda`"
               :class="[
