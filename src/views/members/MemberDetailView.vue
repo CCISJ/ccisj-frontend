@@ -3,14 +3,21 @@ import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ArrowLeft, RefreshCw } from 'lucide-vue-next';
 
-import { getMember } from '@/services/membersService';
-import type { Member } from '@/types/member.type';
+import { getMember, isFullMember } from '@/services/membersService';
+import type { Member, MemberDirectoryEntry } from '@/types/member.type';
 import { formatDate } from '@/utils/format';
 
 const route = useRoute();
 const router = useRouter();
 
-const socio = ref<Member | null>(null);
+const socio = ref<Member | MemberDirectoryEntry | null>(null);
+
+// Un directivo recibe solo el directorio: sin RUT, BPS, observaciones ni
+// estado de la cuenta.
+const fullMember = computed(() =>
+  socio.value && isFullMember(socio.value) ? socio.value : null,
+);
+
 const loading = ref(true);
 const error = ref('');
 
@@ -38,6 +45,8 @@ async function loadMember() {
 
 onMounted(loadMember);
 
+type Field = { label: string; value: string };
+
 /**
  * El detalle agrupa los campos por tema en vez de listar los quince seguidos:
  * quien abre la ficha busca "los datos de contacto", no el campo 9.
@@ -47,20 +56,42 @@ const sections = computed(() => {
 
   if (!data) return [];
 
+  const full = fullMember.value;
+
+  const empresa: Field[] = [
+    { label: 'Razón social', value: data.razonSocial },
+    { label: 'Titular', value: data.titular },
+    { label: 'Giro comercial', value: data.giroComercial },
+  ];
+
+  const afiliacion: Field[] = [
+    {
+      label: 'Tipo de socio',
+      value: data.tipo === 'DIRECTIVO' ? 'Directivo' : 'Común',
+    },
+    { label: 'Fecha de afiliación', value: formatDate(data.fechaAfiliacion) },
+  ];
+
+  if (full) {
+    empresa.push(
+      { label: 'RUT', value: full.rut },
+      { label: 'Nº BPS', value: full.numeroBps },
+      {
+        label: 'Inicio de actividad',
+        value: formatDate(full.fechaInicioEmpresa),
+      },
+    );
+
+    // El estado de la cuenta ya lo dice la etiqueta del encabezado: desde
+    // que `Member.activo` se fue, el socio está activo si su usuario lo
+    // está, y repetirlo acá es decir lo mismo dos veces.
+    afiliacion.push({ label: 'Email de la cuenta', value: full.usuario.email });
+  }
+
   return [
     {
       title: 'Datos de la empresa',
-      fields: [
-        { label: 'Razón social', value: data.razonSocial },
-        { label: 'Titular', value: data.titular },
-        { label: 'Giro comercial', value: data.giroComercial },
-        { label: 'RUT', value: data.rut },
-        { label: 'Nº BPS', value: data.numeroBps },
-        {
-          label: 'Inicio de actividad',
-          value: formatDate(data.fechaInicioEmpresa),
-        },
-      ],
+      fields: empresa,
     },
     {
       title: 'Contacto',
@@ -74,17 +105,7 @@ const sections = computed(() => {
     },
     {
       title: 'Afiliación',
-      fields: [
-        {
-          label: 'Tipo de socio',
-          value: data.tipo === 'DIRECTIVO' ? 'Directivo' : 'Común',
-        },
-        { label: 'Fecha de afiliación', value: formatDate(data.fechaAfiliacion) },
-        { label: 'Email de la cuenta', value: data.usuario.email },
-        // El estado de la cuenta ya lo dice la etiqueta del encabezado: desde
-        // que `Member.activo` se fue, el socio está activo si su usuario lo
-        // está, y repetirlo acá es decir lo mismo dos veces.
-      ],
+      fields: afiliacion,
     },
   ];
 });
@@ -166,14 +187,15 @@ function goBack() {
           </span>
 
           <span
+            v-if="fullMember"
             class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
             :class="
-              socio.usuario.activo
+              fullMember.usuario.activo
                 ? 'bg-emerald-50 text-emerald-700'
                 : 'bg-red-50 text-red-600'
             "
           >
-            {{ socio.usuario.activo ? 'Activo' : 'Inactivo' }}
+            {{ fullMember.usuario.activo ? 'Activo' : 'Inactivo' }}
           </span>
         </div>
       </div>
@@ -190,7 +212,9 @@ function goBack() {
           {{ section.title }}
         </h2>
 
-        <dl class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+        <dl
+          class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3"
+        >
           <div v-for="field in section.fields" :key="field.label">
             <dt class="text-xs text-slate-400">{{ field.label }}</dt>
 
@@ -203,7 +227,7 @@ function goBack() {
 
       <!-- Observaciones: solo si hay algo que mostrar -->
       <div
-        v-if="socio.observaciones"
+        v-if="fullMember?.observaciones"
         class="rounded-xl border border-slate-200 bg-white p-5"
       >
         <h2
@@ -213,7 +237,7 @@ function goBack() {
         </h2>
 
         <p class="whitespace-pre-line text-sm text-slate-700">
-          {{ socio.observaciones }}
+          {{ fullMember.observaciones }}
         </p>
       </div>
     </template>

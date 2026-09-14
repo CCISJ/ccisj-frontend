@@ -4,8 +4,12 @@ import { useRouter } from 'vue-router';
 import { Plus, Search, X, RefreshCw, UserX, Pencil } from 'lucide-vue-next';
 
 import { useAuthStore } from '@/stores/auth';
-import { deleteMember, getMembers } from '@/services/membersService';
-import type { Member } from '@/types/member.type';
+import {
+  deleteMember,
+  getMembers,
+  isFullMember,
+} from '@/services/membersService';
+import type { MemberDirectoryEntry } from '@/types/member.type';
 import { useToastStore } from '@/stores/toast';
 import ConfirmModal from '@/components/ConfirmModal.vue';
 
@@ -13,7 +17,18 @@ const auth = useAuthStore();
 const toast = useToastStore();
 const router = useRouter();
 
-const socios = ref<Member[]>([]);
+/**
+ * Fila de la tabla. Un directivo recibe el directorio, sin RUT ni estado de la
+ * cuenta: esos campos quedan sin definir y sus columnas no se muestran.
+ */
+type MemberRow = MemberDirectoryEntry & {
+  rut?: string;
+  activo?: boolean;
+};
+
+const socios = ref<MemberRow[]>([]);
+
+const isAdmin = computed(() => auth.role === 'ADMIN');
 const loading = ref(true);
 const error = ref('');
 
@@ -21,7 +36,7 @@ const search = ref('');
 const typeFilter = ref('TODOS');
 const statusFilter = ref('TODOS');
 
-const memberToDelete = ref<Member | null>(null);
+const memberToDelete = ref<MemberRow | null>(null);
 const deleting = ref(false);
 
 const PAGE_SIZE = 10;
@@ -32,7 +47,13 @@ async function loadMembers() {
     loading.value = true;
     error.value = '';
 
-    socios.value = await getMembers();
+    const members = await getMembers();
+
+    socios.value = members.map((member) =>
+      isFullMember(member)
+        ? { ...member, activo: member.usuario.activo }
+        : member,
+    );
   } catch (err) {
     error.value =
       err instanceof Error ? err.message : 'No se pudieron cargar los socios';
@@ -63,7 +84,7 @@ const filteredSocios = computed(() => {
     const matchesSearch =
       !query ||
       socio.razonSocial.toLowerCase().includes(query) ||
-      socio.rut.toLowerCase().includes(query) ||
+      socio.rut?.toLowerCase().includes(query) ||
       socio.giroComercial?.toLowerCase().includes(query) ||
       socio.titular?.toLowerCase().includes(query) ||
       socio.email?.toLowerCase().includes(query) ||
@@ -74,9 +95,7 @@ const filteredSocios = computed(() => {
 
     const matchesStatus =
       statusFilter.value === 'TODOS' ||
-      (statusFilter.value === 'ACTIVO'
-        ? socio.usuario.activo
-        : !socio.usuario.activo);
+      (statusFilter.value === 'ACTIVO' ? socio.activo : !socio.activo);
 
     return matchesSearch && matchesType && matchesStatus;
   });
@@ -130,7 +149,7 @@ function editMember(id: number) {
   });
 }
 
-function handleDelete(socio: Member) {
+function handleDelete(socio: MemberRow) {
   memberToDelete.value = socio;
 }
 
@@ -173,7 +192,7 @@ async function confirmDelete() {
       </div>
 
       <button
-        v-if="auth.role === 'ADMIN'"
+        v-if="isAdmin"
         class="flex items-center gap-2 rounded-xl bg-ccisj px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
         @click="handleAddMember"
       >
@@ -194,7 +213,11 @@ async function confirmDelete() {
         <input
           v-model="search"
           type="search"
-          placeholder="Buscar por empresa, RUT, titular, giro o contacto..."
+          :placeholder="
+            isAdmin
+              ? 'Buscar por empresa, RUT, titular, giro o contacto...'
+              : 'Buscar por empresa, titular, giro o contacto...'
+          "
           class="h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 outline-none transition focus:border-ccisj focus:ring-2 focus:ring-emerald-100"
         />
       </div>
@@ -211,6 +234,7 @@ async function confirmDelete() {
       </select>
 
       <select
+        v-if="isAdmin"
         v-model="statusFilter"
         class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 outline-none transition focus:border-ccisj"
       >
@@ -284,17 +308,15 @@ async function confirmDelete() {
             >
               <th class="px-5 py-3">Empresa</th>
 
-              <th class="px-5 py-3">RUT</th>
+              <th v-if="isAdmin" class="px-5 py-3">RUT</th>
 
               <th class="px-5 py-3">Tipo</th>
 
               <th class="px-5 py-3">Contacto</th>
 
-              <th class="px-5 py-3">Estado</th>
+              <th v-if="isAdmin" class="px-5 py-3">Estado</th>
 
-              <th v-if="auth.role === 'ADMIN'" class="px-5 py-3 text-center">
-                Acciones
-              </th>
+              <th v-if="isAdmin" class="px-5 py-3 text-center">Acciones</th>
             </tr>
           </thead>
 
@@ -328,6 +350,7 @@ async function confirmDelete() {
 
               <!-- RUT -->
               <td
+                v-if="isAdmin"
                 class="whitespace-nowrap px-5 py-3.5 font-mono text-xs text-slate-500"
               >
                 {{ socio.rut }}
@@ -354,26 +377,26 @@ async function confirmDelete() {
                 </p>
 
                 <p class="truncate text-xs text-slate-400">
-                  {{ socio.email || socio.usuario.email }}
+                  {{ socio.email || 'Sin email' }}
                 </p>
               </td>
 
               <!-- Estado -->
-              <td class="px-5 py-3.5">
+              <td v-if="isAdmin" class="px-5 py-3.5">
                 <span
                   class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
                   :class="
-                    socio.usuario.activo
+                    socio.activo
                       ? 'bg-emerald-50 text-emerald-700'
                       : 'bg-red-50 text-red-600'
                   "
                 >
-                  {{ socio.usuario.activo ? 'Activo' : 'Inactivo' }}
+                  {{ socio.activo ? 'Activo' : 'Inactivo' }}
                 </span>
               </td>
 
               <!-- Acciones -->
-              <td v-if="auth.role === 'ADMIN'" class="px-5 py-3.5" @click.stop>
+              <td v-if="isAdmin" class="px-5 py-3.5" @click.stop>
                 <div class="flex items-center justify-center gap-1">
                   <!-- Editar -->
                   <button
@@ -387,7 +410,7 @@ async function confirmDelete() {
 
                   <!-- Desactivar -->
                   <button
-                    v-if="socio.usuario.activo"
+                    v-if="socio.activo"
                     type="button"
                     class="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600"
                     title="Desactivar socio"
@@ -401,10 +424,7 @@ async function confirmDelete() {
 
             <!-- Sin resultados para los filtros actuales -->
             <tr v-if="filteredSocios.length === 0">
-              <td
-                :colspan="auth.role === 'ADMIN' ? 6 : 5"
-                class="px-5 py-12 text-center"
-              >
+              <td :colspan="isAdmin ? 6 : 3" class="px-5 py-12 text-center">
                 <p class="text-sm text-slate-500">
                   Ningún socio coincide con esos filtros.
                 </p>
