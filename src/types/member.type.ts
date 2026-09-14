@@ -25,6 +25,26 @@ export type Member = {
   };
 };
 
+/**
+ * Lo que el backend devuelve de un socio a un socio directivo: el directorio,
+ * sin RUT, BPS, observaciones ni datos de la cuenta. El administrador recibe
+ * el `Member` completo.
+ */
+export type MemberDirectoryEntry = Pick<
+  Member,
+  | 'id'
+  | 'razonSocial'
+  | 'titular'
+  | 'giroComercial'
+  | 'tipo'
+  | 'telefono'
+  | 'celular'
+  | 'email'
+  | 'direccion'
+  | 'ciudad'
+  | 'fechaAfiliacion'
+>;
+
 export type CreateMemberData = {
   razonSocial: string;
   titular: string;

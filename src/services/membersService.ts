@@ -2,15 +2,24 @@ import type {
   CreateMemberData,
   CreateMemberResponse,
   Member,
+  MemberDirectoryEntry,
 } from '@/types/member.type';
 import { apiFetch } from './api';
 
+export function isFullMember(
+  member: Member | MemberDirectoryEntry,
+): member is Member {
+  return 'usuario' in member;
+}
+
+// El administrador recibe la ficha completa y un directivo el directorio;
+// usar `isFullMember` para distinguirlos.
 export function getMembers() {
-  return apiFetch<Member[]>('/socios');
+  return apiFetch<(Member | MemberDirectoryEntry)[]>('/socios');
 }
 
 export function getMember(id: number) {
-  return apiFetch<Member>(`/socios/${id}`);
+  return apiFetch<Member | MemberDirectoryEntry>(`/socios/${id}`);
 }
 
 export function createMember(data: CreateMemberData) {
