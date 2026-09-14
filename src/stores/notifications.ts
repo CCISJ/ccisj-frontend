@@ -12,6 +12,7 @@ import type {
 export const useNotificationsStore = defineStore('notifications', () => {
   const notifications = ref<ReceivedNotification[]>([]);
   const sentNotifications = ref<Notification[]>([]);
+  const pendingPopups = ref<ReceivedNotification[]>([]);
 
   const loading = ref(false);
   const loadingSent = ref(false);
@@ -40,6 +41,18 @@ export const useNotificationsStore = defineStore('notifications', () => {
     }
   }
 
+  async function fetchPendingPopups() {
+    pendingPopups.value = await notificationsService.getPendingPopups();
+  }
+
+  async function markPopupAsSeen(item: ReceivedNotification) {
+    await notificationsService.markPopupAsSeen(item.notificacionId);
+
+    pendingPopups.value = pendingPopups.value.filter(
+      (popup) => popup.id !== item.id,
+    );
+  }
+
   async function createNotification(data: CreateNotificationData) {
     const notification = await notificationsService.create(data);
 
@@ -60,6 +73,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
   function clear() {
     notifications.value = [];
     sentNotifications.value = [];
+    pendingPopups.value = [];
   }
 
   return {
@@ -70,6 +84,10 @@ export const useNotificationsStore = defineStore('notifications', () => {
     loadingSent,
 
     unreadCount,
+
+    pendingPopups,
+    fetchPendingPopups,
+    markPopupAsSeen,
 
     fetchMine,
     fetchAll,
