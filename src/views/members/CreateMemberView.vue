@@ -187,11 +187,17 @@ function verSocio() {
             <label :class="labelClass">Nº BPS</label>
 
             <input
-              v-model="form.numeroBps"
+              v-model.trim="form.numeroBps"
               required
               type="text"
+              inputmode="numeric"
+              pattern="\d{7,12}"
+              maxlength="12"
+              title="El número de BPS debe tener entre 7 y 12 números"
               :class="inputClass"
             />
+
+            <p class="mt-1 text-xs text-slate-400">De 7 a 12 números.</p>
           </div>
         </div>
       </fieldset>
