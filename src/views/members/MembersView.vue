@@ -7,7 +7,7 @@ import { useAuthStore } from '@/stores/auth';
 import { deleteMember, getMembers } from '@/services/membersService';
 import type { Member } from '@/types/member.type';
 import { useToastStore } from '@/stores/toast';
-import ConfirmModal from '@/components/ui/ConfirmModal.vue';
+import ConfirmModal from '@/components/ConfirmModal.vue';
 
 const auth = useAuthStore();
 const toast = useToastStore();
@@ -277,7 +277,7 @@ async function confirmDelete() {
       class="overflow-hidden rounded-xl border border-slate-200 bg-white"
     >
       <div class="overflow-x-auto">
-        <table class="w-full min-w-[720px] text-left">
+        <table class="w-full min-w-180 text-left">
           <thead class="bg-slate-50">
             <tr
               class="text-xs font-semibold uppercase tracking-wide text-slate-500"

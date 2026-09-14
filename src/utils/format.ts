@@ -1,7 +1,3 @@
-/**
- * Fechas del backend (ISO) a formato local uruguayo. Devuelve un guion cuando
- * el campo viene vacío, para no imprimir "Invalid Date" en pantalla.
- */
 export function formatDate(value: string | null | undefined) {
   if (!value) return '—';
 
