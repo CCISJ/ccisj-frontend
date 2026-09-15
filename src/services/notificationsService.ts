@@ -3,6 +3,7 @@ import { apiFetch } from './api';
 import type {
   CreateNotificationData,
   Notification,
+  NotificationAvailableRecipient,
   ReceivedNotification,
 } from '@/types/notification.type';
 
@@ -18,11 +19,10 @@ export async function getPendingPopups() {
   return apiFetch<ReceivedNotification[]>('/notificaciones/emergentes');
 }
 
-export async function create(data: CreateNotificationData) {
-  return apiFetch<Notification>('/notificaciones', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
+export function getAvailableRecipients() {
+  return apiFetch<NotificationAvailableRecipient[]>(
+    '/usuarios/destinatarios-notificaciones',
+  );
 }
 
 export async function markAsRead(id: number) {
@@ -38,4 +38,11 @@ export async function markPopupAsSeen(id: number) {
       method: 'PATCH',
     },
   );
+}
+
+export async function create(data: CreateNotificationData) {
+  return apiFetch<Notification>('/notificaciones', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
 }

@@ -6,6 +6,7 @@ import * as notificationsService from '@/services/notificationsService';
 import type {
   CreateNotificationData,
   Notification,
+  NotificationAvailableRecipient,
   ReceivedNotification,
 } from '@/types/notification.type';
 
@@ -13,9 +14,11 @@ export const useNotificationsStore = defineStore('notifications', () => {
   const notifications = ref<ReceivedNotification[]>([]);
   const sentNotifications = ref<Notification[]>([]);
   const pendingPopups = ref<ReceivedNotification[]>([]);
+  const availableRecipients = ref<NotificationAvailableRecipient[]>([]);
 
   const loading = ref(false);
   const loadingSent = ref(false);
+  const loadingRecipients = ref(false);
 
   const unreadCount = computed(
     () => notifications.value.filter((item) => !item.leida).length,
@@ -53,14 +56,6 @@ export const useNotificationsStore = defineStore('notifications', () => {
     );
   }
 
-  async function createNotification(data: CreateNotificationData) {
-    const notification = await notificationsService.create(data);
-
-    sentNotifications.value.unshift(notification);
-
-    return notification;
-  }
-
   async function markAsRead(item: ReceivedNotification) {
     if (item.leida) return;
 
@@ -70,10 +65,30 @@ export const useNotificationsStore = defineStore('notifications', () => {
     item.fechaLectura = new Date().toISOString();
   }
 
+  async function fetchAvailableRecipients() {
+    loadingRecipients.value = true;
+
+    try {
+      availableRecipients.value =
+        await notificationsService.getAvailableRecipients();
+    } finally {
+      loadingRecipients.value = false;
+    }
+  }
+
+  async function createNotification(data: CreateNotificationData) {
+    const notification = await notificationsService.create(data);
+
+    sentNotifications.value.unshift(notification);
+
+    return notification;
+  }
+
   function clear() {
     notifications.value = [];
     sentNotifications.value = [];
     pendingPopups.value = [];
+    availableRecipients.value = [];
   }
 
   return {
@@ -88,6 +103,10 @@ export const useNotificationsStore = defineStore('notifications', () => {
     pendingPopups,
     fetchPendingPopups,
     markPopupAsSeen,
+
+    availableRecipients,
+    loadingRecipients,
+    fetchAvailableRecipients,
 
     fetchMine,
     fetchAll,

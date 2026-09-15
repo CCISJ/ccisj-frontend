@@ -55,3 +55,16 @@ export type CreateNotificationData = {
   destinatarioTipo: NotificationRecipientType;
   usuarioIds?: number[];
 };
+
+export type NotificationAvailableRecipient = {
+  id: number;
+  email: string;
+  tipo: 'SOCIO' | 'POSTULANTE';
+  socio: {
+    razonSocial: string;
+  } | null;
+  postulante: {
+    nombre: string;
+    apellido: string;
+  } | null;
+};
