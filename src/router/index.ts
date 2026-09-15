@@ -55,6 +55,30 @@ const router = createRouter({
           },
         },
         {
+          path: 'mis-ofertas',
+          name: 'mis-ofertas',
+          component: () => import('@/views/offers/MyOffersView.vue'),
+          meta: {
+            roles: ['SOCIO'],
+          },
+        },
+        {
+          path: 'mis-ofertas/nueva',
+          name: 'mis-ofertas-nueva',
+          component: () => import('@/views/offers/OfferFormView.vue'),
+          meta: {
+            roles: ['SOCIO'],
+          },
+        },
+        {
+          path: 'mis-ofertas/:id(\\d+)/editar',
+          name: 'mis-ofertas-editar',
+          component: () => import('@/views/offers/OfferFormView.vue'),
+          meta: {
+            roles: ['SOCIO'],
+          },
+        },
+        {
           path: 'notificaciones',
           name: 'notificaciones',
           component: () =>
