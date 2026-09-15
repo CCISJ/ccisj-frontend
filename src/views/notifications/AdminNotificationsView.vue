@@ -17,8 +17,12 @@ import type {
 const toast = useToastStore();
 const notificationsStore = useNotificationsStore();
 
-const { sentNotifications: notifications, loadingSent: loading } =
-  storeToRefs(notificationsStore);
+const {
+  sentNotifications: notifications,
+  loadingSent: loading,
+  availableRecipients,
+  loadingRecipients,
+} = storeToRefs(notificationsStore);
 
 const sending = ref(false);
 
@@ -26,6 +30,38 @@ const titulo = ref('');
 const mensaje = ref('');
 const tipo = ref<NotificationType>('NORMAL');
 const destinatarioTipo = ref<NotificationRecipientType>('TODOS');
+
+const recipientSearch = ref('');
+const selectedUserIds = ref<number[]>([]);
+
+const filteredRecipients = computed(() => {
+  const query = recipientSearch.value.trim().toLowerCase();
+
+  if (!query) return availableRecipients.value;
+
+  return availableRecipients.value.filter((user) => {
+    const name =
+      user.tipo === 'SOCIO'
+        ? (user.socio?.razonSocial ?? '')
+        : `${user.postulante?.nombre ?? ''} ${user.postulante?.apellido ?? ''}`;
+
+    return (
+      name.toLowerCase().includes(query) ||
+      user.email.toLowerCase().includes(query)
+    );
+  });
+});
+
+function recipientName(user: (typeof availableRecipients.value)[number]) {
+  if (user.tipo === 'SOCIO') {
+    return user.socio?.razonSocial ?? user.email;
+  }
+
+  const fullName =
+    `${user.postulante?.nombre ?? ''} ${user.postulante?.apellido ?? ''}`.trim();
+
+  return fullName || user.email;
+}
 
 const search = ref('');
 const filterType = ref<'TODOS' | NotificationType>('TODOS');
@@ -68,11 +104,22 @@ async function sendNotification() {
     return;
   }
 
+  if (
+    destinatarioTipo.value === 'USUARIOS' &&
+    selectedUserIds.value.length === 0
+  ) {
+    toast.error('Seleccioná al menos un usuario');
+    return;
+  }
+
   const data: CreateNotificationData = {
     titulo: titulo.value.trim(),
     mensaje: mensaje.value.trim(),
     tipo: tipo.value,
     destinatarioTipo: destinatarioTipo.value,
+    ...(destinatarioTipo.value === 'USUARIOS' && {
+      usuarioIds: selectedUserIds.value,
+    }),
   };
 
   sending.value = true;
@@ -84,6 +131,8 @@ async function sendNotification() {
     mensaje.value = '';
     tipo.value = 'NORMAL';
     destinatarioTipo.value = 'TODOS';
+    selectedUserIds.value = [];
+    recipientSearch.value = '';
 
     toast.success('Notificación enviada correctamente');
   } catch (err) {
@@ -117,12 +166,13 @@ function recipientLabel(notification: Notification) {
 
 onMounted(async () => {
   try {
-    await notificationsStore.fetchAll();
+    await Promise.all([
+      notificationsStore.fetchAll(),
+      notificationsStore.fetchAvailableRecipients(),
+    ]);
   } catch (err) {
     toast.error(
-      err instanceof Error
-        ? err.message
-        : 'No se pudieron cargar las notificaciones',
+      err instanceof Error ? err.message : 'No se pudieron cargar los datos',
     );
   }
 });
@@ -208,7 +258,82 @@ onMounted(async () => {
               <option value="SOCIOS">Socios</option>
 
               <option value="POSTULANTES">Postulantes</option>
+
+              <option value="USUARIOS">Usuarios específicos</option>
             </select>
+
+            <div
+              v-if="destinatarioTipo === 'USUARIOS'"
+              class="mt-3 overflow-hidden rounded-lg border border-slate-200"
+            >
+              <div class="border-b border-slate-200 p-3">
+                <input
+                  v-model="recipientSearch"
+                  type="text"
+                  placeholder="Buscar por nombre o email..."
+                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-ccisj"
+                />
+              </div>
+
+              <div
+                v-if="loadingRecipients"
+                class="p-4 text-center text-sm text-slate-500"
+              >
+                Cargando usuarios...
+              </div>
+
+              <div
+                v-else-if="filteredRecipients.length === 0"
+                class="p-4 text-center text-sm text-slate-500"
+              >
+                No se encontraron usuarios.
+              </div>
+
+              <div
+                v-else
+                class="max-h-52 divide-y divide-slate-100 overflow-y-auto"
+              >
+                <label
+                  v-for="user in filteredRecipients"
+                  :key="user.id"
+                  class="flex cursor-pointer items-center gap-3 px-3 py-2.5 transition hover:bg-slate-50"
+                >
+                  <input
+                    v-model="selectedUserIds"
+                    type="checkbox"
+                    :value="user.id"
+                    class="h-4 w-4 accent-ccisj"
+                  />
+
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-medium text-slate-700">
+                      {{ recipientName(user) }}
+                    </p>
+
+                    <p class="truncate text-xs text-slate-400">
+                      {{ user.email }}
+                    </p>
+                  </div>
+
+                  <span
+                    class="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500"
+                  >
+                    {{ user.tipo === 'SOCIO' ? 'Socio' : 'Postulante' }}
+                  </span>
+                </label>
+              </div>
+
+              <div
+                class="border-t border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-500"
+              >
+                {{ selectedUserIds.length }}
+                {{
+                  selectedUserIds.length === 1
+                    ? 'usuario seleccionado'
+                    : 'usuarios seleccionados'
+                }}
+              </div>
+            </div>
           </div>
 
           <div>
