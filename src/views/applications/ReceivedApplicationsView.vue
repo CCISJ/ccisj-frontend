@@ -69,8 +69,14 @@ onMounted(async () => {
   await loadApplications();
 
   // Desde Mis ofertas se llega con ?oferta=ID y desde Inicio con
-  // ?postulacion=ID. Si ya no existe, se ignora.
+  // ?estado=ENVIADA o ?postulacion=ID. Lo que ya no existe se ignora.
   const offerId = queryId(route.query.oferta);
+
+  const status = route.query.estado;
+
+  if (STATUS_ORDER.includes(status as ApplicationStatus)) {
+    statusFilter.value = status as ApplicationStatus;
+  }
 
   if (offerId && offers.value.some((offer) => offer.id === offerId)) {
     offerFilter.value = offerId;

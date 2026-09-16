@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { Users, Plus } from 'lucide-vue-next';
 
 import { useAuthStore } from '@/stores/auth';
+import MemberDashboard from '@/views/members/DashboardView.vue';
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -63,7 +64,9 @@ const shortcuts = computed(() => {
 </script>
 
 <template>
-  <div>
+  <MemberDashboard v-if="auth.role === 'SOCIO'" />
+
+  <div v-else>
     <span
       class="inline-flex rounded-full bg-ccisj-light px-3 py-1 text-xs font-semibold text-ccisj ring-1 ring-emerald-100"
     >
