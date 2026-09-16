@@ -449,8 +449,21 @@ const iconButton =
               <!-- Postulaciones -->
               <td
                 class="px-5 py-3.5 text-center text-sm font-semibold tabular-nums text-slate-800"
+                @click.stop
               >
-                {{ offer._count.postulaciones }}
+                <RouterLink
+                  v-if="offer._count.postulaciones > 0"
+                  :to="{
+                    name: 'postulaciones-recibidas',
+                    query: { oferta: offer.id },
+                  }"
+                  class="rounded-md px-2 py-1 text-ccisj transition hover:bg-ccisj-light hover:underline"
+                  :title="`Ver las postulaciones a ${offer.titulo}`"
+                >
+                  {{ offer._count.postulaciones }}
+                </RouterLink>
+
+                <span v-else class="text-slate-400">0</span>
               </td>
 
               <!-- Estado -->

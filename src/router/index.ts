@@ -79,6 +79,15 @@ const router = createRouter({
           },
         },
         {
+          path: 'postulaciones-recibidas',
+          name: 'postulaciones-recibidas',
+          component: () =>
+            import('@/views/applications/ReceivedApplicationsView.vue'),
+          meta: {
+            roles: ['SOCIO'],
+          },
+        },
+        {
           path: 'notificaciones',
           name: 'notificaciones',
           component: () =>
