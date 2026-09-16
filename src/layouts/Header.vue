@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { Bell, ChevronDown, LogOut, Menu } from 'lucide-vue-next';
+import { Bell, ChevronDown, KeyRound, LogOut, Menu } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 
 import { useAuthStore } from '@/stores/auth';
@@ -56,6 +56,12 @@ const initials = computed(() => {
 
 async function handleNotifications() {
   await router.push('/notificaciones');
+}
+
+async function handleAccount() {
+  userMenuOpen.value = false;
+
+  await router.push({ name: 'mi-cuenta' });
 }
 
 async function handleLogout() {
@@ -175,7 +181,16 @@ onBeforeUnmount(() => {
           </div>
 
           <button
-            class="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-slate-600 transition hover:bg-red-50 hover:text-red-600"
+            type="button"
+            class="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-slate-600 transition hover:bg-slate-50 hover:text-ccisj"
+            @click="handleAccount"
+          >
+            <KeyRound class="h-4 w-4 shrink-0" />
+            Mi cuenta
+          </button>
+
+          <button
+            class="flex w-full items-center gap-2 border-t border-slate-100 px-3 py-2.5 text-left text-sm text-slate-600 transition hover:bg-red-50 hover:text-red-600"
             @click="handleLogout"
           >
             <LogOut class="h-4 w-4 shrink-0" />
