@@ -93,6 +93,12 @@ const router = createRouter({
           component: () =>
             import('@/views/notifications/NotificationsView.vue'),
         },
+        {
+          // Para todos los roles: datos de acceso y cambio de contraseña.
+          path: 'mi-cuenta',
+          name: 'mi-cuenta',
+          component: () => import('@/views/account/MyAccountView.vue'),
+        },
 
         // Cualquier otra URL dentro del sistema cae acá en vez de dejar la
         // pantalla en blanco.
