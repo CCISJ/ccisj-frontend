@@ -40,14 +40,21 @@ type NavGroup = {
 };
 
 /**
- * Una sección solo es navegable si su ruta existe en el router. Las que
- * todavía no se construyeron se muestran deshabilitadas en vez de llevar a
- * una pantalla en blanco: en cuanto alguien agrega la ruta, se activan solas.
+ * Una sección solo es navegable si su ruta existe en el router y es para este
+ * rol. Las que todavía no se construyeron se muestran deshabilitadas en vez de
+ * llevar a una pantalla en blanco: en cuanto alguien agrega la ruta, se
+ * activan solas.
  */
 function isAvailable(path: string) {
   const resolved = router.resolve(path);
 
-  return resolved.matched.length > 0 && resolved.name !== 'not-found';
+  if (resolved.matched.length === 0 || resolved.name === 'not-found') {
+    return false;
+  }
+
+  const roles = resolved.meta.roles as string[] | undefined;
+
+  return !roles || (!!auth.role && roles.includes(auth.role));
 }
 
 const groups = computed<NavGroup[]>(() => {
@@ -114,7 +121,7 @@ const groups = computed<NavGroup[]>(() => {
             {
               label: 'Postulantes',
               icon: UserRoundSearch,
-              to: '/postulantes',
+              to: '/postulaciones-recibidas',
             },
           ],
         },
@@ -213,11 +220,7 @@ watch(() => route.fullPath, ui.closeSidebar);
         {{ sectionTitle }}
       </p>
 
-      <div
-        v-for="group in groups"
-        :key="group.title"
-        class="mb-4 last:mb-0"
-      >
+      <div v-for="group in groups" :key="group.title" class="mb-4 last:mb-0">
         <p class="mb-1 px-3 text-[11px] font-medium text-slate-400">
           {{ group.title }}
         </p>
