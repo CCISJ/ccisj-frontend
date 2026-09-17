@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { ArrowLeft, RefreshCw } from 'lucide-vue-next';
+import { ArrowLeft, Pencil, RefreshCw } from 'lucide-vue-next';
 
 import { getMember, isFullMember } from '@/services/membersService';
 import type { Member, MemberDirectoryEntry } from '@/types/member.type';
@@ -197,6 +197,18 @@ function goBack() {
           >
             {{ fullMember.usuario.activo ? 'Activo' : 'Inactivo' }}
           </span>
+
+          <button
+            v-if="fullMember"
+            type="button"
+            class="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:border-ccisj hover:text-ccisj"
+            @click="
+              router.push({ name: 'socio-editar', params: { id: socio.id } })
+            "
+          >
+            <Pencil class="h-4 w-4" />
+            Editar
+          </button>
         </div>
       </div>
 
