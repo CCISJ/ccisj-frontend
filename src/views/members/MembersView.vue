@@ -1,17 +1,22 @@
 <script setup lang="ts">
-import { computed, ref, watch, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { Plus, Search, X, RefreshCw, UserX, Pencil } from 'lucide-vue-next';
+import { computed, onMounted, ref, watch } from 'vue';
 
-import { useAuthStore } from '@/stores/auth';
+import { useRouter } from 'vue-router';
+
+import { Pencil, Plus, RefreshCw, Search, UserX, X } from 'lucide-vue-next';
+
+import ConfirmModal from '@/components/ConfirmModal.vue';
+
 import {
   deleteMember,
   getMembers,
   isFullMember,
 } from '@/services/membersService';
-import type { MemberDirectoryEntry } from '@/types/member.type';
+
+import { useAuthStore } from '@/stores/auth';
 import { useToastStore } from '@/stores/toast';
-import ConfirmModal from '@/components/ConfirmModal.vue';
+
+import type { MemberDirectoryEntry } from '@/types/member.type';
 
 const auth = useAuthStore();
 const toast = useToastStore();

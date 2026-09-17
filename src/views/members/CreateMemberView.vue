@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
+
 import { useRouter } from 'vue-router';
+
 import { ArrowLeft } from 'lucide-vue-next';
 
 import { createMember } from '@/services/membersService';
-import type { CreateMemberData } from '@/types/member.type';
+
 import { useToastStore } from '@/stores/toast';
+
+import type { CreateMemberData } from '@/types/member.type';
+
 import { uruguayDay } from '@/utils/format';
+
 import MemberForm from './MemberForm.vue';
 
 const router = useRouter();

@@ -1,10 +1,7 @@
 export type NotificationType = 'NORMAL' | 'EMERGENTE';
 
 export type NotificationRecipientType =
-  | 'TODOS'
-  | 'SOCIOS'
-  | 'POSTULANTES'
-  | 'USUARIOS';
+  'TODOS' | 'SOCIOS' | 'POSTULANTES' | 'USUARIOS';
 
 export type NotificationUser = {
   id: number;

@@ -1,15 +1,20 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+
 import { onBeforeRouteLeave } from 'vue-router';
+
 import { Lock, RefreshCw, Save } from 'lucide-vue-next';
 
 import { getMyCompany, updateMyCompany } from '@/services/membersService';
+
 import { useToastStore } from '@/stores/toast';
+
 import type {
   OwnMember,
   OwnMemberEditableField,
   UpdateOwnMemberData,
 } from '@/types/member.type';
+
 import { formatDate } from '@/utils/format';
 
 const toast = useToastStore();

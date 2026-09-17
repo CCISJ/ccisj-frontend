@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+
 import { apiFetch } from '@/services/api';
 
 import type { AuthUser, MeResponse } from '@/types/auth.type';

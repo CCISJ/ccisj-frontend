@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+
 import { storeToRefs } from 'pinia';
-
-import { useAuthStore } from '@/stores/auth';
-import { useToastStore } from '@/stores/toast';
-import { useNotificationsStore } from '@/stores/notifications';
-
-import AdminLayout from '@/layouts/AdminLayout.vue';
-import MemberLayout from '@/layouts/MemberLayout.vue';
-import ApplicantLayout from '@/layouts/ApplicantLayout.vue';
 
 import AppToast from '@/components/AppToast.vue';
 import EmergentNotificationModal from '@/components/EmergentNotificationModal.vue';
+
+import AdminLayout from '@/layouts/AdminLayout.vue';
+import ApplicantLayout from '@/layouts/ApplicantLayout.vue';
+import MemberLayout from '@/layouts/MemberLayout.vue';
+
+import { useAuthStore } from '@/stores/auth';
+import { useNotificationsStore } from '@/stores/notifications';
+import { useToastStore } from '@/stores/toast';
 
 const auth = useAuthStore();
 const toast = useToastStore();
@@ -76,7 +77,7 @@ const layout = computed(() => {
 </script>
 
 <template>
-  <component v-if="layout" :is="layout" />
+  <component :is="layout" v-if="layout" />
 
   <EmergentNotificationModal
     v-if="currentPopup"

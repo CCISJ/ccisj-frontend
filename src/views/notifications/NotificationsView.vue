@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { useAuthStore } from '@/stores/auth';
+
 import AdminNotificationsView from './AdminNotificationsView.vue';
 import UserNotificationsView from './UserNotificationsView.vue';
-
-import { useAuthStore } from '@/stores/auth';
 
 const auth = useAuthStore();
 </script>

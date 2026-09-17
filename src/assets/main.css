@@ -1,11 +1,11 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
-    --color-ccisj: #009b45;
-    --color-ccisj-dark: #007a37;
-    --color-ccisj-light: #eaf7ef;
+  --color-ccisj: #009b45;
+  --color-ccisj-dark: #007a37;
+  --color-ccisj-light: #eaf7ef;
 }
 
 button {
-    cursor: pointer;
+  cursor: pointer;
 }

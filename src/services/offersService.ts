@@ -1,9 +1,10 @@
-import { apiFetch } from './api';
 import type {
   CreateOfferData,
   OwnOffer,
   UpdateOfferData,
 } from '@/types/offer.type';
+
+import { apiFetch } from './api';
 
 // Las respuestas de crear y editar traen la oferta sin el conteo de
 // postulaciones: después de guardar se vuelve a pedir con getMyOffer.

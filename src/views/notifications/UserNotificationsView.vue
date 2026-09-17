@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { Bell, Mail, MailOpen, TriangleAlert } from 'lucide-vue-next';
-import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
 
-import { useToastStore } from '@/stores/toast';
+import { storeToRefs } from 'pinia';
+
+import { Bell, Mail, MailOpen, TriangleAlert } from 'lucide-vue-next';
+
 import { useNotificationsStore } from '@/stores/notifications';
+import { useToastStore } from '@/stores/toast';
+
 import { formatDate } from '@/utils/format';
 
 const toast = useToastStore();

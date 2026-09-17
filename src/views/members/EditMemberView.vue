@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
+
 import { useRoute, useRouter } from 'vue-router';
+
 import { ArrowLeft, RefreshCw } from 'lucide-vue-next';
 
 import {
@@ -8,8 +10,11 @@ import {
   isFullMember,
   updateMember,
 } from '@/services/membersService';
-import type { CreateMemberData, Member } from '@/types/member.type';
+
 import { useToastStore } from '@/stores/toast';
+
+import type { CreateMemberData, Member } from '@/types/member.type';
+
 import MemberForm from './MemberForm.vue';
 
 const route = useRoute();

@@ -6,6 +6,7 @@ import type {
   OwnMember,
   UpdateOwnMemberData,
 } from '@/types/member.type';
+
 import { apiFetch } from './api';
 
 export function isFullMember(

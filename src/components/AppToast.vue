@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+
 import { CheckCircle2, CircleAlert, Info, X } from 'lucide-vue-next';
 
 import { useToastStore } from '@/stores/toast';
