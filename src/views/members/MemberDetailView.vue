@@ -6,11 +6,9 @@ import {
   CircleCheck,
   Clock3,
   Plus,
-  RefreshCw,
   ArrowLeft,
   TriangleAlert,
-  ArrowLeft, 
-  Pencil, 
+  Pencil,
   RefreshCw,
 } from 'lucide-vue-next';
 
