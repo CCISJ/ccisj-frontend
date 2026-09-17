@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
+
 import { useRouter } from 'vue-router';
+
 import {
   Lock,
   Pencil,
@@ -13,13 +15,17 @@ import {
 } from 'lucide-vue-next';
 
 import ConfirmModal from '@/components/ConfirmModal.vue';
+
 import {
   deleteOffer,
   getMyOffers,
   updateOffer,
 } from '@/services/offersService';
+
 import { useToastStore } from '@/stores/toast';
+
 import { OFFER_MODALITY_LABELS, type OwnOffer } from '@/types/offer.type';
+
 import { formatDate, uruguayDay } from '@/utils/format';
 
 const router = useRouter();

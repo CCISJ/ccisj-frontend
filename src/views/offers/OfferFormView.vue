@@ -1,19 +1,24 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
+
 import { ArrowLeft, Info, RefreshCw, Save } from 'lucide-vue-next';
 
 import { getCategories } from '@/services/categoriesService';
 import { createOffer, getMyOffer, updateOffer } from '@/services/offersService';
+
 import { useToastStore } from '@/stores/toast';
+
 import {
-  OFFER_MODALITY_LABELS,
   type Category,
+  OFFER_MODALITY_LABELS,
   type OfferFormData,
   type OfferModality,
   type OwnOffer,
   type UpdateOfferData,
 } from '@/types/offer.type';
+
 import { formatDate, uruguayDay } from '@/utils/format';
 
 const route = useRoute();

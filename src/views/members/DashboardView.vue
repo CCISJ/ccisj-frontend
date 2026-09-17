@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+
 import { useRouter } from 'vue-router';
+
+import { storeToRefs } from 'pinia';
+
 import {
   Briefcase,
   Building2,
@@ -10,17 +14,20 @@ import {
   RefreshCw,
   Users,
 } from 'lucide-vue-next';
-import { storeToRefs } from 'pinia';
 
 import ApplicationStatusBadge from '@/components/ApplicationStatusBadge.vue';
+
 import { getReceivedApplications } from '@/services/applicationsService';
 import { getMyCompany } from '@/services/membersService';
 import { getMyOffers } from '@/services/offersService';
+
 import { useAuthStore } from '@/stores/auth';
 import { useNotificationsStore } from '@/stores/notifications';
+
 import type { ReceivedApplication } from '@/types/application.type';
 import type { OwnMember } from '@/types/member.type';
 import type { OwnOffer } from '@/types/offer.type';
+
 import { formatDate, uruguayDay } from '@/utils/format';
 
 const router = useRouter();

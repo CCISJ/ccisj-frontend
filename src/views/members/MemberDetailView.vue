@@ -1,29 +1,32 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+
 import { useRoute, useRouter } from 'vue-router';
+
 import {
+  ArrowLeft,
   Banknote,
   CircleCheck,
   Clock3,
-  Plus,
-  ArrowLeft,
-  TriangleAlert,
   Pencil,
+  Plus,
   RefreshCw,
+  TriangleAlert,
 } from 'lucide-vue-next';
+
+import { feesService } from '@/services/feesService';
+import { getMember, isFullMember } from '@/services/membersService';
 
 import { useAuthStore } from '@/stores/auth';
 
-import { feesService } from '@/services/feesService';
-
-import { getMember, isFullMember } from '@/services/membersService';
-
-import type { Member, MemberDirectoryEntry } from '@/types/member.type';
 import type { Fee, MemberFeeSummary, PayableFee } from '@/types/fee.type';
+import type { Member, MemberDirectoryEntry } from '@/types/member.type';
 
 import { formatDate } from '@/utils/format';
-import RegisterPaymentModal from '../fees/RegisterPaymentModal.vue';
+
 import FeeAdjustmentModal from '../fees/FeeAdjustmentModal.vue';
+import RegisterPaymentModal from '../fees/RegisterPaymentModal.vue';
+
 const adjustmentModalOpen = ref(false);
 
 const route = useRoute();

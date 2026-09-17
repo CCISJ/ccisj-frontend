@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+
 import {
   Banknote,
   CircleCheck,
@@ -11,6 +12,7 @@ import {
 } from 'lucide-vue-next';
 
 import { feesService } from '@/services/feesService';
+
 import type {
   FeeConfiguration,
   FeeConfigurationHistory,

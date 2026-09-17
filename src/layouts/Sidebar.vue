@@ -1,27 +1,27 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue';
+
 import { useRoute, useRouter } from 'vue-router';
 
+import logoVerde from '@/assets/CCISJ logo sin fondo - Letras verdes.png';
 import {
-  LayoutDashboard,
-  Users,
-  Building2,
-  Briefcase,
-  UserRoundSearch,
-  UserRound,
   Bell,
-  Wallet,
-  FileText,
-  Settings,
-  FileUser,
+  Briefcase,
+  Building2,
   ClipboardList,
+  FileText,
+  FileUser,
+  LayoutDashboard,
+  Settings,
+  UserRound,
+  UserRoundSearch,
+  Users,
+  Wallet,
   X,
 } from 'lucide-vue-next';
 
 import { useAuthStore } from '@/stores/auth';
 import { useUiStore } from '@/stores/ui';
-
-import logoVerde from '@/assets/CCISJ logo sin fondo - Letras verdes.png';
 
 const auth = useAuthStore();
 const ui = useUiStore();

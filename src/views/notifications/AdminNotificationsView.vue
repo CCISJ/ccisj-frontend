@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+
 import { storeToRefs } from 'pinia';
+
 import { Bell, Send } from 'lucide-vue-next';
 
-import { useToastStore } from '@/stores/toast';
 import { useNotificationsStore } from '@/stores/notifications';
-import { formatDate } from '@/utils/format';
+import { useToastStore } from '@/stores/toast';
 
 import type {
   CreateNotificationData,
@@ -13,6 +14,8 @@ import type {
   NotificationRecipientType,
   NotificationType,
 } from '@/types/notification.type';
+
+import { formatDate } from '@/utils/format';
 
 const toast = useToastStore();
 const notificationsStore = useNotificationsStore();

@@ -1,8 +1,9 @@
-import { apiFetch } from './api';
 import type {
   MemberApplicationStatus,
   ReceivedApplication,
 } from '@/types/application.type';
+
+import { apiFetch } from './api';
 
 export function getReceivedApplications() {
   return apiFetch<ReceivedApplication[]>('/postulaciones/recibidas');

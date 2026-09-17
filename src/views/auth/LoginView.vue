@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import logoVerde from '@/assets/CCISJ logo sin fondo - Letras verdes.png';
-
 import { computed, ref } from 'vue';
+
 import { useRoute, useRouter } from 'vue-router';
-import { Mail, Lock, Eye, EyeOff, LoaderCircle } from 'lucide-vue-next';
+
+import logoVerde from '@/assets/CCISJ logo sin fondo - Letras verdes.png';
+import { Eye, EyeOff, LoaderCircle, Lock, Mail } from 'lucide-vue-next';
+
 import { useAuthStore } from '@/stores/auth';
 
 const route = useRoute();
@@ -126,15 +128,15 @@ async function handleLogin() {
               />
 
               <input
-                v-model="email"
                 id="email"
+                v-model="email"
                 type="email"
                 placeholder="correo@ejemplo.com"
                 autocomplete="email"
                 autocapitalize="none"
                 :disabled="loading"
-                @input="error = ''"
                 class="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70"
+                @input="error = ''"
               />
             </div>
           </div>
@@ -174,14 +176,14 @@ async function handleLogin() {
               />
 
               <input
-                v-model="password"
                 id="password"
+                v-model="password"
                 :type="showPassword ? 'text' : 'password'"
                 placeholder="••••••••"
                 autocomplete="current-password"
                 :disabled="loading"
-                @input="error = ''"
                 class="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-11 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70"
+                @input="error = ''"
               />
 
               <button

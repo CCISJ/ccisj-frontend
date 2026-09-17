@@ -1,4 +1,5 @@
 import { computed, ref } from 'vue';
+
 import { defineStore } from 'pinia';
 
 import * as notificationsService from '@/services/notificationsService';

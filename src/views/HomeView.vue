@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+
 import { useRouter } from 'vue-router';
-import { Users, Plus } from 'lucide-vue-next';
+
+import MemberDashboard from '@/views/members/DashboardView.vue';
+import { Plus, Users } from 'lucide-vue-next';
 
 import { useAuthStore } from '@/stores/auth';
-import MemberDashboard from '@/views/members/DashboardView.vue';
 
 const auth = useAuthStore();
 const router = useRouter();

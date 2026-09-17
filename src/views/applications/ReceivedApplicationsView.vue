@@ -1,23 +1,30 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
+
 import { useRoute, useRouter } from 'vue-router';
+
 import { FileText, RefreshCw, Search, X } from 'lucide-vue-next';
 
 import ApplicationStatusBadge from '@/components/ApplicationStatusBadge.vue';
 import ConfirmModal from '@/components/ConfirmModal.vue';
-import ApplicationDetailPanel from './ApplicationDetailPanel.vue';
+
 import {
   getReceivedApplications,
   updateApplicationStatus,
 } from '@/services/applicationsService';
+
 import { useToastStore } from '@/stores/toast';
+
 import {
   APPLICATION_STATUS_LABELS,
   type ApplicationStatus,
   type MemberApplicationStatus,
   type ReceivedApplication,
 } from '@/types/application.type';
+
 import { formatDate } from '@/utils/format';
+
+import ApplicationDetailPanel from './ApplicationDetailPanel.vue';
 
 const route = useRoute();
 const router = useRouter();

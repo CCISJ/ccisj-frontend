@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+
 import { useRouter } from 'vue-router';
-import { Bell, ChevronDown, KeyRound, LogOut, Menu } from 'lucide-vue-next';
+
 import { storeToRefs } from 'pinia';
 
+import { Bell, ChevronDown, KeyRound, LogOut, Menu } from 'lucide-vue-next';
+
 import { useAuthStore } from '@/stores/auth';
-import { useUiStore } from '@/stores/ui';
 import { useNotificationsStore } from '@/stores/notifications';
+import { useUiStore } from '@/stores/ui';
 
 const userMenuOpen = ref(false);
 const userMenuRef = ref<HTMLElement | null>(null);

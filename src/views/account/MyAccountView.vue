@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue';
+
 import { Check, Eye, EyeOff, KeyRound, Lock, X } from 'lucide-vue-next';
 
 import {
-  changePassword,
   PASSWORD_MAX,
   PASSWORD_MIN,
+  changePassword,
 } from '@/services/accountService';
+
 import { useAuthStore } from '@/stores/auth';
 import { useToastStore } from '@/stores/toast';
 

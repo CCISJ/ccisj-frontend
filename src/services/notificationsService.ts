@@ -1,11 +1,11 @@
-import { apiFetch } from './api';
-
 import type {
   CreateNotificationData,
   Notification,
   NotificationAvailableRecipient,
   ReceivedNotification,
 } from '@/types/notification.type';
+
+import { apiFetch } from './api';
 
 export async function getAll() {
   return apiFetch<Notification[]>('/notificaciones');

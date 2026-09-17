@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted } from 'vue';
+
 import {
   CheckCircle2,
-  Eye,
   ExternalLink,
+  Eye,
   FileText,
   Mail,
   Phone,
@@ -12,12 +13,14 @@ import {
 } from 'lucide-vue-next';
 
 import ApplicationStatusBadge from '@/components/ApplicationStatusBadge.vue';
+
 import {
   APPLICATION_STATUS_LABELS,
   MEMBER_APPLICATION_STATES,
   type MemberApplicationStatus,
   type ReceivedApplication,
 } from '@/types/application.type';
+
 import { formatDate } from '@/utils/format';
 import { safeHttpsUrl, telHref } from '@/utils/url';
 
