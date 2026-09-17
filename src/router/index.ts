@@ -108,6 +108,12 @@ const router = createRouter({
           component: () => import('@/views/account/MyAccountView.vue'),
         },
 
+        {
+          path: 'cuotas',
+          name: 'cuotas',
+          component: () => import('@/views/fees/FeesView.vue'),
+        },
+
         // Cualquier otra URL dentro del sistema cae acá en vez de dejar la
         // pantalla en blanco.
         {
