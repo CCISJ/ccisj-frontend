@@ -69,9 +69,10 @@ const groups = computed<NavGroup[]>(() => {
           ],
         },
         {
-          title: 'Socios',
+          title: 'Administración',
           items: [
             { label: 'Socios', icon: Users, to: '/socios' },
+            { label: 'Cuotas', icon: Wallet, to: '/cuotas' },
             { label: 'Caja', icon: Wallet, to: '/caja' },
             { label: 'Comprobantes', icon: FileText, to: '/comprobantes' },
           ],
