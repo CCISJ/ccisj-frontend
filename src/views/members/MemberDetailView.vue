@@ -9,11 +9,15 @@ import {
   RefreshCw,
   ArrowLeft,
   TriangleAlert,
+  ArrowLeft, 
+  Pencil, 
+  RefreshCw,
 } from 'lucide-vue-next';
 
 import { useAuthStore } from '@/stores/auth';
 
 import { feesService } from '@/services/feesService';
+
 import { getMember, isFullMember } from '@/services/membersService';
 
 import type { Member, MemberDirectoryEntry } from '@/types/member.type';
@@ -100,7 +104,7 @@ onMounted(loadMember);
 type Field = { label: string; value: string };
 
 /**
- * El detalle agrupa los campos por tema en vez de listar los quince seguidos:
+ * El detalle agrupa los campos por tema en v de listar los quince seguidos:
  * quien abre la ficha busca "los datos de contacto", no el campo 9.
  */
 const sections = computed(() => {
@@ -301,6 +305,18 @@ function goBack() {
           >
             {{ fullMember.usuario.activo ? 'Activo' : 'Inactivo' }}
           </span>
+
+          <button
+            v-if="fullMember"
+            type="button"
+            class="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:border-ccisj hover:text-ccisj"
+            @click="
+              router.push({ name: 'socio-editar', params: { id: socio.id } })
+            "
+          >
+            <Pencil class="h-4 w-4" />
+            Editar
+          </button>
         </div>
       </div>
 

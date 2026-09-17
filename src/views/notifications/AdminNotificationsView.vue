@@ -235,6 +235,7 @@ onMounted(async () => {
               id="mensaje"
               v-model="mensaje"
               rows="5"
+              maxlength="5000"
               placeholder="Escribí el mensaje..."
               class="w-full resize-none rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-ccisj"
             />

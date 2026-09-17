@@ -38,6 +38,14 @@ const router = createRouter({
           },
         },
         {
+          path: 'socios/:id(\\d+)/editar',
+          name: 'socio-editar',
+          component: () => import('@/views/members/EditMemberView.vue'),
+          meta: {
+            roles: ['ADMIN'],
+          },
+        },
+        {
           path: 'socios/:id',
           name: 'socio-detalle',
           component: () => import('@/views/members/MemberDetailView.vue'),

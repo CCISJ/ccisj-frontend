@@ -495,7 +495,7 @@ async function confirmDelete() {
     title="Desactivar socio"
     :message="
       memberToDelete
-        ? `¿Seguro que querés desactivar a ${memberToDelete.razonSocial}? El socio conservará sus datos pero no podrá acceder al sistema.`
+        ? `¿Seguro que querés desactivar a ${memberToDelete.razonSocial}? El socio conservará sus datos pero no podrá acceder al sistema. Sus ofertas activas se cerrarán y las postulaciones sin resolver quedarán finalizadas, con aviso a cada postulante.`
         : ''
     "
     confirm-text="Desactivar"
