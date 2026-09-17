@@ -34,6 +34,10 @@ export type Notification = {
   destinatarios: NotificationRecipient[];
 };
 
+/**
+ * Lo que recibe un usuario. Del creador solo llega el tipo (administración o
+ * empresa), y solo en `/notificaciones/recibidas`: ni su email ni su ID.
+ */
 export type ReceivedNotification = {
   id: number;
   notificacionId: number;
@@ -45,7 +49,12 @@ export type ReceivedNotification = {
   emergenteVista: boolean;
   fechaEmergenteVista: string | null;
 
-  notificacion: Notification;
+  notificacion: Omit<
+    Notification,
+    'creadoPorId' | 'creadoPor' | 'destinatarios'
+  > & {
+    creadoPor?: Pick<NotificationUser, 'tipo'>;
+  };
 };
 
 export type CreateNotificationData = {
