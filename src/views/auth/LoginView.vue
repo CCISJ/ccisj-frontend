@@ -1,18 +1,36 @@
 <script setup lang="ts">
 import logoVerde from '@/assets/CCISJ logo sin fondo - Letras verdes.png';
 
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { Mail, Lock, Eye, EyeOff, LoaderCircle } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 
+const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
+
+// Llegó acá porque la sesión dejó de valer mientras usaba el sistema.
+const sessionExpired = computed(() => route.query.sesion === 'vencida');
+
+// A dónde volver después de entrar. Solo rutas internas: `//otro-sitio.com`
+// también empieza con "/" y llevaría afuera.
+function redirectTarget() {
+  const target = route.query.volver;
+
+  return typeof target === 'string' &&
+    target.startsWith('/') &&
+    !target.startsWith('//') &&
+    !target.startsWith('/login')
+    ? target
+    : '/';
+}
 
 const email = ref('');
 const password = ref('');
 const error = ref('');
 const showPassword = ref(false);
+const showForgotHelp = ref(false);
 const loading = ref(false);
 
 async function handleLogin() {
@@ -23,7 +41,7 @@ async function handleLogin() {
 
   try {
     await auth.login(email.value.trim(), password.value);
-    await router.push('/');
+    await router.replace(redirectTarget());
   } catch (err) {
     error.value =
       err instanceof Error ? err.message : 'Error al iniciar sesión';
@@ -82,6 +100,14 @@ async function handleLogin() {
           <p class="mt-2 text-sm text-slate-500">
             Ingresá tus datos para acceder al sistema.
           </p>
+
+          <p
+            v-if="sessionExpired && !error"
+            role="status"
+            class="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+          >
+            Tu sesión se cerró. Volvé a iniciar sesión para continuar.
+          </p>
         </div>
 
         <form class="space-y-5" @submit.prevent="handleLogin">
@@ -105,6 +131,7 @@ async function handleLogin() {
                 type="email"
                 placeholder="correo@ejemplo.com"
                 autocomplete="email"
+                autocapitalize="none"
                 :disabled="loading"
                 @input="error = ''"
                 class="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70"
@@ -122,10 +149,24 @@ async function handleLogin() {
               <button
                 type="button"
                 class="text-xs font-medium text-ccisj hover:underline"
+                :aria-expanded="showForgotHelp"
+                aria-controls="forgot-help"
+                @click="showForgotHelp = !showForgotHelp"
               >
                 ¿Olvidaste tu contraseña?
               </button>
             </div>
+
+            <!-- No hay recuperación por email: la administración asigna una
+                 contraseña nueva (definido por el cliente). -->
+            <p
+              v-if="showForgotHelp"
+              id="forgot-help"
+              class="mb-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600"
+            >
+              Comunicate con la administración del Centro Comercial: te van a
+              asignar una contraseña nueva.
+            </p>
 
             <div class="relative">
               <Lock
@@ -175,18 +216,9 @@ async function handleLogin() {
           </button>
         </form>
 
-        <div class="mt-8 border-t border-slate-200 pt-6 text-center">
-          <p class="text-sm text-slate-500">
-            ¿Todavía no tenés una cuenta?
-
-            <button
-              type="button"
-              class="font-semibold text-ccisj hover:underline"
-            >
-              Registrarse
-            </button>
-          </p>
-        </div>
+        <!-- "Registrarse" no hacía nada: el registro de postulantes todavía no
+             existe (falta que el cliente lo defina). Se vuelve a agregar con
+             la pantalla de registro. -->
       </div>
     </section>
   </div>

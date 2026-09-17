@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { ArrowLeft, Save } from 'lucide-vue-next';
+import { ArrowLeft } from 'lucide-vue-next';
 
 import { createMember } from '@/services/membersService';
 import type { CreateMemberData } from '@/types/member.type';
 import { useToastStore } from '@/stores/toast';
+import { uruguayDay } from '@/utils/format';
+import MemberForm from './MemberForm.vue';
 
 const router = useRouter();
 const toast = useToastStore();
@@ -22,7 +24,8 @@ const form = reactive<CreateMemberData>({
   rut: '',
   numeroBps: '',
   fechaInicioEmpresa: '',
-  fechaAfiliacion: new Date().toISOString().slice(0, 10),
+  // Hoy en Uruguay: con `toISOString()` después de las 21 h ya era mañana.
+  fechaAfiliacion: uruguayDay(),
   direccion: '',
   ciudad: '',
   celular: '',
@@ -31,19 +34,17 @@ const form = reactive<CreateMemberData>({
   observaciones: '',
 });
 
-const inputClass =
-  'w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-ccisj focus:ring-2 focus:ring-emerald-100';
-
-const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
-
 async function handleSubmit() {
+  // Ya creado: un segundo envío chocaría con el RUT recién registrado.
+  if (loading.value || socioCreadoId.value !== null) return;
+
   try {
     loading.value = true;
 
     const response = await createMember(form);
 
     passwordInicial.value = response.passwordInicial;
-    socioCreadoId.value = response.socio.id;
+    socioCreadoId.value = response.socioId;
 
     toast.success('Socio creado correctamente');
   } catch (err) {
@@ -94,11 +95,14 @@ function verSocio() {
 
       <p class="mt-2 text-sm text-emerald-700">
         Contraseña inicial:
-        <span class="font-mono font-semibold">{{ passwordInicial }}</span>
+        <span class="select-all font-mono font-semibold">
+          {{ passwordInicial }}
+        </span>
       </p>
 
       <p class="mt-1 text-xs text-emerald-600">
-        Guardá esta contraseña para entregársela al socio.
+        Guardá esta contraseña para entregársela al socio: no se vuelve a
+        mostrar.
       </p>
 
       <div class="mt-4 flex flex-wrap gap-2">
@@ -120,222 +124,13 @@ function verSocio() {
       </div>
     </div>
 
-    <form class="space-y-5" @submit.prevent="handleSubmit">
-      <!-- Datos de la empresa -->
-      <fieldset
-        class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-      >
-        <legend
-          class="px-1 text-xs font-semibold uppercase tracking-wide text-slate-400"
-        >
-          Datos de la empresa
-        </legend>
-
-        <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-          <div>
-            <label :class="labelClass">Razón social</label>
-
-            <input
-              v-model="form.razonSocial"
-              required
-              type="text"
-              :class="inputClass"
-            />
-          </div>
-
-          <div>
-            <label :class="labelClass">Nombre del titular</label>
-
-            <input
-              v-model="form.titular"
-              required
-              type="text"
-              :class="inputClass"
-            />
-          </div>
-
-          <div>
-            <label :class="labelClass">Giro comercial</label>
-
-            <input
-              v-model="form.giroComercial"
-              required
-              type="text"
-              placeholder="Ej. Supermercado, ferretería, servicios..."
-              :class="inputClass"
-            />
-          </div>
-
-          <div>
-            <label :class="labelClass">Fecha de inicio de la empresa</label>
-
-            <input
-              v-model="form.fechaInicioEmpresa"
-              required
-              type="date"
-              :class="inputClass"
-            />
-          </div>
-
-          <div>
-            <label :class="labelClass">RUT</label>
-
-            <input v-model="form.rut" required type="text" :class="inputClass" />
-          </div>
-
-          <div>
-            <label :class="labelClass">Nº BPS</label>
-
-            <input
-              v-model.trim="form.numeroBps"
-              required
-              type="text"
-              inputmode="numeric"
-              pattern="\d{7,12}"
-              maxlength="12"
-              title="El número de BPS debe tener entre 7 y 12 números"
-              :class="inputClass"
-            />
-
-            <p class="mt-1 text-xs text-slate-400">De 7 a 12 números.</p>
-          </div>
-        </div>
-      </fieldset>
-
-      <!-- Contacto -->
-      <fieldset
-        class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-      >
-        <legend
-          class="px-1 text-xs font-semibold uppercase tracking-wide text-slate-400"
-        >
-          Contacto
-        </legend>
-
-        <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-          <div>
-            <label :class="labelClass">Teléfono</label>
-
-            <input
-              v-model="form.telefono"
-              required
-              type="tel"
-              :class="inputClass"
-            />
-          </div>
-
-          <div>
-            <label :class="labelClass">Celular</label>
-
-            <input
-              v-model="form.celular"
-              required
-              type="tel"
-              :class="inputClass"
-            />
-          </div>
-
-          <div>
-            <label :class="labelClass">Dirección</label>
-
-            <input
-              v-model="form.direccion"
-              required
-              type="text"
-              :class="inputClass"
-            />
-          </div>
-
-          <div>
-            <label :class="labelClass">Ciudad / Localidad</label>
-
-            <input
-              v-model="form.ciudad"
-              required
-              type="text"
-              :class="inputClass"
-            />
-          </div>
-
-          <div class="md:col-span-2">
-            <label :class="labelClass">Email</label>
-
-            <input
-              v-model="form.email"
-              required
-              type="email"
-              :class="inputClass"
-            />
-
-            <p class="mt-1 text-xs text-slate-400">
-              Este email será utilizado también para crear la cuenta del socio.
-            </p>
-          </div>
-        </div>
-      </fieldset>
-
-      <!-- Afiliación -->
-      <fieldset
-        class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-      >
-        <legend
-          class="px-1 text-xs font-semibold uppercase tracking-wide text-slate-400"
-        >
-          Afiliación
-        </legend>
-
-        <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-          <div>
-            <label :class="labelClass">Tipo de socio</label>
-
-            <select v-model="form.tipo" required :class="inputClass">
-              <option value="COMUN">Común</option>
-              <option value="DIRECTIVO">Directivo</option>
-            </select>
-          </div>
-
-          <div>
-            <label :class="labelClass">Fecha de afiliación</label>
-
-            <input
-              v-model="form.fechaAfiliacion"
-              required
-              type="date"
-              :class="inputClass"
-            />
-          </div>
-
-          <div class="md:col-span-2">
-            <label :class="labelClass">Observaciones</label>
-
-            <textarea
-              v-model="form.observaciones"
-              rows="4"
-              :class="[inputClass, 'resize-none']"
-            />
-          </div>
-        </div>
-      </fieldset>
-
-      <div class="flex justify-end gap-3">
-        <button
-          type="button"
-          class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
-          @click="goBack"
-        >
-          Cancelar
-        </button>
-
-        <button
-          type="submit"
-          :disabled="loading || !!passwordInicial"
-          class="flex items-center gap-2 rounded-xl bg-ccisj px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          <Save class="h-4 w-4" />
-
-          {{ loading ? 'Guardando...' : 'Crear socio' }}
-        </button>
-      </div>
-    </form>
+    <MemberForm
+      v-else
+      v-model="form"
+      mode="create"
+      :loading="loading"
+      @submit="handleSubmit"
+      @cancel="goBack"
+    />
   </div>
 </template>

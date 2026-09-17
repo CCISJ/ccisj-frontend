@@ -82,7 +82,10 @@ export type CreateMemberData = {
   observaciones?: string;
 };
 
+// Lo que devuelve `POST /socios`. La contraseña inicial se muestra una sola vez.
 export type CreateMemberResponse = {
-  socio: Member;
+  message: string;
+  socioId: number;
+  email: string;
   passwordInicial: string;
 };
