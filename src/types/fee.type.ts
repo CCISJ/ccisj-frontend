@@ -1,52 +1,56 @@
-export type FeeStatus = 'PENDIENTE' | 'PAGADA' | 'ANULADA';
+export type FeeStatus = 'PENDIENTE' | 'PARCIAL' | 'PAGADA' | 'ANULADA';
 
 export type MemberFeeStatus = 'AL_DIA' | 'PENDIENTE' | 'DEUDOR';
 
 export type MemberFeeSummary = {
   socioId: number;
-  razonSocial: string;
-  rut: string;
-
-  cuotaActual: number;
   deudaTotal: number;
   cuotasPendientes: number;
-
   estado: MemberFeeStatus;
 };
 
 export type Fee = {
   id: number;
   socioId: number;
-
   periodoDesde: string;
   periodoHasta: string;
   fechaVencimiento: string;
-
   importeBase: number;
   importeAjustes: number;
   importeTotal: number;
-
   estado: FeeStatus;
+  fechaCreacion: string;
 };
 
-// Configuración general de la cuota
 export type FeeConfiguration = {
+  id?: number;
   importeBase: number;
   vigenciaDesde: string;
+  fechaCreacion: string;
 };
 
-// Resumen general del módulo de cuotas
 export type FeesDashboardSummary = {
   cobradoMes: number;
   pendiente: number;
   deudaTotal: number;
-
   sociosAlDia: number;
-  sociosPendientes: number;
   sociosDeudores: number;
+  sociosPendientes: number;
 };
 
-// Últimos pagos registrados
+// Pago registrado
+export type FeePayment = {
+  id: number;
+  socioId: number;
+  importe: number;
+  fechaPago: string;
+  medioPago: string;
+  numeroRecibo: string | null;
+  observaciones: string | null;
+  fechaCreacion: string;
+};
+
+// Pago utilizado en listados generales
 export type RecentFeePayment = {
   id: number;
   socioId: number;
@@ -62,17 +66,41 @@ export type FeeConfigurationHistory = {
   vigenciaDesde: string;
 };
 
+// Cuota disponible para recibir pagos
 export type PayableFee = {
   id: number;
   periodoDesde: string;
   periodoHasta: string;
   fechaVencimiento: string;
   importeTotal: number;
-  estado: 'PENDIENTE';
+  estado: 'PENDIENTE' | 'PARCIAL';
+  fechaCreacion: string;
 };
 
 export type RegisterFeePaymentData = {
-  socioId: number;
-  cuotaIds: number[];
+  importe: number;
   fechaPago: string;
+  medioPago: string;
+  numeroRecibo?: string;
+  observaciones?: string;
+};
+
+export type CreateFeeAdjustmentData = {
+  tipo: 'ADICIONAL' | 'DESCUENTO';
+  importe: number;
+  fechaDesde: string;
+  fechaHasta?: string;
+  motivo?: string;
+};
+
+export type FeeAdjustment = {
+  id: number;
+  socioId: number;
+  tipo: 'ADICIONAL' | 'DESCUENTO';
+  importe: number;
+  fechaDesde: string;
+  fechaHasta: string | null;
+  motivo: string | null;
+  activo: boolean;
+  fechaCreacion: string;
 };

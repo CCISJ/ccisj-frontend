@@ -20,6 +20,8 @@ import type {
   RecentFeePayment,
 } from '@/types/fee.type';
 
+import { formatDate, formatDateTime, formatMoney } from '@/utils/format';
+
 const configuration = ref<FeeConfiguration | null>(null);
 const summary = ref<FeesDashboardSummary | null>(null);
 const recentPayments = ref<RecentFeePayment[]>([]);
@@ -37,32 +39,6 @@ const totalSocios = computed(() => {
     summary.value.sociosDeudores
   );
 });
-
-function formatMoney(value: number) {
-  return new Intl.NumberFormat('es-UY', {
-    style: 'currency',
-    currency: 'UYU',
-    maximumFractionDigits: 0,
-  }).format(value);
-}
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat('es-UY', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  }).format(new Date(value));
-}
-
-function formatDateTime(value: string) {
-  return new Intl.DateTimeFormat('es-UY', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(new Date(value));
-}
 
 async function loadData() {
   try {
