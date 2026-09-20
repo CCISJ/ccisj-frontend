@@ -8,214 +8,77 @@ import type {
   RecentFeePayment,
 } from '@/types/fee.type';
 
-// TODO: reemplazar estos mocks por apiFetch cuando esté listo el backend.
-
-const membersFees: MemberFeeSummary[] = [
-  {
-    socioId: 1,
-    razonSocial: 'Supermercado Central',
-    rut: '210123450018',
-    cuotaActual: 535,
-    deudaTotal: 0,
-    cuotasPendientes: 0,
-    estado: 'AL_DIA',
-  },
-  {
-    socioId: 2,
-    razonSocial: 'Ferretería San José',
-    rut: '210987650019',
-    cuotaActual: 635,
-    deudaTotal: 635,
-    cuotasPendientes: 1,
-    estado: 'PENDIENTE',
-  },
-  {
-    socioId: 3,
-    razonSocial: 'Distribuidora del Sur',
-    rut: '211234560017',
-    cuotaActual: 435,
-    deudaTotal: 1305,
-    cuotasPendientes: 3,
-    estado: 'DEUDOR',
-  },
-];
-
-const fees: Fee[] = [
-  {
-    id: 1,
-    socioId: 3,
-    periodoDesde: '2026-06-20',
-    periodoHasta: '2026-07-20',
-    fechaVencimiento: '2026-08-20',
-    importeBase: 535,
-    importeAjustes: -100,
-    importeTotal: 435,
-    estado: 'PENDIENTE',
-  },
-  {
-    id: 2,
-    socioId: 3,
-    periodoDesde: '2026-07-20',
-    periodoHasta: '2026-08-20',
-    fechaVencimiento: '2026-09-20',
-    importeBase: 535,
-    importeAjustes: -100,
-    importeTotal: 435,
-    estado: 'PENDIENTE',
-  },
-  {
-    id: 3,
-    socioId: 3,
-    periodoDesde: '2026-08-20',
-    periodoHasta: '2026-09-20',
-    fechaVencimiento: '2026-10-20',
-    importeBase: 535,
-    importeAjustes: -100,
-    importeTotal: 435,
-    estado: 'PENDIENTE',
-  },
-];
-
-const configuration: FeeConfiguration = {
-  importeBase: 535,
-  vigenciaDesde: '2026-01-01',
-};
-
-const dashboardSummary: FeesDashboardSummary = {
-  cobradoMes: 84530,
-  pendiente: 12305,
-  deudaTotal: 18450,
-
-  sociosAlDia: 120,
-  sociosPendientes: 15,
-  sociosDeudores: 7,
-};
-
-const recentPayments: RecentFeePayment[] = [
-  {
-    id: 1,
-    socioId: 1,
-    razonSocial: 'Supermercado Central',
-    importe: 535,
-    fechaPago: '2026-09-16T14:30:00',
-  },
-  {
-    id: 2,
-    socioId: 4,
-    razonSocial: 'Barraca del Centro',
-    importe: 635,
-    fechaPago: '2026-09-16T11:15:00',
-  },
-  {
-    id: 3,
-    socioId: 5,
-    razonSocial: 'Comercial Rodríguez',
-    importe: 535,
-    fechaPago: '2026-09-15T16:40:00',
-  },
-];
-
-const configurationHistory: FeeConfigurationHistory[] = [
-  {
-    id: 3,
-    importeBase: 535,
-    vigenciaDesde: '2026-01-01',
-  },
-  {
-    id: 2,
-    importeBase: 500,
-    vigenciaDesde: '2025-07-01',
-  },
-  {
-    id: 1,
-    importeBase: 450,
-    vigenciaDesde: '2025-01-01',
-  },
-];
+import { apiFetch } from './api';
 
 export const feesService = {
   async getConfiguration(): Promise<FeeConfiguration> {
-    return { ...configuration };
+    const data = await apiFetch<FeeConfiguration>('/cuotas/configuracion');
+    return {
+      ...data,
+      importeBase: Number(data.importeBase),
+    };
   },
 
   async getMemberFeeSummary(socioId: number): Promise<MemberFeeSummary> {
+    const data = await apiFetch<{
+      estado: MemberFeeSummary['estado'];
+      cuotasVencidas: number;
+      deudaVencida: number;
+    }>(`/cuotas/socio/${socioId}/estado`);
+
     return {
       socioId,
-      razonSocial: '',
-      rut: '',
-      cuotaActual: 535,
-      deudaTotal: 1070,
-      cuotasPendientes: 2,
-      estado: 'PENDIENTE',
+      deudaTotal: data.deudaVencida,
+      cuotasPendientes: data.cuotasVencidas,
+      estado: data.estado,
     };
   },
 
   async getDashboardSummary(): Promise<FeesDashboardSummary> {
-    return { ...dashboardSummary };
+    return apiFetch<FeesDashboardSummary>('/cuotas/resumen');
   },
 
   async getRecentPayments(): Promise<RecentFeePayment[]> {
-    return recentPayments.map((payment) => ({ ...payment }));
+    return apiFetch<RecentFeePayment[]>('/cuotas/pagos/recientes');
   },
 
   async getConfigurationHistory(): Promise<FeeConfigurationHistory[]> {
-    return configurationHistory.map((item) => ({ ...item }));
-  },
-
-  async getMembersFees(): Promise<MemberFeeSummary[]> {
-    return membersFees.map((member) => ({ ...member }));
+    const data = await apiFetch<FeeConfigurationHistory[]>(
+      '/cuotas/configuracion/historial',
+    );
+    return data.map((config) => ({
+      ...config,
+      importeBase: Number(config.importeBase),
+    }));
   },
 
   async getMemberFees(socioId: number): Promise<Fee[]> {
-    return [
-      {
-        id: 1,
-        socioId,
-        periodoDesde: '2026-06-20',
-        periodoHasta: '2026-07-20',
-        fechaVencimiento: '2026-08-20',
-        importeBase: 535,
-        importeAjustes: 0,
-        importeTotal: 535,
-        estado: 'PAGADA',
-      },
-      {
-        id: 2,
-        socioId,
-        periodoDesde: '2026-07-20',
-        periodoHasta: '2026-08-20',
-        fechaVencimiento: '2026-09-20',
-        importeBase: 535,
-        importeAjustes: 0,
-        importeTotal: 535,
-        estado: 'PENDIENTE',
-      },
-      {
-        id: 3,
-        socioId,
-        periodoDesde: '2026-08-20',
-        periodoHasta: '2026-09-20',
-        fechaVencimiento: '2026-10-20',
-        importeBase: 535,
-        importeAjustes: 0,
-        importeTotal: 535,
-        estado: 'PENDIENTE',
-      },
-    ];
+    const data = await apiFetch<Fee[]>(`/cuotas/socio/${socioId}`);
+
+    return data.map((fee) => ({
+      ...fee,
+      importeBase: Number(fee.importeBase),
+      importeAjustes: Number(fee.importeAjustes),
+      importeTotal: Number(fee.importeTotal),
+    }));
   },
 
   async getPayableFees(socioId: number): Promise<PayableFee[]> {
     const memberFees = await this.getMemberFees(socioId);
 
     return memberFees
-      .filter((fee) => fee.estado === 'PENDIENTE')
+      .filter(
+        (fee): fee is Fee & { estado: 'PENDIENTE' | 'PARCIAL' } =>
+          fee.estado === 'PENDIENTE' || fee.estado === 'PARCIAL',
+      )
       .map((fee) => ({
         id: fee.id,
         periodoDesde: fee.periodoDesde,
         periodoHasta: fee.periodoHasta,
         fechaVencimiento: fee.fechaVencimiento,
         importeTotal: fee.importeTotal,
-        estado: 'PENDIENTE' as const,
+        estado: fee.estado,
+        fechaCreacion: fee.fechaCreacion,
       }));
   },
 };
