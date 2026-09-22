@@ -13,6 +13,8 @@ import {
 
 import { feesService } from '@/services/feesService';
 
+import { useToastStore } from '@/stores/toast';
+
 import type {
   FeeConfiguration,
   FeeConfigurationHistory,
@@ -27,8 +29,16 @@ const summary = ref<FeesDashboardSummary | null>(null);
 const recentPayments = ref<RecentFeePayment[]>([]);
 const configurationHistory = ref<FeeConfigurationHistory[]>([]);
 
-const loading = ref(true);
-const error = ref('');
+const showConfigurationModal = ref(false);
+const savingConfiguration = ref(false);
+const newFeeAmount = ref<number>(0);
+const loading = ref(false);
+
+const editingConfiguration = ref<FeeConfigurationHistory | null>(null);
+const editFeeAmount = ref<number>(0);
+const savingEdit = ref(false);
+
+const toast = useToastStore();
 
 const totalSocios = computed(() => {
   if (!summary.value) return 0;
@@ -40,10 +50,124 @@ const totalSocios = computed(() => {
   );
 });
 
+const nextEffectiveDate = computed(() => {
+  const currentYear = new Date().getFullYear();
+
+  return `${currentYear + 1}-01-01`;
+});
+
+const currentConfigurationId = computed(() => {
+  const now = new Date();
+
+  const current = configurationHistory.value
+    .filter((item) => new Date(item.vigenciaDesde) <= now)
+    .sort(
+      (a, b) =>
+        new Date(b.vigenciaDesde).getTime() -
+        new Date(a.vigenciaDesde).getTime(),
+    )[0];
+
+  return current?.id ?? null;
+});
+
+function getConfigurationStatus(item: FeeConfigurationHistory) {
+  if (new Date(item.vigenciaDesde) > new Date()) {
+    return 'FUTURO';
+  }
+
+  if (item.id === currentConfigurationId.value) {
+    return 'ACTUAL';
+  }
+
+  return 'ANTERIOR';
+}
+
+function openConfigurationModal() {
+  if (!configuration.value) return;
+
+  newFeeAmount.value = configuration.value.importeBase;
+  showConfigurationModal.value = true;
+}
+
+function closeConfigurationModal() {
+  showConfigurationModal.value = false;
+}
+
+async function saveConfiguration() {
+  if (newFeeAmount.value <= 0) {
+    toast.error('El importe debe ser válido.');
+    return;
+  }
+
+  try {
+    savingConfiguration.value = true;
+
+    await feesService.createConfiguration({
+      importeBase: newFeeAmount.value,
+      vigenciaDesde: nextEffectiveDate.value,
+    });
+
+    showConfigurationModal.value = false;
+
+    setTimeout(() => {
+      toast.success('Se guardó la nueva configuración de cuota.');
+    }, 300);
+
+    await loadData();
+  } catch (err) {
+    console.error(err);
+    toast.error(
+      err instanceof Error
+        ? err.message
+        : 'No se pudo guardar la nueva configuración de cuota.',
+    );
+  } finally {
+    savingConfiguration.value = false;
+  }
+}
+
+function openEditConfiguration(item: FeeConfigurationHistory) {
+  editingConfiguration.value = item;
+  editFeeAmount.value = item.importeBase;
+}
+
+function closeEditConfiguration() {
+  editingConfiguration.value = null;
+}
+
+async function saveConfigurationEdit() {
+  if (!editingConfiguration.value) return;
+
+  if (editFeeAmount.value <= 0) {
+    toast.error('El importe debe ser válido.');
+    return;
+  }
+
+  try {
+    savingEdit.value = true;
+
+    await feesService.updateConfiguration(
+      editingConfiguration.value.id,
+      editFeeAmount.value,
+    );
+
+    editingConfiguration.value = null;
+
+    await loadData();
+  } catch (err) {
+    toast.error(
+      err instanceof Error
+        ? err.message
+        : 'No se pudo modificar la configuración',
+    );
+  } finally {
+    savingEdit.value = false;
+  }
+}
+
 async function loadData() {
   try {
     loading.value = true;
-    error.value = '';
 
     const [configurationData, summaryData, paymentsData, historyData] =
       await Promise.all([
@@ -58,10 +182,11 @@ async function loadData() {
     recentPayments.value = paymentsData;
     configurationHistory.value = historyData;
   } catch (err) {
-    error.value =
+    toast.error(
       err instanceof Error
         ? err.message
-        : 'No se pudo cargar la información de cuotas';
+        : 'No se pudo cargar la información de cuotas y pagos.',
+    );
   } finally {
     loading.value = false;
   }
@@ -87,24 +212,6 @@ onMounted(loadData);
       class="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500"
     >
       Cargando información de cuotas...
-    </div>
-
-    <!-- Error -->
-    <div
-      v-else-if="error"
-      class="rounded-xl border border-red-200 bg-red-50 p-6 text-center"
-    >
-      <p class="text-sm text-red-600">
-        {{ error }}
-      </p>
-
-      <button
-        type="button"
-        class="mt-3 rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
-        @click="loadData"
-      >
-        Reintentar
-      </button>
     </div>
 
     <template v-else-if="configuration && summary">
@@ -139,6 +246,7 @@ onMounted(loadData);
         <button
           type="button"
           class="flex items-center gap-2 rounded-lg border border-slate-200 px-3.5 py-2 text-sm font-semibold text-slate-600 transition hover:border-ccisj hover:bg-ccisj-light hover:text-ccisj"
+          @click="openConfigurationModal()"
         >
           <Pencil class="h-4 w-4" />
           Modificar valor
@@ -374,6 +482,8 @@ onMounted(loadData);
                   <th class="px-5 py-3">Vigente desde</th>
 
                   <th class="px-5 py-3">Estado</th>
+
+                  <th class="px-5 py-3 text-right">Acciones</th>
                 </tr>
               </thead>
 
@@ -393,7 +503,14 @@ onMounted(loadData);
 
                   <td class="px-5 py-3.5">
                     <span
-                      v-if="index === 0"
+                      v-if="getConfigurationStatus(item) === 'FUTURO'"
+                      class="inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700"
+                    >
+                      Futuro
+                    </span>
+
+                    <span
+                      v-else-if="getConfigurationStatus(item) === 'ACTUAL'"
                       class="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700"
                     >
                       Actual
@@ -403,6 +520,20 @@ onMounted(loadData);
                       Anterior
                     </span>
                   </td>
+
+                  <td class="px-5 py-3.5 text-right">
+                    <button
+                      v-if="getConfigurationStatus(item) === 'FUTURO'"
+                      type="button"
+                      class="inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-ccisj-light hover:text-ccisj"
+                      title="Editar valor"
+                      @click="openEditConfiguration(item)"
+                    >
+                      <Pencil class="h-4 w-4" />
+                    </button>
+
+                    <span v-else class="text-xs text-slate-300"> — </span>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -410,5 +541,115 @@ onMounted(loadData);
         </section>
       </div>
     </template>
+    <div
+      v-if="showConfigurationModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+    >
+      <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+        <h2 class="text-lg font-semibold text-slate-900">
+          Modificar valor de cuota
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          El nuevo importe se aplicará a partir de la fecha indicada.
+        </p>
+
+        <div class="mt-5 space-y-4">
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-slate-700">
+              Nuevo importe
+            </label>
+
+            <input
+              v-model.number="newFeeAmount"
+              type="number"
+              min="1"
+              class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-ccisj"
+            />
+          </div>
+
+          <div>
+            <p class="mb-1.5 text-sm font-medium text-slate-700">
+              Vigente desde
+            </p>
+
+            <div
+              class="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-700"
+            >
+              {{ formatDate(nextEffectiveDate) }}
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex justify-end gap-3">
+          <button
+            type="button"
+            class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+            :disabled="savingConfiguration"
+            @click="closeConfigurationModal"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="button"
+            class="rounded-lg bg-ccisj px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            :disabled="savingConfiguration"
+            @click="saveConfiguration"
+          >
+            {{ savingConfiguration ? 'Guardando...' : 'Guardar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      v-if="editingConfiguration"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+    >
+      <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+        <h2 class="text-lg font-semibold text-slate-900">
+          Editar valor de cuota
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Vigencia:
+          {{ formatDate(editingConfiguration.vigenciaDesde) }}
+        </p>
+
+        <div class="mt-5">
+          <label class="mb-1.5 block text-sm font-medium text-slate-700">
+            Importe
+          </label>
+
+          <input
+            v-model.number="editFeeAmount"
+            type="number"
+            min="1"
+            class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-ccisj"
+          />
+        </div>
+
+        <div class="mt-6 flex justify-end gap-3">
+          <button
+            type="button"
+            class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+            :disabled="savingEdit"
+            @click="closeEditConfiguration"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="button"
+            class="rounded-lg bg-ccisj px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            :disabled="savingEdit"
+            @click="saveConfigurationEdit"
+          >
+            {{ savingEdit ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
