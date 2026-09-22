@@ -104,3 +104,8 @@ export type FeeAdjustment = {
   activo: boolean;
   fechaCreacion: string;
 };
+
+export type CreateFeeConfigurationData = {
+  importeBase: number;
+  vigenciaDesde: string;
+};

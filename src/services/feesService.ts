@@ -1,4 +1,5 @@
 import type {
+  CreateFeeConfigurationData,
   Fee,
   FeeConfiguration,
   FeeConfigurationHistory,
@@ -80,5 +81,35 @@ export const feesService = {
         estado: fee.estado,
         fechaCreacion: fee.fechaCreacion,
       }));
+  },
+
+  async createConfiguration(
+    data: CreateFeeConfigurationData,
+  ): Promise<FeeConfiguration> {
+    const response = await apiFetch<FeeConfiguration>('/cuotas/configuracion', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    return {
+      ...response,
+      importeBase: Number(response.importeBase),
+    };
+  },
+
+  async updateConfiguration(
+    id: number,
+    importeBase: number,
+  ): Promise<FeeConfiguration> {
+    const response = await apiFetch<FeeConfiguration>(
+      `/cuotas/configuracion/${id}`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify({ importeBase }),
+      },
+    );
+    return {
+      ...response,
+      importeBase: Number(response.importeBase),
+    };
   },
 };
