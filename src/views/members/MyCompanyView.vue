@@ -15,7 +15,7 @@ import type {
   UpdateOwnMemberData,
 } from '@/types/member.type';
 
-import { formatDate } from '@/utils/format';
+import { formatDate } from '@/utils/money';
 
 const toast = useToastStore();
 

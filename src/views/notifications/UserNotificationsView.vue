@@ -8,7 +8,7 @@ import { Bell, Mail, MailOpen, TriangleAlert } from 'lucide-vue-next';
 import { useNotificationsStore } from '@/stores/notifications';
 import { useToastStore } from '@/stores/toast';
 
-import { formatDate } from '@/utils/format';
+import { formatDate } from '@/utils/money';
 
 const toast = useToastStore();
 

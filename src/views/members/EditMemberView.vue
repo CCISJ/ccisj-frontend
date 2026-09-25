@@ -15,7 +15,7 @@ import { useToastStore } from '@/stores/toast';
 
 import type { CreateMemberData, Member } from '@/types/member.type';
 
-import MemberForm from './MemberForm.vue';
+import MemberForm from '../../components/members/MemberForm.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -25,7 +25,6 @@ const memberId = Number(route.params.id);
 
 const loading = ref(true);
 const saving = ref(false);
-const error = ref('');
 const razonSocial = ref('');
 
 const form = reactive<CreateMemberData>({
@@ -90,19 +89,18 @@ const hasChanges = computed(() => Object.keys(changes.value).length > 0);
 
 async function loadMember() {
   if (!Number.isInteger(memberId) || memberId <= 0) {
-    error.value = 'El identificador del socio no es válido';
+    toast.error('El identificador del socio no es válido');
     loading.value = false;
     return;
   }
 
   try {
     loading.value = true;
-    error.value = '';
 
     const member = await getMember(memberId);
 
     if (!isFullMember(member)) {
-      error.value = 'No tenés permiso para editar este socio';
+      toast.error('No tenés permiso para editar este socio');
       return;
     }
 
@@ -110,8 +108,9 @@ async function loadMember() {
     original.value = toFormData(member);
     Object.assign(form, original.value);
   } catch (err) {
-    error.value =
-      err instanceof Error ? err.message : 'No se pudo cargar el socio';
+    toast.error(
+      err instanceof Error ? err.message : 'No se pudo cargar el socio',
+    );
   } finally {
     loading.value = false;
   }
@@ -168,22 +167,6 @@ function goBack() {
       class="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500"
     >
       Cargando socio...
-    </div>
-
-    <div
-      v-else-if="error"
-      class="rounded-xl border border-red-200 bg-red-50 p-6 text-center"
-    >
-      <p class="text-sm text-red-600">{{ error }}</p>
-
-      <button
-        type="button"
-        class="mx-auto mt-3 flex items-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
-        @click="loadMember"
-      >
-        <RefreshCw class="h-4 w-4" />
-        Reintentar
-      </button>
     </div>
 
     <MemberForm

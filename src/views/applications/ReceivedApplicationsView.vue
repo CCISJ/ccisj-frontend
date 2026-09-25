@@ -22,7 +22,7 @@ import {
   type ReceivedApplication,
 } from '@/types/application.type';
 
-import { formatDate } from '@/utils/format';
+import { formatDate } from '@/utils/money.ts';
 
 import ApplicationDetailPanel from './ApplicationDetailPanel.vue';
 
@@ -32,7 +32,6 @@ const toast = useToastStore();
 
 const applications = ref<ReceivedApplication[]>([]);
 const loading = ref(true);
-const error = ref('');
 
 const search = ref('');
 const offerFilter = ref<number | 'TODAS'>('TODAS');
@@ -59,14 +58,14 @@ function queryId(value: unknown) {
 async function loadApplications() {
   try {
     loading.value = true;
-    error.value = '';
 
     applications.value = await getReceivedApplications();
   } catch (err) {
-    error.value =
+    toast.error(
       err instanceof Error
         ? err.message
-        : 'No se pudieron cargar las postulaciones';
+        : 'No se pudieron cargar las postulaciones',
+    );
   } finally {
     loading.value = false;
   }
@@ -94,7 +93,7 @@ onMounted(async () => {
   if (applicationId) {
     if (applications.value.some((item) => item.id === applicationId)) {
       selectedId.value = applicationId;
-    } else if (!error.value) {
+    } else {
       toast.info('No encontramos esa postulación');
     }
   }
@@ -373,23 +372,6 @@ async function confirmStatusChange() {
       class="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500"
     >
       Cargando postulaciones...
-    </div>
-
-    <!-- Error -->
-    <div
-      v-else-if="error"
-      class="rounded-xl border border-red-200 bg-red-50 p-6 text-center"
-    >
-      <p class="text-sm text-red-600">{{ error }}</p>
-
-      <button
-        type="button"
-        class="mx-auto mt-3 flex items-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
-        @click="loadApplications"
-      >
-        <RefreshCw class="h-4 w-4" />
-        Reintentar
-      </button>
     </div>
 
     <!-- Sin postulaciones -->

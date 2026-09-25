@@ -26,14 +26,13 @@ import { useToastStore } from '@/stores/toast';
 
 import { OFFER_MODALITY_LABELS, type OwnOffer } from '@/types/offer.type';
 
-import { formatDate, uruguayDay } from '@/utils/format';
+import { formatDate, uruguayDay } from '@/utils/money';
 
 const router = useRouter();
 const toast = useToastStore();
 
 const offers = ref<OwnOffer[]>([]);
 const loading = ref(true);
-const error = ref('');
 
 const search = ref('');
 const statusFilter = ref<'TODOS' | 'ACTIVA' | 'CERRADA'>('TODOS');
@@ -44,12 +43,12 @@ const page = ref(1);
 async function loadOffers() {
   try {
     loading.value = true;
-    error.value = '';
 
     offers.value = await getMyOffers();
   } catch (err) {
-    error.value =
-      err instanceof Error ? err.message : 'No se pudieron cargar tus ofertas';
+    toast.error(
+      err instanceof Error ? err.message : 'No se pudieron cargar tus ofertas',
+    );
   } finally {
     loading.value = false;
   }
@@ -331,23 +330,6 @@ const iconButton =
       class="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500"
     >
       Cargando ofertas...
-    </div>
-
-    <!-- Error -->
-    <div
-      v-else-if="error"
-      class="rounded-xl border border-red-200 bg-red-50 p-6 text-center"
-    >
-      <p class="text-sm text-red-600">{{ error }}</p>
-
-      <button
-        type="button"
-        class="mx-auto mt-3 flex items-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
-        @click="loadOffers"
-      >
-        <RefreshCw class="h-4 w-4" />
-        Reintentar
-      </button>
     </div>
 
     <!-- Sin ofertas -->

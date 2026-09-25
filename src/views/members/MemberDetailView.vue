@@ -5,42 +5,44 @@ import { useRoute, useRouter } from 'vue-router';
 
 import {
   ArrowLeft,
-  Banknote,
   CircleCheck,
   Clock3,
   Pencil,
   Plus,
-  RefreshCw,
+  Trash2,
   TriangleAlert,
 } from 'lucide-vue-next';
+
+import ConfirmModal from '@/components/ConfirmModal.vue';
+import FeeAdjustmentModal from '@/components/fees/FeeAdjustmentModal.vue';
 
 import { feesService } from '@/services/feesService';
 import { getMember, isFullMember } from '@/services/membersService';
 
-import { useAuthStore } from '@/stores/auth';
+import { useToastStore } from '@/stores/toast.ts';
 
-import type { Fee, MemberFeeSummary, PayableFee } from '@/types/fee.type';
+import type {
+  CreateFeeAdjustmentData,
+  Fee,
+  FeeAdjustment,
+  MemberFeeSummary,
+} from '@/types/fee.type.ts';
 import type { Member, MemberDirectoryEntry } from '@/types/member.type';
 
-import { formatDate } from '@/utils/format';
-
-import FeeAdjustmentModal from '../fees/FeeAdjustmentModal.vue';
-import RegisterPaymentModal from '../fees/RegisterPaymentModal.vue';
-
-const adjustmentModalOpen = ref(false);
+import { formatDate, formatMonth } from '@/utils/date';
+import { formatMoney } from '@/utils/money';
 
 const route = useRoute();
 const router = useRouter();
 
-const auth = useAuthStore();
-
 const feeSummary = ref<MemberFeeSummary | null>(null);
 const memberFees = ref<Fee[]>([]);
+const adjustmentModalOpen = ref(false);
+const feeAdjustments = ref<FeeAdjustment[]>([]);
+const adjustmentToDelete = ref<FeeAdjustment | null>(null);
+const deletingAdjustment = ref(false);
 
 const socio = ref<Member | MemberDirectoryEntry | null>(null);
-const paymentModalOpen = ref(false);
-const payableFees = ref<PayableFee[]>([]);
-const loadingPayableFees = ref(false);
 
 // Un directivo recibe solo el directorio: sin RUT, BPS, observaciones ni
 // estado de la cuenta.
@@ -49,42 +51,75 @@ const fullMember = computed(() =>
 );
 
 const loading = ref(true);
-const error = ref('');
+const toast = useToastStore();
 
-async function openPaymentModal() {
-  if (!socio.value || !auth.isAdmin) return;
+async function handleAdjustmentConfirm(data: CreateFeeAdjustmentData) {
+  if (!fullMember.value) return;
 
   try {
-    loadingPayableFees.value = true;
+    await feesService.createAdjustment(fullMember.value.id, data);
 
-    payableFees.value = await feesService.getPayableFees(socio.value.id);
+    adjustmentModalOpen.value = false;
 
-    paymentModalOpen.value = true;
+    toast.success('Ajuste de cuota guardado correctamente');
+
+    await loadMember();
   } catch (err) {
-    console.error('No se pudieron cargar las cuotas pendientes', err);
-  } finally {
-    loadingPayableFees.value = false;
+    toast.error(
+      err instanceof Error
+        ? err.message
+        : 'No se pudo guardar el ajuste de cuota',
+    );
   }
 }
 
-function handlePaymentConfirm(cuotaIds: number[]) {
-  console.log('Cuotas seleccionadas:', cuotaIds);
+async function handleDeleteAdjustment() {
+  if (!adjustmentToDelete.value) return;
 
-  paymentModalOpen.value = false;
+  deletingAdjustment.value = true;
+
+  try {
+    const result = await feesService.deleteAdjustment(
+      adjustmentToDelete.value.id,
+    );
+
+    adjustmentToDelete.value = null;
+
+    if (result.cuotasPagadasNoModificadas > 0) {
+      const cantidad = result.cuotasPagadasNoModificadas;
+
+      toast.success(
+        `Ajuste eliminado. ${cantidad} ${
+          cantidad === 1 ? 'cuota pagada mantuvo' : 'cuotas pagadas mantuvieron'
+        } el ajuste. Si necesitás compensar ese importe, creá un nuevo ajuste.`,
+      );
+    } else {
+      toast.success('Ajuste eliminado correctamente');
+    }
+
+    await loadMember();
+
+    await loadMember();
+  } catch (err) {
+    toast.error(
+      err instanceof Error ? err.message : 'No se pudo eliminar el ajuste',
+    );
+  } finally {
+    deletingAdjustment.value = false;
+  }
 }
 
 async function loadMember() {
   const id = Number(route.params.id);
 
   if (!Number.isInteger(id) || id <= 0) {
-    error.value = 'El identificador del socio no es válido';
+    toast.error('El identificador del socio no es válido');
     loading.value = false;
     return;
   }
 
   try {
     loading.value = true;
-    error.value = '';
 
     const memberData = await getMember(id);
 
@@ -92,9 +127,11 @@ async function loadMember() {
 
     feeSummary.value = await feesService.getMemberFeeSummary(id);
     memberFees.value = await feesService.getMemberFees(id);
+    feeAdjustments.value = await feesService.getMemberAdjustments(id);
   } catch (err) {
-    error.value =
-      err instanceof Error ? err.message : 'No se pudo cargar el socio';
+    toast.error(
+      err instanceof Error ? err.message : 'No se pudo cargar el socio',
+    );
   } finally {
     loading.value = false;
   }
@@ -167,14 +204,6 @@ const sections = computed(() => {
   ];
 });
 
-function formatMoney(value: number) {
-  return new Intl.NumberFormat('es-UY', {
-    style: 'currency',
-    currency: 'UYU',
-    maximumFractionDigits: 0,
-  }).format(value);
-}
-
 function feeStatusLabel() {
   if (!feeSummary.value) return 'Sin información';
 
@@ -243,26 +272,7 @@ function goBack() {
       Cargando socio...
     </div>
 
-    <!-- Error -->
-    <div
-      v-else-if="error || !socio"
-      class="rounded-xl border border-red-200 bg-red-50 p-6 text-center"
-    >
-      <p class="text-sm text-red-600">
-        {{ error || 'No se encontró el socio' }}
-      </p>
-
-      <button
-        type="button"
-        class="mx-auto mt-3 flex items-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
-        @click="loadMember"
-      >
-        <RefreshCw class="h-4 w-4" />
-        Reintentar
-      </button>
-    </div>
-
-    <template v-else>
+    <template v-if="socio">
       <!-- Encabezado -->
       <div
         class="flex flex-wrap items-center gap-4 rounded-xl border border-slate-200 bg-white p-5"
@@ -310,7 +320,17 @@ function goBack() {
           <button
             v-if="fullMember"
             type="button"
-            class="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:border-ccisj hover:text-ccisj"
+            class="flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 shadow-sm transition hover:border-ccisj hover:text-ccisj"
+            @click="adjustmentModalOpen = true"
+          >
+            <Plus class="h-4 w-4" />
+            Agregar ajuste
+          </button>
+
+          <button
+            v-if="fullMember"
+            type="button"
+            class="flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 shadow-sm transition hover:border-ccisj hover:text-ccisj"
             @click="
               router.push({ name: 'socio-editar', params: { id: socio.id } })
             "
@@ -344,21 +364,7 @@ function goBack() {
           </span>
         </div>
 
-        <div v-if="feeSummary" class="mt-5 grid gap-4 sm:grid-cols-3">
-          <!-- Cuota actual -->
-          <div class="rounded-xl bg-slate-50 p-4">
-            <div class="flex items-center justify-between">
-              <p class="text-xs font-medium text-slate-500">Cuota actual</p>
-
-              <Banknote class="h-4 w-4 text-slate-400" />
-            </div>
-
-            <p class="mt-2 text-xl font-bold text-slate-900">
-              {{ formatMoney(feeSummary.cuotaActual) }}
-            </p>
-          </div>
-
-          <!-- Pendientes -->
+        <div v-if="feeSummary" class="mt-5 grid gap-4 sm:grid-cols-2">
           <div class="rounded-xl bg-slate-50 p-4">
             <div class="flex items-center justify-between">
               <p class="text-xs font-medium text-slate-500">
@@ -373,7 +379,6 @@ function goBack() {
             </p>
           </div>
 
-          <!-- Deuda -->
           <div class="rounded-xl bg-slate-50 p-4">
             <div class="flex items-center justify-between">
               <p class="text-xs font-medium text-slate-500">Deuda total</p>
@@ -398,31 +403,91 @@ function goBack() {
         >
           No hay información de cuotas disponible para este socio.
         </div>
+      </section>
 
-        <!-- Acciones exclusivas de administración -->
+      <section
+        v-if="fullMember"
+        class="rounded-xl border border-slate-200 bg-white p-5"
+      >
+        <div class="mb-4 flex items-center justify-between">
+          <div>
+            <h2 class="text-base font-semibold text-slate-900">
+              Ajustes programados
+            </h2>
+            <p class="mt-1 text-sm text-slate-500">
+              Adicionales y descuentos aplicados a las cuotas del socio.
+            </p>
+          </div>
+        </div>
+
         <div
-          v-if="auth.isAdmin && feeSummary"
-          class="mt-5 flex flex-wrap gap-2 border-t border-slate-100 pt-4"
+          v-if="feeAdjustments.length === 0"
+          class="rounded-lg bg-slate-50 px-4 py-6 text-center text-sm text-slate-500"
         >
-          <button
-            type="button"
-            :disabled="loadingPayableFees"
-            class="flex items-center gap-2 rounded-lg bg-ccisj px-3.5 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-            @click="openPaymentModal"
-          >
-            <Banknote class="h-4 w-4" />
+          No hay ajustes registrados.
+        </div>
 
-            {{ loadingPayableFees ? 'Cargando...' : 'Registrar pago' }}
-          </button>
-
-          <button
-            type="button"
-            class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
-            @click="adjustmentModalOpen = true"
+        <div v-else class="divide-y divide-slate-100">
+          <div
+            v-for="adjustment in feeAdjustments"
+            :key="adjustment.id"
+            class="flex items-center justify-between gap-4 py-3"
           >
-            <Plus class="h-4 w-4" />
-            Agregar ajuste
-          </button>
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <span
+                  class="font-semibold"
+                  :class="
+                    adjustment.tipo === 'ADICIONAL'
+                      ? 'text-red-600'
+                      : 'text-emerald-600'
+                  "
+                >
+                  {{ adjustment.tipo === 'ADICIONAL' ? '+' : '-' }}${{
+                    adjustment.importe.toLocaleString('es-UY')
+                  }}
+                </span>
+
+                <span
+                  class="rounded-full px-2 py-0.5 text-xs font-medium"
+                  :class="
+                    adjustment.tipo === 'ADICIONAL'
+                      ? 'bg-red-50 text-red-700'
+                      : 'bg-emerald-50 text-emerald-700'
+                  "
+                >
+                  {{
+                    adjustment.tipo === 'ADICIONAL' ? 'Adicional' : 'Descuento'
+                  }}
+                </span>
+              </div>
+
+              <p v-if="adjustment.motivo" class="mt-1 text-sm text-slate-600">
+                {{ adjustment.motivo }}
+              </p>
+            </div>
+
+            <div class="flex shrink-0 items-center gap-4">
+              <p class="text-right text-sm text-slate-500">
+                {{ formatMonth(adjustment.fechaDesde) }}
+                →
+                {{
+                  adjustment.fechaHasta
+                    ? formatMonth(adjustment.fechaHasta)
+                    : 'Indefinido'
+                }}
+              </p>
+
+              <button
+                type="button"
+                class="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                title="Eliminar ajuste"
+                @click="adjustmentToDelete = adjustment"
+              >
+                <Trash2 class="h-4 w-4" />
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -551,7 +616,7 @@ function goBack() {
           <div v-for="field in section.fields" :key="field.label">
             <dt class="text-xs text-slate-400">{{ field.label }}</dt>
 
-            <dd class="mt-0.5 break-words text-sm text-slate-800">
+            <dd class="mt-0.5 wrap-break-word text-sm text-slate-800">
               {{ field.value || '—' }}
             </dd>
           </div>
@@ -574,26 +639,24 @@ function goBack() {
         </p>
       </div>
     </template>
-    <RegisterPaymentModal
-      v-if="socio"
-      :open="paymentModalOpen"
-      :socio-name="socio.razonSocial"
-      :fees="payableFees"
-      @close="paymentModalOpen = false"
-      @confirm="handlePaymentConfirm"
+    <FeeAdjustmentModal
+      v-if="fullMember"
+      :open="adjustmentModalOpen"
+      :socio-name="fullMember.razonSocial"
+      @close="adjustmentModalOpen = false"
+      @confirm="handleAdjustmentConfirm"
     />
 
-    <FeeAdjustmentModal
-      v-if="socio"
-      :open="adjustmentModalOpen"
-      :socio-name="socio.razonSocial"
-      @close="adjustmentModalOpen = false"
-      @confirm="
-        (data) => {
-          console.log('Ajuste:', data);
-          adjustmentModalOpen = false;
-        }
-      "
+    <ConfirmModal
+      :open="adjustmentToDelete !== null"
+      title="Eliminar ajuste"
+      message="¿Seguro que querés eliminar este ajuste? Las cuotas pendientes afectadas se recalcularán automáticamente."
+      confirm-text="Eliminar"
+      cancel-text="Cancelar"
+      danger
+      :loading="deletingAdjustment"
+      @confirm="handleDeleteAdjustment"
+      @cancel="adjustmentToDelete = null"
     />
   </div>
 </template>

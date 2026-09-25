@@ -35,7 +35,6 @@ const socios = ref<MemberRow[]>([]);
 
 const isAdmin = computed(() => auth.role === 'ADMIN');
 const loading = ref(true);
-const error = ref('');
 
 const search = ref('');
 const typeFilter = ref('TODOS');
@@ -50,7 +49,6 @@ const page = ref(1);
 async function loadMembers() {
   try {
     loading.value = true;
-    error.value = '';
 
     const members = await getMembers();
 
@@ -60,8 +58,9 @@ async function loadMembers() {
         : member,
     );
   } catch (err) {
-    error.value =
-      err instanceof Error ? err.message : 'No se pudieron cargar los socios';
+    toast.error(
+      err instanceof Error ? err.message : 'No se pudieron cargar los socios',
+    );
   } finally {
     loading.value = false;
   }
@@ -267,25 +266,6 @@ async function confirmDelete() {
       class="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500"
     >
       Cargando socios...
-    </div>
-
-    <!-- Error -->
-    <div
-      v-else-if="error"
-      class="rounded-xl border border-red-200 bg-red-50 p-6 text-center"
-    >
-      <p class="text-sm text-red-600">
-        {{ error }}
-      </p>
-
-      <button
-        type="button"
-        class="mx-auto mt-3 flex items-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
-        @click="loadMembers"
-      >
-        <RefreshCw class="h-4 w-4" />
-        Reintentar
-      </button>
     </div>
 
     <!-- Sin socios cargados -->

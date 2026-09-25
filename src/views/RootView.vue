@@ -4,7 +4,7 @@ import { computed, onMounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import AppToast from '@/components/AppToast.vue';
-import EmergentNotificationModal from '@/components/EmergentNotificationModal.vue';
+import EmergentNotificationModal from '@/components/notifications/EmergentNotificationModal.vue';
 
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import ApplicantLayout from '@/layouts/ApplicantLayout.vue';
