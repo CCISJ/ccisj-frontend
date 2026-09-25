@@ -19,7 +19,7 @@ import {
   type UpdateOfferData,
 } from '@/types/offer.type';
 
-import { formatDate, uruguayDay } from '@/utils/format';
+import { formatDate, uruguayDay } from '@/utils/money';
 
 const route = useRoute();
 const router = useRouter();

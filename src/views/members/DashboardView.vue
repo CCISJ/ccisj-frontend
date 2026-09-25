@@ -28,7 +28,7 @@ import type { ReceivedApplication } from '@/types/application.type';
 import type { OwnMember } from '@/types/member.type';
 import type { OwnOffer } from '@/types/offer.type';
 
-import { formatDate, uruguayDay } from '@/utils/format';
+import { formatDate, uruguayDay } from '@/utils/date';
 
 const router = useRouter();
 const auth = useAuthStore();

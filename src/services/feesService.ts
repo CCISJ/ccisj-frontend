@@ -1,6 +1,9 @@
 import type {
+  CreateFeeAdjustmentData,
   CreateFeeConfigurationData,
+  DeleteAdjustmentResponse,
   Fee,
+  FeeAdjustment,
   FeeConfiguration,
   FeeConfigurationHistory,
   FeesDashboardSummary,
@@ -111,5 +114,34 @@ export const feesService = {
       ...response,
       importeBase: Number(response.importeBase),
     };
+  },
+
+  async getMemberAdjustments(socioId: number): Promise<FeeAdjustment[]> {
+    const data = await apiFetch<FeeAdjustment[]>(
+      `/cuotas/socio/${socioId}/ajustes`,
+    );
+
+    return data.map((adjustment) => ({
+      ...adjustment,
+      importe: Number(adjustment.importe),
+    }));
+  },
+
+  async createAdjustment(socioId: number, data: CreateFeeAdjustmentData) {
+    return apiFetch(`/cuotas/socio/${socioId}/ajustes`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  async deleteAdjustment(
+    adjustmentId: number,
+  ): Promise<DeleteAdjustmentResponse> {
+    return apiFetch<DeleteAdjustmentResponse>(
+      `/cuotas/ajustes/${adjustmentId}`,
+      {
+        method: 'DELETE',
+      },
+    );
   },
 };

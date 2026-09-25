@@ -2,6 +2,10 @@ export type FeeStatus = 'PENDIENTE' | 'PARCIAL' | 'PAGADA' | 'ANULADA';
 
 export type MemberFeeStatus = 'AL_DIA' | 'PENDIENTE' | 'DEUDOR';
 
+export type AdjustmentType = 'ADICIONAL' | 'DESCUENTO';
+
+export type AdjustmentDuration = '1' | '2' | '3' | '6' | '12' | 'INDEFINIDO';
+
 export type MemberFeeSummary = {
   socioId: number;
   deudaTotal: number;
@@ -108,4 +112,10 @@ export type FeeAdjustment = {
 export type CreateFeeConfigurationData = {
   importeBase: number;
   vigenciaDesde: string;
+};
+
+export type DeleteAdjustmentResponse = {
+  id: number;
+  activo: boolean;
+  cuotasPagadasNoModificadas: number;
 };

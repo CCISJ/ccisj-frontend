@@ -21,7 +21,7 @@ import {
   type ReceivedApplication,
 } from '@/types/application.type';
 
-import { formatDate } from '@/utils/format';
+import { formatDate } from '@/utils/money';
 import { safeHttpsUrl, telHref } from '@/utils/url';
 
 const props = defineProps<{

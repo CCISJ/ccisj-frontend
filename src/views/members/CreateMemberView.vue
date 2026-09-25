@@ -11,9 +11,9 @@ import { useToastStore } from '@/stores/toast';
 
 import type { CreateMemberData } from '@/types/member.type';
 
-import { uruguayDay } from '@/utils/format';
+import { uruguayDay } from '@/utils/money.ts';
 
-import MemberForm from './MemberForm.vue';
+import MemberForm from '../../components/members/MemberForm.vue';
 
 const router = useRouter();
 const toast = useToastStore();

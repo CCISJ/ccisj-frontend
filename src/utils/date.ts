@@ -30,14 +30,6 @@ export function formatDate(value: string | null | undefined) {
   });
 }
 
-export function formatMoney(value: number) {
-  return new Intl.NumberFormat('es-UY', {
-    style: 'currency',
-    currency: 'UYU',
-    maximumFractionDigits: 0,
-  }).format(value);
-}
-
 export function formatDateTime(value: string) {
   return new Intl.DateTimeFormat('es-UY', {
     day: '2-digit',
@@ -46,4 +38,58 @@ export function formatDateTime(value: string) {
     hour: '2-digit',
     minute: '2-digit',
   }).format(new Date(value));
+}
+
+export function getCurrentMonth() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+
+  return `${year}-${month}`;
+}
+
+export function getMonthRange(
+  startMonth: string,
+  durationMonths: number | null,
+) {
+  const [yearString, monthString] = startMonth.split('-');
+
+  if (!yearString || !monthString) {
+    throw new Error('Mes de inicio inválido');
+  }
+
+  const year = Number(yearString);
+  const month = Number(monthString);
+
+  const fechaDesde = `${startMonth}-01`;
+
+  if (durationMonths === null) {
+    return {
+      fechaDesde,
+      fechaHasta: undefined,
+    };
+  }
+
+  const endDate = new Date(Date.UTC(year, month - 1 + durationMonths, 0));
+
+  const fechaHasta = endDate.toISOString().slice(0, 10);
+
+  return {
+    fechaDesde,
+    fechaHasta,
+  };
+}
+
+export function formatMonth(value: string | Date) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return '—';
+
+  const formatted = new Intl.DateTimeFormat('es-UY', {
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(date);
+
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }
