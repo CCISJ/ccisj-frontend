@@ -15,7 +15,7 @@ import type {
   NotificationType,
 } from '@/types/notification.type';
 
-import { formatDate } from '@/utils/money';
+import { formatDate } from '@/utils/date';
 
 const toast = useToastStore();
 const notificationsStore = useNotificationsStore();

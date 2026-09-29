@@ -22,7 +22,8 @@ import type {
   RecentFeePayment,
 } from '@/types/fee.type';
 
-import { formatDate, formatDateTime, formatMoney } from '@/utils/money';
+import { formatDate, formatDateTime } from '@/utils/date';
+import { formatMoney } from '@/utils/money';
 
 const configuration = ref<FeeConfiguration | null>(null);
 const summary = ref<FeesDashboardSummary | null>(null);

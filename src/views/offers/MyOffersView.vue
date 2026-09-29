@@ -26,7 +26,7 @@ import { useToastStore } from '@/stores/toast';
 
 import { OFFER_MODALITY_LABELS, type OwnOffer } from '@/types/offer.type';
 
-import { formatDate, uruguayDay } from '@/utils/money';
+import { formatDate, uruguayDay } from '@/utils/date';
 
 const router = useRouter();
 const toast = useToastStore();

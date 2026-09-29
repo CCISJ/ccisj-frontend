@@ -11,7 +11,7 @@ import { useToastStore } from '@/stores/toast';
 
 import type { CreateMemberData } from '@/types/member.type';
 
-import { uruguayDay } from '@/utils/money.ts';
+import { uruguayDay } from '@/utils/date.ts';
 
 import MemberForm from '../../components/members/MemberForm.vue';
 
