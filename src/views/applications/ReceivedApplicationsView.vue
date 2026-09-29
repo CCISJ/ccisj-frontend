@@ -22,7 +22,7 @@ import {
   type ReceivedApplication,
 } from '@/types/application.type';
 
-import { formatDate } from '@/utils/money.ts';
+import { formatDate } from '@/utils/date.ts';
 
 import ApplicationDetailPanel from './ApplicationDetailPanel.vue';
 
