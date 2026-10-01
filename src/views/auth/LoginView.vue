@@ -218,9 +218,17 @@ async function handleLogin() {
           </button>
         </form>
 
-        <!-- "Registrarse" no hacía nada: el registro de postulantes todavía no
-             existe (falta que el cliente lo defina). Se vuelve a agregar con
-             la pantalla de registro. -->
+        <!-- Solo los postulantes se registran solos: las cuentas de socio las
+             crea la administración. -->
+        <p class="mt-8 text-center text-sm text-slate-500">
+          ¿Buscás trabajo?
+          <RouterLink
+            to="/registro"
+            class="font-semibold text-ccisj hover:underline"
+          >
+            Registrate acá
+          </RouterLink>
+        </p>
       </div>
     </section>
   </div>

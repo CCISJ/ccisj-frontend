@@ -9,6 +9,14 @@ export type AuthUser = {
   memberType: MemberType | null;
 };
 
+export type RegisterData = {
+  nombre: string;
+  apellido: string;
+  email: string;
+  telefono?: string;
+  password: string;
+};
+
 export type MeResponse = {
   user: {
     id: number;

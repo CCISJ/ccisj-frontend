@@ -13,6 +13,12 @@ const router = createRouter({
     },
 
     {
+      path: '/registro',
+      name: 'registro',
+      component: () => import('@/views/auth/RegisterView.vue'),
+    },
+
+    {
       path: '/',
       component: () => import('@/views/RootView.vue'),
       children: [
@@ -127,18 +133,22 @@ const router = createRouter({
   ],
 });
 
+// Pantallas que se ven sin sesión iniciada.
+const PUBLIC_PATHS = ['/login', '/registro'];
+
 router.beforeEach(async (to) => {
   const auth = useAuthStore();
+  const isPublic = PUBLIC_PATHS.includes(to.path);
 
   if (to.path !== '/login') {
     await auth.initialize();
   }
 
-  if (!auth.isAuthenticated && to.path !== '/login') {
+  if (!auth.isAuthenticated && !isPublic) {
     return '/login';
   }
 
-  if (auth.isAuthenticated && to.path === '/login') {
+  if (auth.isAuthenticated && isPublic) {
     return '/';
   }
 
