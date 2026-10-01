@@ -3,12 +3,22 @@ import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 
 import { onBeforeRouteLeave } from 'vue-router';
 
-import { Lock, RefreshCw, Save } from 'lucide-vue-next';
+import {
+  CircleCheck,
+  Clock3,
+  Lock,
+  RefreshCw,
+  Save,
+  TriangleAlert,
+  Wallet,
+} from 'lucide-vue-next';
 
+import { feesService } from '@/services/feesService';
 import { getMyCompany, updateMyCompany } from '@/services/membersService';
 
 import { useToastStore } from '@/stores/toast';
 
+import type { MemberFeeSummary } from '@/types/fee.type';
 import type {
   OwnMember,
   OwnMemberEditableField,
@@ -16,6 +26,7 @@ import type {
 } from '@/types/member.type';
 
 import { formatDate } from '@/utils/date';
+import { formatMoney } from '@/utils/money';
 
 const toast = useToastStore();
 
@@ -23,6 +34,14 @@ const socio = ref<OwnMember | null>(null);
 const loading = ref(true);
 const loadError = ref('');
 const saving = ref(false);
+
+// Estado de cuenta. Ojo con los nombres: el backend devuelve solo lo
+// **vencido** (`cuotasVencidas` y `deudaVencida`), que el servicio renombra a
+// `cuotasPendientes` y `deudaTotal`. Acá se muestran con el nombre que
+// realmente tienen, para no prometer un total que no es.
+const feeSummary = ref<MemberFeeSummary | null>(null);
+const feeLoading = ref(true);
+const feeError = ref('');
 
 type Form = Record<OwnMemberEditableField, string>;
 
@@ -58,6 +77,28 @@ function fillForm(data: OwnMember) {
   submitted.value = false;
 }
 
+/**
+ * El estado de cuenta se pide aparte y sin `await`: lo atiende el módulo de
+ * cuotas, así que si falla o tarda, la ficha y el formulario tienen que
+ * funcionar igual.
+ */
+async function loadFeeStatus(socioId: number) {
+  try {
+    feeLoading.value = true;
+    feeError.value = '';
+
+    feeSummary.value = await feesService.getMemberFeeSummary(socioId);
+  } catch (err) {
+    feeSummary.value = null;
+    feeError.value =
+      err instanceof Error
+        ? err.message
+        : 'No se pudo obtener el estado de tu cuota';
+  } finally {
+    feeLoading.value = false;
+  }
+}
+
 async function loadCompany() {
   try {
     loading.value = true;
@@ -65,6 +106,8 @@ async function loadCompany() {
 
     socio.value = await getMyCompany();
     fillForm(socio.value);
+
+    void loadFeeStatus(socio.value.id);
   } catch (err) {
     loadError.value =
       err instanceof Error
@@ -76,6 +119,46 @@ async function loadCompany() {
 }
 
 onMounted(loadCompany);
+
+const feeStatusLabel = computed(() => {
+  switch (feeSummary.value?.estado) {
+    case 'AL_DIA':
+      return 'Al día';
+
+    case 'PENDIENTE':
+      return 'Pendiente';
+
+    case 'DEUDOR':
+      return 'Deudor';
+
+    default:
+      return 'Sin información';
+  }
+});
+
+const feeStatusClass = computed(() => {
+  switch (feeSummary.value?.estado) {
+    case 'AL_DIA':
+      return 'bg-emerald-50 text-emerald-700';
+
+    case 'PENDIENTE':
+      return 'bg-amber-50 text-amber-700';
+
+    case 'DEUDOR':
+      return 'bg-red-50 text-red-600';
+
+    default:
+      return 'bg-slate-100 text-slate-600';
+  }
+});
+
+const feeStatusHint = computed(() => {
+  if (feeSummary.value?.estado === 'AL_DIA') {
+    return 'No tenés cuotas vencidas sin pagar.';
+  }
+
+  return 'Para regularizar tu situación, comunicate con la administración del Centro Comercial.';
+});
 
 /*
  * Las mismas reglas que aplica el backend: validarlas acá solo evita el viaje
@@ -373,6 +456,89 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
           {{ socio.tipo === 'DIRECTIVO' ? 'Socio directivo' : 'Socio común' }}
         </span>
       </div>
+
+      <!-- Estado de cuenta -->
+      <section class="rounded-xl border border-slate-200 bg-white p-5">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <Wallet class="h-3.5 w-3.5 text-slate-400" />
+
+            <h2
+              class="text-xs font-semibold uppercase tracking-wide text-slate-400"
+            >
+              Estado de cuenta
+            </h2>
+          </div>
+
+          <span
+            v-if="feeSummary"
+            class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
+            :class="feeStatusClass"
+          >
+            {{ feeStatusLabel }}
+          </span>
+        </div>
+
+        <p v-if="feeLoading" class="mt-4 text-sm text-slate-500">
+          Cargando el estado de tu cuota...
+        </p>
+
+        <div
+          v-else-if="feeError"
+          class="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg bg-slate-50 p-4"
+        >
+          <p class="text-sm text-slate-500">{{ feeError }}</p>
+
+          <button
+            type="button"
+            class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+            @click="loadFeeStatus(socio.id)"
+          >
+            <RefreshCw class="h-4 w-4" />
+            Reintentar
+          </button>
+        </div>
+
+        <template v-else-if="feeSummary">
+          <div class="mt-5 grid gap-4 sm:grid-cols-2">
+            <div class="rounded-xl bg-slate-50 p-4">
+              <div class="flex items-center justify-between">
+                <p class="text-xs font-medium text-slate-500">
+                  Cuotas vencidas sin pagar
+                </p>
+
+                <Clock3 class="h-4 w-4 text-slate-400" />
+              </div>
+
+              <p class="mt-2 text-xl font-bold text-slate-900">
+                {{ feeSummary.cuotasPendientes }}
+              </p>
+            </div>
+
+            <div class="rounded-xl bg-slate-50 p-4">
+              <div class="flex items-center justify-between">
+                <p class="text-xs font-medium text-slate-500">Deuda vencida</p>
+
+                <TriangleAlert
+                  v-if="feeSummary.deudaTotal > 0"
+                  class="h-4 w-4 text-red-500"
+                />
+
+                <CircleCheck v-else class="h-4 w-4 text-emerald-600" />
+              </div>
+
+              <p class="mt-2 text-xl font-bold text-slate-900">
+                {{ formatMoney(feeSummary.deudaTotal) }}
+              </p>
+            </div>
+          </div>
+
+          <p class="mt-5 border-t border-slate-100 pt-4 text-xs text-slate-500">
+            {{ feeStatusHint }} Las cuotas y los pagos los registra la
+            administración.
+          </p>
+        </template>
+      </section>
 
       <!-- Datos editables -->
       <form
