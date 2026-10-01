@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 
 import { apiFetch } from '@/services/api';
 
-import type { AuthUser, MeResponse } from '@/types/auth.type';
+import type { AuthUser, MeResponse, RegisterData } from '@/types/auth.type';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -24,6 +24,18 @@ export const useAuthStore = defineStore('auth', {
           email,
           password,
         }),
+      });
+
+      await this.fetchMe();
+
+      return this.user;
+    },
+
+    /** Registro público de postulantes: crea la cuenta y deja la sesión iniciada. */
+    async register(data: RegisterData) {
+      await apiFetch('/auth/registro', {
+        method: 'POST',
+        body: JSON.stringify(data),
       });
 
       await this.fetchMe();
