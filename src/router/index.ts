@@ -70,6 +70,22 @@ const router = createRouter({
           },
         },
         {
+          path: 'ofertas',
+          name: 'ofertas',
+          component: () => import('@/views/offers/JobOffersView.vue'),
+          meta: {
+            roles: ['POSTULANTE'],
+          },
+        },
+        {
+          path: 'ofertas/:id(\\d+)',
+          name: 'oferta-detalle',
+          component: () => import('@/views/offers/JobOfferDetailView.vue'),
+          meta: {
+            roles: ['POSTULANTE'],
+          },
+        },
+        {
           path: 'mis-ofertas',
           name: 'mis-ofertas',
           component: () => import('@/views/offers/MyOffersView.vue'),

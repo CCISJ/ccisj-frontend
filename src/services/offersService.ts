@@ -1,10 +1,20 @@
 import type {
   CreateOfferData,
+  Offer,
   OwnOffer,
   UpdateOfferData,
 } from '@/types/offer.type';
 
 import { apiFetch } from './api';
+
+/** Bolsa de trabajo. Al postulante el backend le devuelve solo las activas. */
+export function getOffers() {
+  return apiFetch<Offer[]>('/ofertas');
+}
+
+export function getOffer(id: number) {
+  return apiFetch<Offer>(`/ofertas/${id}`);
+}
 
 // Las respuestas de crear y editar traen la oferta sin el conteo de
 // postulaciones: después de guardar se vuelve a pedir con getMyOffer.
