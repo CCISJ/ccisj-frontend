@@ -38,7 +38,7 @@ const toastClasses = computed(() => {
   >
     <div
       v-if="toast.visible"
-      class="fixed top-6 right-6 z-50 flex min-w-80 max-w-md items-center gap-3 rounded-xl border px-4 py-3 shadow-lg"
+      class="fixed top-6 right-6 z-200 flex min-w-80 max-w-md items-center gap-3 rounded-xl border px-4 py-3 shadow-lg"
       :class="toastClasses"
     >
       <component :is="icon" class="h-5 w-5 shrink-0" />
