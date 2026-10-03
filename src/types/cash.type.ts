@@ -49,3 +49,18 @@ export type CreateCashCategoryData = {
   nombre: string;
   tipo: CashMovementType;
 };
+
+export type CashSummary = {
+  ingresos: number;
+  egresos: number;
+  balance: number;
+  cantidadMovimientos: number;
+};
+
+export type CashMovementFilters = {
+  desde?: string;
+  hasta?: string;
+  tipo?: 'INGRESO' | 'EGRESO';
+  categoriaId?: number;
+  buscar?: string;
+};

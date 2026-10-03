@@ -7,36 +7,75 @@ import CashCategoriesModal from '@/components/cash/CashCategoriesModal.vue';
 import RegisterCashMovementModal from '@/components/cash/RegisterCashMovementModal.vue';
 import RegisterMemberPaymentModal from '@/components/cash/RegisterMemberPaymentModal.vue';
 
-import { getCashMovements } from '@/services/cashService';
+import {
+  getCashCategories,
+  getCashMovements,
+  getSummary,
+} from '@/services/cashService';
 
 import { useToastStore } from '@/stores/toast';
 
-import type { CashMovement } from '@/types/cash.type';
+import type {
+  CashCategory,
+  CashMovement,
+  CashMovementFilters,
+  CashSummary,
+} from '@/types/cash.type';
 
 const movements = ref<CashMovement[]>([]);
-const loading = ref(true);
+const summary = ref<CashSummary | null>(null);
+const categories = ref<CashCategory[]>([]);
+const filters = ref<CashMovementFilters>({
+  desde: undefined,
+  hasta: undefined,
+  tipo: undefined,
+  categoriaId: undefined,
+  buscar: undefined,
+});
 const toast = useToastStore();
+
+const loading = ref(true);
 const showRegisterModal = ref(false);
 const showCategoriesModal = ref(false);
 const showRegisterMemberPaymentModal = ref(false);
 
-async function loadMovements() {
+async function loadCash() {
   loading.value = true;
 
   try {
-    movements.value = await getCashMovements();
+    const [cashMovements, cashSummary, cashCategories] = await Promise.all([
+      getCashMovements(filters.value),
+      getSummary(),
+      getCashCategories(),
+    ]);
+
+    movements.value = cashMovements;
+    summary.value = cashSummary;
+    categories.value = cashCategories;
   } catch (err) {
     toast.error(
       err instanceof Error
         ? err.message
-        : 'Error al cargar los movimientos de caja',
+        : 'Error al cargar la información de caja',
     );
   } finally {
     loading.value = false;
   }
 }
 
-onMounted(loadMovements);
+function clearFilters() {
+  filters.value = {
+    desde: undefined,
+    hasta: undefined,
+    tipo: undefined,
+    categoriaId: undefined,
+    buscar: undefined,
+  };
+
+  loadCash();
+}
+
+onMounted(loadCash);
 </script>
 
 <template>
@@ -80,6 +119,45 @@ onMounted(loadMovements);
       </div>
     </div>
 
+    <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div class="rounded-xl border border-slate-200 bg-white p-5">
+        <p class="text-sm font-medium text-slate-500">Ingresos del mes</p>
+
+        <p class="mt-2 text-2xl font-bold text-emerald-700">
+          ${{ Number(summary?.ingresos ?? 0).toLocaleString('es-UY') }}
+        </p>
+      </div>
+
+      <div class="rounded-xl border border-slate-200 bg-white p-5">
+        <p class="text-sm font-medium text-slate-500">Egresos del mes</p>
+
+        <p class="mt-2 text-2xl font-bold text-red-600">
+          ${{ Number(summary?.egresos ?? 0).toLocaleString('es-UY') }}
+        </p>
+      </div>
+
+      <div class="rounded-xl border border-slate-200 bg-white p-5">
+        <p class="text-sm font-medium text-slate-500">Balance del mes</p>
+
+        <p
+          class="mt-2 text-2xl font-bold"
+          :class="
+            (summary?.balance ?? 0) >= 0 ? 'text-emerald-700' : 'text-red-600'
+          "
+        >
+          ${{ Number(summary?.balance ?? 0).toLocaleString('es-UY') }}
+        </p>
+      </div>
+
+      <div class="rounded-xl border border-slate-200 bg-white p-5">
+        <p class="text-sm font-medium text-slate-500">Movimientos del mes</p>
+
+        <p class="mt-2 text-2xl font-bold text-slate-900">
+          {{ summary?.cantidadMovimientos ?? 0 }}
+        </p>
+      </div>
+    </section>
+
     <section
       class="overflow-hidden rounded-xl border border-slate-200 bg-white"
     >
@@ -89,6 +167,102 @@ onMounted(loadMovements);
         <p class="mt-0.5 text-xs text-slate-400">
           Historial de ingresos y egresos registrados
         </p>
+      </div>
+
+      <div class="border-b border-slate-100 bg-slate-50/50 px-5 py-4">
+        <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+          <div>
+            <label class="mb-1 block text-xs font-medium text-slate-500">
+              Desde
+            </label>
+
+            <input
+              v-model="filters.desde"
+              type="date"
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-ccisj"
+            />
+          </div>
+
+          <div>
+            <label class="mb-1 block text-xs font-medium text-slate-500">
+              Hasta
+            </label>
+
+            <input
+              v-model="filters.hasta"
+              type="date"
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-ccisj"
+            />
+          </div>
+
+          <div>
+            <label class="mb-1 block text-xs font-medium text-slate-500">
+              Tipo
+            </label>
+
+            <select
+              v-model="filters.tipo"
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-ccisj"
+            >
+              <option :value="undefined">Todos</option>
+              <option value="INGRESO">Ingresos</option>
+              <option value="EGRESO">Egresos</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="mb-1 block text-xs font-medium text-slate-500">
+              Categoría
+            </label>
+
+            <select
+              v-model="filters.categoriaId"
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-ccisj"
+            >
+              <option :value="undefined">Todas</option>
+
+              <option
+                v-for="category in categories"
+                :key="category.id"
+                :value="category.id"
+              >
+                {{ category.nombre }}
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label class="mb-1 block text-xs font-medium text-slate-500">
+              Concepto
+            </label>
+
+            <input
+              v-model="filters.buscar"
+              type="text"
+              placeholder="Buscar..."
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj"
+              @keyup.enter="loadCash"
+            />
+          </div>
+        </div>
+
+        <div class="mt-3 flex justify-end gap-2">
+          <button
+            type="button"
+            class="rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+            @click="clearFilters"
+          >
+            Limpiar
+          </button>
+
+          <button
+            type="button"
+            class="rounded-lg bg-ccisj px-3.5 py-2 text-sm font-semibold text-white transition"
+            @click="loadCash"
+          >
+            Aplicar filtros
+          </button>
+        </div>
       </div>
 
       <div v-if="loading" class="p-10 text-center text-sm text-slate-400">
@@ -102,9 +276,9 @@ onMounted(loadMovements);
         No hay movimientos registrados.
       </div>
 
-      <div v-else class="overflow-x-auto">
+      <div v-else class="max-h-96 overflow-auto">
         <table class="w-full text-center">
-          <thead class="bg-slate-50">
+          <thead class="sticky top-0 z-10 bg-slate-50">
             <tr
               class="text-xs font-semibold uppercase tracking-wide text-slate-500"
             >
@@ -187,7 +361,7 @@ onMounted(loadMovements);
       @close="showRegisterModal = false"
       @created="
         showRegisterModal = false;
-        loadMovements();
+        loadCash();
       "
     />
 
@@ -201,7 +375,7 @@ onMounted(loadMovements);
       @close="showRegisterMemberPaymentModal = false"
       @created="
         showRegisterMemberPaymentModal = false;
-        loadMovements();
+        loadCash();
       "
     />
   </div>

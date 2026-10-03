@@ -3,12 +3,40 @@ import { apiFetch } from '@/services/api';
 import type {
   CashCategory,
   CashMovement,
+  CashMovementFilters,
+  CashSummary,
   CreateCashCategoryData,
   CreateCashMovementData,
 } from '@/types/cash.type';
 
-export function getCashMovements() {
-  return apiFetch<CashMovement[]>('/caja/movimientos');
+export function getCashMovements(filters: CashMovementFilters = {}) {
+  const params = new URLSearchParams();
+
+  if (filters.desde) {
+    params.set('desde', filters.desde);
+  }
+
+  if (filters.hasta) {
+    params.set('hasta', filters.hasta);
+  }
+
+  if (filters.tipo) {
+    params.set('tipo', filters.tipo);
+  }
+
+  if (filters.categoriaId) {
+    params.set('categoriaId', String(filters.categoriaId));
+  }
+
+  if (filters.buscar) {
+    params.set('buscar', filters.buscar);
+  }
+
+  const query = params.toString();
+
+  return apiFetch<CashMovement[]>(
+    `/caja/movimientos${query ? `?${query}` : ''}`,
+  );
 }
 
 export function getCashCategories() {
@@ -33,4 +61,8 @@ export function deactivateCashCategory(id: number) {
   return apiFetch<CashCategory>(`/caja/categorias/${id}`, {
     method: 'DELETE',
   });
+}
+
+export function getSummary() {
+  return apiFetch<CashSummary>('/caja/movimientos/resumen');
 }
