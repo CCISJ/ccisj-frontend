@@ -1,6 +1,7 @@
 import type {
   CreateFeeAdjustmentData,
   CreateFeeConfigurationData,
+  CreateFeePaymentData,
   DeleteAdjustmentResponse,
   Fee,
   FeeAdjustment,
@@ -143,5 +144,12 @@ export const feesService = {
         method: 'DELETE',
       },
     );
+  },
+
+  async createPayment(socioId: number, data: CreateFeePaymentData) {
+    return apiFetch(`/cuotas/socio/${socioId}/pagos`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   },
 };

@@ -137,6 +137,12 @@ const router = createRouter({
           component: () => import('@/views/fees/FeesView.vue'),
         },
 
+        {
+          path: 'caja',
+          name: 'caja',
+          component: () => import('@/views/cash/CashView.vue'),
+        },
+
         // Cualquier otra URL dentro del sistema cae acá en vez de dejar la
         // pantalla en blanco.
         {

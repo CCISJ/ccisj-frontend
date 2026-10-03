@@ -119,3 +119,11 @@ export type DeleteAdjustmentResponse = {
   activo: boolean;
   cuotasPagadasNoModificadas: number;
 };
+
+export type CreateFeePaymentData = {
+  importe: number;
+  fechaPago: string;
+  medioPago: string;
+  comprobanteUrl?: string;
+  observaciones?: string;
+};
