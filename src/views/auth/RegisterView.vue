@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue';
 
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 import logoVerde from '@/assets/CCISJ logo sin fondo - Letras verdes.png';
 import {
@@ -15,10 +15,26 @@ import {
 } from 'lucide-vue-next';
 
 import { PASSWORD_MAX, PASSWORD_MIN } from '@/services/accountService';
+
 import { useAuthStore } from '@/stores/auth';
 
+const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
+
+// A dónde ir después de crear la cuenta. Quien llega desde una oferta de la
+// bolsa pública vuelve a esa oferta en vez de caer en el inicio. Solo rutas
+// internas: `//otro-sitio.com` también empieza con "/" y llevaría afuera.
+function redirectTarget() {
+  const target = route.query.volver;
+
+  return typeof target === 'string' &&
+    target.startsWith('/') &&
+    !target.startsWith('//') &&
+    !target.startsWith('/registro')
+    ? target
+    : '/';
+}
 
 const form = reactive({
   nombre: '',
@@ -86,7 +102,7 @@ async function handleRegister() {
       password: form.password,
     });
 
-    await router.replace('/');
+    await router.replace(redirectTarget());
   } catch (err) {
     error.value =
       err instanceof Error ? err.message : 'Error al crear la cuenta';
@@ -114,8 +130,8 @@ async function handleRegister() {
         <h1 class="text-4xl font-bold leading-tight">Bolsa de trabajo</h1>
 
         <p class="mt-5 text-base leading-relaxed text-white/75">
-          Creá tu cuenta para postularte a las ofertas laborales de las
-          empresas socias del Centro Comercial e Industrial de San José.
+          Creá tu cuenta para postularte a las ofertas laborales de las empresas
+          socias del Centro Comercial e Industrial de San José.
         </p>
       </div>
 
@@ -364,7 +380,10 @@ async function handleRegister() {
 
         <p class="mt-8 text-center text-sm text-slate-500">
           ¿Ya tenés cuenta?
-          <RouterLink to="/login" class="font-semibold text-ccisj hover:underline">
+          <RouterLink
+            to="/login"
+            class="font-semibold text-ccisj hover:underline"
+          >
             Iniciá sesión
           </RouterLink>
         </p>

@@ -69,11 +69,16 @@ const router = createRouter({
             roles: ['SOCIO'],
           },
         },
+        // La bolsa de trabajo se ve con sesión y sin ella (lo definió el
+        // cliente). `publico` la saca del control de sesión; `roles` sigue
+        // valiendo para quien sí tiene sesión, así que un socio o la
+        // administración no entran acá: tienen sus propias pantallas.
         {
           path: 'ofertas',
           name: 'ofertas',
           component: () => import('@/views/offers/JobOffersView.vue'),
           meta: {
+            publico: true,
             roles: ['POSTULANTE'],
           },
         },
@@ -82,6 +87,7 @@ const router = createRouter({
           name: 'oferta-detalle',
           component: () => import('@/views/offers/JobOfferDetailView.vue'),
           meta: {
+            publico: true,
             roles: ['POSTULANTE'],
           },
         },
@@ -155,12 +161,19 @@ const router = createRouter({
   ],
 });
 
-// Pantallas que se ven sin sesión iniciada.
-const PUBLIC_PATHS = ['/login', '/registro'];
+// Las pantallas de autenticación: se ven sin sesión y, si ya hay sesión, no
+// tiene sentido mostrarlas.
+const AUTH_PATHS = ['/login', '/registro'];
 
 router.beforeEach(async (to) => {
   const auth = useAuthStore();
-  const isPublic = PUBLIC_PATHS.includes(to.path);
+  const isAuthPath = AUTH_PATHS.includes(to.path);
+
+  // Una pantalla pública se ve igual con sesión o sin ella, así que no manda a
+  // nadie al login ni echa a quien ya entró. Va en `meta` y no en una lista de
+  // rutas porque las que llevan parámetro (`/ofertas/12`) no se pueden
+  // comparar por igualdad de texto.
+  const isPublic = isAuthPath || to.meta.publico === true;
 
   if (to.path !== '/login') {
     await auth.initialize();
@@ -170,7 +183,7 @@ router.beforeEach(async (to) => {
     return '/login';
   }
 
-  if (auth.isAuthenticated && isPublic) {
+  if (auth.isAuthenticated && isAuthPath) {
     return '/';
   }
 

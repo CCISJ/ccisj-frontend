@@ -9,6 +9,7 @@ import EmergentNotificationModal from '@/components/notifications/EmergentNotifi
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import ApplicantLayout from '@/layouts/ApplicantLayout.vue';
 import MemberLayout from '@/layouts/MemberLayout.vue';
+import PublicLayout from '@/layouts/PublicLayout.vue';
 
 import { useAuthStore } from '@/stores/auth';
 import { useNotificationsStore } from '@/stores/notifications';
@@ -50,7 +51,9 @@ async function closeCurrentPopup() {
 }
 
 onMounted(async () => {
-  if (auth.isAdmin) return;
+  // Un visitante sin cuenta no tiene notificaciones que buscar, y pedirlas le
+  // daría un 401 en la bolsa de trabajo pública.
+  if (!auth.isAuthenticated || auth.isAdmin) return;
 
   try {
     await notificationsStore.fetchPendingPopups();
@@ -70,8 +73,10 @@ const layout = computed(() => {
     case 'POSTULANTE':
       return ApplicantLayout;
 
+    // Sin sesión: las pantallas públicas (la bolsa de trabajo) se muestran con
+    // un encabezado simple, sin menú lateral ni notificaciones.
     default:
-      return null;
+      return PublicLayout;
   }
 });
 </script>
