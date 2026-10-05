@@ -11,16 +11,20 @@ import {
   Laptop,
   MapPin,
   Send,
+  UserPlus,
   Users,
 } from 'lucide-vue-next';
 
 import { getOffer } from '@/services/offersService';
+
+import { useAuthStore } from '@/stores/auth';
 
 import { OFFER_MODALITY_LABELS, type Offer } from '@/types/offer.type';
 
 import { formatDate, uruguayDay } from '@/utils/date';
 
 const route = useRoute();
+const auth = useAuthStore();
 
 const offer = ref<Offer | null>(null);
 const loading = ref(true);
@@ -113,9 +117,7 @@ const closingLabel = computed(() => {
           <span class="text-slate-400">· {{ offer.socio.giroComercial }}</span>
         </p>
 
-        <div
-          class="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-600"
-        >
+        <div class="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-600">
           <span class="flex items-center gap-1.5">
             <MapPin class="h-4 w-4 text-slate-400" />
             {{ offer.ubicacion || offer.socio.ciudad }}
@@ -175,23 +177,52 @@ const closingLabel = computed(() => {
         </p>
       </section>
 
-      <!-- Postularme: se habilita cuando esté lista la postulación -->
+      <!--
+        Sin sesión se invita a entrar o a crear la cuenta, llevando `volver`
+        para no perder la oferta que estaba mirando. Con sesión el botón sigue
+        deshabilitado hasta que la postulación esté conectada.
+      -->
       <footer
         class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4"
       >
-        <p class="text-sm text-slate-500">
-          Muy pronto vas a poder postularte desde acá.
-        </p>
+        <template v-if="!auth.isAuthenticated">
+          <p class="text-sm text-slate-500">
+            Para postularte necesitás una cuenta. Es gratis y lleva un minuto.
+          </p>
 
-        <button
-          type="button"
-          disabled
-          title="Próximamente"
-          class="flex cursor-not-allowed items-center gap-2 rounded-xl bg-ccisj px-5 py-2.5 text-sm font-semibold text-white opacity-50"
-        >
-          <Send class="h-4 w-4" />
-          Postularme
-        </button>
+          <div class="flex items-center gap-2">
+            <RouterLink
+              :to="{ name: 'login', query: { volver: route.fullPath } }"
+              class="rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-200 hover:text-slate-800"
+            >
+              Ya tengo cuenta
+            </RouterLink>
+
+            <RouterLink
+              :to="{ name: 'registro', query: { volver: route.fullPath } }"
+              class="flex items-center gap-2 rounded-xl bg-ccisj px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-ccisj-dark"
+            >
+              <UserPlus class="h-4 w-4" />
+              Crear cuenta para postularme
+            </RouterLink>
+          </div>
+        </template>
+
+        <template v-else>
+          <p class="text-sm text-slate-500">
+            Muy pronto vas a poder postularte desde acá.
+          </p>
+
+          <button
+            type="button"
+            disabled
+            title="Próximamente"
+            class="flex cursor-not-allowed items-center gap-2 rounded-xl bg-ccisj px-5 py-2.5 text-sm font-semibold text-white opacity-50"
+          >
+            <Send class="h-4 w-4" />
+            Postularme
+          </button>
+        </template>
       </footer>
     </article>
   </div>

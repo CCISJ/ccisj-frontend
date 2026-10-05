@@ -229,6 +229,17 @@ async function handleLogin() {
             Registrate acá
           </RouterLink>
         </p>
+
+        <!-- Las ofertas se ven sin cuenta (definido por el cliente): desde el
+             login hay que poder llegar a la bolsa de trabajo. -->
+        <p class="mt-2 text-center text-sm text-slate-500">
+          <RouterLink
+            to="/ofertas"
+            class="font-medium text-slate-600 hover:text-ccisj hover:underline"
+          >
+            Ver las ofertas laborales sin ingresar
+          </RouterLink>
+        </p>
       </div>
     </section>
   </div>
