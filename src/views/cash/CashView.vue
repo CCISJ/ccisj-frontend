@@ -8,6 +8,7 @@ import RegisterCashMovementModal from '@/components/cash/RegisterCashMovementMod
 import RegisterMemberPaymentModal from '@/components/cash/RegisterMemberPaymentModal.vue';
 
 import {
+  cancelCashMovement,
   getCashCategories,
   getCashMovements,
   getSummary,
@@ -38,6 +39,9 @@ const loading = ref(true);
 const showRegisterModal = ref(false);
 const showCategoriesModal = ref(false);
 const showRegisterMemberPaymentModal = ref(false);
+const movementToCancel = ref<CashMovement | null>(null);
+const cancellationReason = ref('');
+const cancelling = ref(false);
 
 async function loadCash() {
   loading.value = true;
@@ -60,6 +64,38 @@ async function loadCash() {
     );
   } finally {
     loading.value = false;
+  }
+}
+
+async function handleCancelMovement() {
+  if (!movementToCancel.value) {
+    return;
+  }
+
+  const motivo = cancellationReason.value.trim();
+
+  if (!motivo) {
+    toast.error('Ingresá un motivo de anulación');
+    return;
+  }
+
+  cancelling.value = true;
+
+  try {
+    await cancelCashMovement(movementToCancel.value.id, motivo);
+
+    toast.success('Movimiento anulado correctamente');
+
+    movementToCancel.value = null;
+    cancellationReason.value = '';
+
+    await loadCash();
+  } catch (err) {
+    toast.error(
+      err instanceof Error ? err.message : 'Error al anular el movimiento',
+    );
+  } finally {
+    cancelling.value = false;
   }
 }
 
@@ -276,7 +312,7 @@ onMounted(loadCash);
         No hay movimientos registrados.
       </div>
 
-      <div v-else class="max-h-96 overflow-auto">
+      <div v-else class="max-h-80 overflow-auto">
         <table class="w-full text-center">
           <thead class="sticky top-0 z-10 bg-slate-50">
             <tr
@@ -290,7 +326,9 @@ onMounted(loadCash);
 
               <th class="px-5 py-3">Tipo</th>
 
-              <th class="px-5 py-3 text-right">Importe</th>
+              <th class="px-5 py-3">Importe</th>
+
+              <th class="px-5 py-3">Acciones</th>
             </tr>
           </thead>
 
@@ -340,7 +378,7 @@ onMounted(loadCash);
               </td>
 
               <td
-                class="whitespace-nowrap px-5 py-3.5 text-right text-sm font-semibold"
+                class="whitespace-nowrap px-5 py-3.5 t text-sm font-semibold"
                 :class="
                   movement.tipo === 'INGRESO'
                     ? 'text-emerald-700'
@@ -349,6 +387,26 @@ onMounted(loadCash);
               >
                 {{ movement.tipo === 'INGRESO' ? '+' : '-' }}
                 ${{ Number(movement.importe).toLocaleString('es-UY') }}
+              </td>
+
+              <td class="whitespace-nowrap px-5 py-3.5">
+                <span
+                  v-if="movement.anulado"
+                  class="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-500"
+                >
+                  Anulado
+                </span>
+
+                <button
+                  v-else-if="!movement.pagoCuota"
+                  type="button"
+                  class="text-sm font-semibold text-red-600 transition hover:text-red-700"
+                  @click="movementToCancel = movement"
+                >
+                  Anular
+                </button>
+
+                <span v-else class="text-xs text-slate-400"> — </span>
               </td>
             </tr>
           </tbody>
@@ -378,5 +436,66 @@ onMounted(loadCash);
         loadCash();
       "
     />
+
+    <div
+      v-if="movementToCancel"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+    >
+      <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+        <h2 class="text-lg font-semibold text-slate-900">Anular movimiento</h2>
+
+        <p class="mt-2 text-sm text-slate-500">
+          El movimiento permanecerá en el historial, pero dejará de
+          contabilizarse en Caja.
+        </p>
+
+        <div class="mt-4 rounded-lg bg-slate-50 p-3">
+          <p class="text-sm font-medium text-slate-800">
+            {{ movementToCancel.concepto }}
+          </p>
+
+          <p class="mt-1 text-sm text-slate-500">
+            ${{ Number(movementToCancel.importe).toLocaleString('es-UY') }}
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <label class="mb-1 block text-sm font-medium text-slate-700">
+            Motivo de anulación
+          </label>
+
+          <textarea
+            v-model="cancellationReason"
+            rows="3"
+            maxlength="500"
+            placeholder="Ej: Importe registrado incorrectamente"
+            class="w-full resize-none rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-ccisj"
+          />
+        </div>
+
+        <div class="mt-5 flex justify-end gap-2">
+          <button
+            type="button"
+            class="rounded-lg border border-slate-200 px-3.5 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+            :disabled="cancelling"
+            @click="
+              movementToCancel = null;
+              cancellationReason = '';
+            "
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="button"
+            class="rounded-lg bg-red-600 px-3.5 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-50"
+            :disabled="cancelling"
+            @click="handleCancelMovement"
+          >
+            {{ cancelling ? 'Anulando...' : 'Anular movimiento' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
