@@ -66,3 +66,10 @@ export function deactivateCashCategory(id: number) {
 export function getSummary() {
   return apiFetch<CashSummary>('/caja/movimientos/resumen');
 }
+
+export function cancelCashMovement(id: number, motivo: string) {
+  return apiFetch<CashMovement>(`/caja/movimientos/${id}/anular`, {
+    method: 'PATCH',
+    body: JSON.stringify({ motivo }),
+  });
+}
