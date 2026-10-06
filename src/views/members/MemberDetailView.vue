@@ -15,6 +15,7 @@ import {
 
 import ConfirmModal from '@/components/ConfirmModal.vue';
 import FeeAdjustmentModal from '@/components/fees/FeeAdjustmentModal.vue';
+import FeePaymentModal from '@/components/fees/FeePaymentModal.vue';
 
 import { feesService } from '@/services/feesService';
 import { getMember, isFullMember } from '@/services/membersService';
@@ -23,8 +24,10 @@ import { useToastStore } from '@/stores/toast.ts';
 
 import type {
   CreateFeeAdjustmentData,
+  CreateFeePaymentData,
   Fee,
   FeeAdjustment,
+  FeePayment,
   MemberFeeSummary,
 } from '@/types/fee.type.ts';
 import type { Member, MemberDirectoryEntry } from '@/types/member.type';
@@ -41,6 +44,14 @@ const adjustmentModalOpen = ref(false);
 const feeAdjustments = ref<FeeAdjustment[]>([]);
 const adjustmentToDelete = ref<FeeAdjustment | null>(null);
 const deletingAdjustment = ref(false);
+
+const feePayments = ref<FeePayment[]>([]);
+const paymentToCancel = ref<FeePayment | null>(null);
+const cancellationReason = ref('');
+const cancellingPayment = ref(false);
+
+const paymentModalOpen = ref(false);
+const registeringPayment = ref(false);
 
 const socio = ref<Member | MemberDirectoryEntry | null>(null);
 
@@ -109,6 +120,58 @@ async function handleDeleteAdjustment() {
   }
 }
 
+async function handleCancelPayment() {
+  if (!paymentToCancel.value) return;
+
+  const motivo = cancellationReason.value.trim();
+
+  if (!motivo) {
+    toast.error('Ingresá un motivo de anulación');
+    return;
+  }
+
+  try {
+    cancellingPayment.value = true;
+
+    await feesService.cancelPayment(paymentToCancel.value.id, motivo);
+
+    paymentToCancel.value = null;
+    cancellationReason.value = '';
+
+    toast.success('Pago anulado correctamente');
+
+    await loadMember();
+  } catch (err) {
+    toast.error(
+      err instanceof Error ? err.message : 'No se pudo anular el pago',
+    );
+  } finally {
+    cancellingPayment.value = false;
+  }
+}
+
+async function handlePaymentConfirm(data: CreateFeePaymentData) {
+  if (!fullMember.value || registeringPayment.value) return;
+
+  try {
+    registeringPayment.value = true;
+
+    await feesService.createPayment(fullMember.value.id, data);
+
+    paymentModalOpen.value = false;
+
+    toast.success('Pago registrado correctamente');
+
+    await loadMember();
+  } catch (err) {
+    toast.error(
+      err instanceof Error ? err.message : 'No se pudo registrar el pago',
+    );
+  } finally {
+    registeringPayment.value = false;
+  }
+}
+
 async function loadMember() {
   const id = Number(route.params.id);
 
@@ -128,6 +191,7 @@ async function loadMember() {
     feeSummary.value = await feesService.getMemberFeeSummary(id);
     memberFees.value = await feesService.getMemberFees(id);
     feeAdjustments.value = await feesService.getMemberAdjustments(id);
+    feePayments.value = await feesService.getMemberPayments(id);
   } catch (err) {
     toast.error(
       err instanceof Error ? err.message : 'No se pudo cargar el socio',
@@ -320,6 +384,16 @@ function goBack() {
           <button
             v-if="fullMember"
             type="button"
+            class="flex items-center gap-1.5 rounded-lg bg-ccisj px-3 py-1.5 text-sm font-medium text-white shadow-sm transition hover:opacity-90"
+            @click="paymentModalOpen = true"
+          >
+            <Plus class="h-4 w-4" />
+            Registrar pago
+          </button>
+
+          <button
+            v-if="fullMember"
+            type="button"
             class="flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 shadow-sm transition hover:border-ccisj hover:text-ccisj"
             @click="adjustmentModalOpen = true"
           >
@@ -468,7 +542,7 @@ function goBack() {
             </div>
 
             <div class="flex shrink-0 items-center gap-4">
-              <p class="text-right text-sm text-slate-500">
+              <p class="text-sm text-slate-500">
                 {{ formatMonth(adjustment.fechaDesde) }}
                 →
                 {{
@@ -488,6 +562,132 @@ function goBack() {
               </button>
             </div>
           </div>
+        </div>
+      </section>
+
+      <!-- Historial de pagos -->
+      <section
+        v-if="fullMember"
+        class="overflow-hidden rounded-xl border border-slate-200 bg-white"
+      >
+        <div class="px-5 py-4">
+          <h2
+            class="text-xs font-semibold uppercase tracking-wide text-slate-400"
+          >
+            Historial de pagos
+          </h2>
+
+          <p class="mt-1 text-sm text-slate-500">
+            Pagos de cuotas registrados para este socio.
+          </p>
+        </div>
+
+        <div
+          v-if="feePayments.length === 0"
+          class="border-t border-slate-100 p-8 text-center text-sm text-slate-400"
+        >
+          No hay pagos registrados para este socio.
+        </div>
+
+        <div v-else class="overflow-x-auto">
+          <table class="w-full min-w-180 text-left">
+            <thead class="border-t border-slate-100 bg-slate-50">
+              <tr
+                class="text-xs font-semibold uppercase text-center tracking-wide text-slate-500"
+              >
+                <th class="px-5 py-3">Fecha</th>
+                <th class="px-5 py-3">Importe</th>
+                <th class="px-5 py-3">Medio</th>
+                <th class="px-5 py-3">Estado</th>
+                <th class="px-5 py-3">Observaciones</th>
+                <th class="px-5 py-3">Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr
+                v-for="payment in feePayments"
+                :key="payment.id"
+                class="border-t border-slate-100 text-center"
+                :class="{ 'bg-slate-50/70': payment.anulado }"
+              >
+                <td
+                  class="whitespace-nowrap px-5 py-3.5 text-sm text-slate-600"
+                >
+                  {{ formatDate(payment.fechaPago) }}
+                </td>
+
+                <td
+                  class="whitespace-nowrap px-5 py-3.5 text-sm font-semibold"
+                  :class="
+                    payment.anulado
+                      ? 'text-slate-400 line-through'
+                      : 'text-slate-800'
+                  "
+                >
+                  {{ formatMoney(payment.importe) }}
+                </td>
+
+                <td
+                  class="whitespace-nowrap px-5 py-3.5 text-sm text-slate-600"
+                >
+                  {{ payment.medioPago }}
+                </td>
+
+                <td class="px-5 py-3.5">
+                  <span
+                    v-if="payment.anulado"
+                    class="inline-flex rounded-full bg-red-50 px-2.5 py-1 text-xs font-medium text-red-600"
+                  >
+                    Anulado
+                  </span>
+
+                  <span
+                    v-else
+                    class="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700"
+                  >
+                    Registrado
+                  </span>
+                </td>
+
+                <td class="max-w-64 px-5 py-3.5 text-sm text-slate-500">
+                  <template v-if="payment.anulado">
+                    <p class="font-medium text-red-600">
+                      {{ payment.motivoAnulacion }}
+                    </p>
+
+                    <p
+                      v-if="payment.anuladoPor"
+                      class="mt-1 text-xs text-slate-400"
+                    >
+                      Anulado por {{ payment.anuladoPor.email }}
+                    </p>
+                  </template>
+
+                  <template v-else>
+                    {{ payment.observaciones || '—' }}
+                  </template>
+                </td>
+
+                <td class="px-5 py-3.5">
+                  <button
+                    v-if="!payment.anulado"
+                    type="button"
+                    class="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                    title="Anular pago"
+                    @click="
+                      paymentToCancel = payment;
+                      cancellationReason = '';
+                    "
+                  >
+                    <Trash2 class="h-4 w-4" />
+                  </button>
+
+                  <span v-else class="text-sm text-slate-300">—</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
@@ -658,5 +858,68 @@ function goBack() {
       @confirm="handleDeleteAdjustment"
       @cancel="adjustmentToDelete = null"
     />
+
+    <FeePaymentModal
+      v-if="fullMember"
+      :open="paymentModalOpen"
+      :socio-name="fullMember.razonSocial"
+      @close="paymentModalOpen = false"
+      @confirm="handlePaymentConfirm"
+    />
+
+    <div
+      v-if="paymentToCancel"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+    >
+      <div class="w-full max-w-md rounded-xl bg-white p-5 shadow-xl">
+        <h2 class="text-lg font-semibold text-slate-900">Anular pago</h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          El pago seguirá en el historial, pero dejará de contabilizarse en las
+          cuotas y en caja.
+        </p>
+
+        <div class="mt-4">
+          <label
+            for="payment-cancellation-reason"
+            class="mb-1.5 block text-sm font-medium text-slate-700"
+          >
+            Motivo de anulación
+          </label>
+
+          <textarea
+            id="payment-cancellation-reason"
+            v-model="cancellationReason"
+            maxlength="500"
+            rows="4"
+            class="w-full resize-none rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-ccisj focus:ring-1 focus:ring-ccisj"
+            placeholder="Ej: Pago registrado por error"
+          />
+        </div>
+
+        <div class="mt-5 flex justify-end gap-2">
+          <button
+            type="button"
+            class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+            :disabled="cancellingPayment"
+            @click="
+              paymentToCancel = null;
+              cancellationReason = '';
+            "
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="button"
+            class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+            :disabled="cancellingPayment || !cancellationReason.trim()"
+            @click="handleCancelPayment"
+          >
+            {{ cancellingPayment ? 'Anulando...' : 'Anular pago' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
