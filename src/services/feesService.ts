@@ -7,6 +7,7 @@ import type {
   FeeAdjustment,
   FeeConfiguration,
   FeeConfigurationHistory,
+  FeePayment,
   FeesDashboardSummary,
   MemberFeeSummary,
   PayableFee,
@@ -150,6 +151,32 @@ export const feesService = {
     return apiFetch(`/cuotas/socio/${socioId}/pagos`, {
       method: 'POST',
       body: JSON.stringify(data),
+    });
+  },
+
+  async getMemberPayments(socioId: number): Promise<FeePayment[]> {
+    const data = await apiFetch<FeePayment[]>(`/cuotas/socio/${socioId}/pagos`);
+
+    return data.map((payment) => ({
+      ...payment,
+      importe: Number(payment.importe),
+      detalles: payment.detalles.map((detail) => ({
+        ...detail,
+        importeAplicado: Number(detail.importeAplicado),
+        cuota: {
+          ...detail.cuota,
+          importeBase: Number(detail.cuota.importeBase),
+          importeAjustes: Number(detail.cuota.importeAjustes),
+          importeTotal: Number(detail.cuota.importeTotal),
+        },
+      })),
+    }));
+  },
+
+  async cancelPayment(pagoId: number, motivo: string): Promise<FeePayment> {
+    return apiFetch<FeePayment>(`/cuotas/${pagoId}/anular`, {
+      method: 'PATCH',
+      body: JSON.stringify({ motivo }),
     });
   },
 };

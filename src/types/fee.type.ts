@@ -43,15 +43,36 @@ export type FeesDashboardSummary = {
 };
 
 // Pago registrado
+export type FeePaymentDetail = {
+  id: number;
+  pagoId: number;
+  cuotaId: number;
+  importeAplicado: number;
+  cuota: Fee;
+};
+
 export type FeePayment = {
   id: number;
   socioId: number;
+  registradoPorId: number;
   importe: number;
   fechaPago: string;
   medioPago: string;
-  numeroRecibo: string | null;
+  comprobanteUrl: string | null;
   observaciones: string | null;
   fechaCreacion: string;
+
+  anulado: boolean;
+  fechaAnulacion: string | null;
+  anuladoPorId: number | null;
+  motivoAnulacion: string | null;
+
+  anuladoPor: {
+    id: number;
+    email: string;
+  } | null;
+
+  detalles: FeePaymentDetail[];
 };
 
 // Pago utilizado en listados generales
