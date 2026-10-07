@@ -256,6 +256,13 @@ const modal = computed(() => {
         confirmText: 'Marcar como no seleccionado',
       };
   }
+
+  // El switch cubre los tres estados que un socio puede poner. Si mañana se
+  // agrega otro, esta asignación deja de compilar y hay que decidir su texto
+  // acá, en vez de que el modal aparezca vacío en pantalla.
+  const sinCubrir: never = estado;
+
+  throw new Error(`Estado sin texto de confirmación: ${String(sinCubrir)}`);
 });
 
 function askStatusChange(estado: MemberApplicationStatus) {

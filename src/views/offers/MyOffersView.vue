@@ -186,6 +186,14 @@ const modal = computed(() => {
         confirmText: 'Eliminar',
       };
   }
+
+  // Mismo criterio que en las postulaciones recibidas: si se agrega otra
+  // acción al modal, esto deja de compilar en vez de mostrar un modal vacío.
+  const sinCubrir: never = action;
+
+  throw new Error(
+    `Acción sin texto de confirmación: ${JSON.stringify(sinCubrir)}`,
+  );
 });
 
 function askClose(offer: OwnOffer) {
