@@ -28,7 +28,10 @@ setUnauthorizedHandler(() => {
 
   const current = router.currentRoute.value;
 
-  router.replace({
+  // `void` a propósito: si la navegación se cancela porque un guard manda a
+  // otra parte, no hay nada que hacer con ese rechazo. Sin el `void` queda una
+  // promesa suelta, que es lo que marca el linter.
+  void router.replace({
     name: 'login',
     query: {
       sesion: 'vencida',
