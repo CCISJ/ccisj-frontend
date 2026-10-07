@@ -28,14 +28,16 @@ export const feesService = {
   async getMemberFeeSummary(socioId: number): Promise<MemberFeeSummary> {
     const data = await apiFetch<{
       estado: MemberFeeSummary['estado'];
+      cuotasPendientes: number;
+      deudaTotal: number;
       cuotasVencidas: number;
       deudaVencida: number;
     }>(`/cuotas/socio/${socioId}/estado`);
 
     return {
       socioId,
-      deudaTotal: data.deudaVencida,
-      cuotasPendientes: data.cuotasVencidas,
+      deudaTotal: data.deudaTotal,
+      cuotasPendientes: data.cuotasPendientes,
       estado: data.estado,
     };
   },
@@ -171,6 +173,16 @@ export const feesService = {
         },
       })),
     }));
+  },
+
+  async generateMonthlyFees(
+    year: number,
+    month: number,
+  ): Promise<{ generated: number; skipped: number }> {
+    return apiFetch<{ generated: number; skipped: number }>('/cuotas/generar', {
+      method: 'POST',
+      body: JSON.stringify({ year, month }),
+    });
   },
 
   async cancelPayment(pagoId: number, motivo: string): Promise<FeePayment> {

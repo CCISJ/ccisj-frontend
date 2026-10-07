@@ -6,6 +6,7 @@ import {
   CircleCheck,
   Clock3,
   Pencil,
+  Plus,
   ReceiptText,
   TriangleAlert,
   Users,
@@ -22,7 +23,7 @@ import type {
   RecentFeePayment,
 } from '@/types/fee.type';
 
-import { formatDate, formatDateTime } from '@/utils/date';
+import { formatDate, formatDateTime, getCurrentMonth } from '@/utils/date';
 import { formatMoney } from '@/utils/money';
 
 const configuration = ref<FeeConfiguration | null>(null);
@@ -38,6 +39,10 @@ const loading = ref(false);
 const editingConfiguration = ref<FeeConfigurationHistory | null>(null);
 const editFeeAmount = ref<number>(0);
 const savingEdit = ref(false);
+
+const showGenerateModal = ref(false);
+const generatingFees = ref(false);
+const selectedMonth = ref(getCurrentMonth());
 
 const toast = useToastStore();
 
@@ -193,18 +198,69 @@ async function loadData() {
   }
 }
 
+async function handleGenerateFees() {
+  if (generatingFees.value) return;
+
+  const [yearString, monthString] = selectedMonth.value.split('-');
+  const year = Number(yearString);
+  const month = Number(monthString);
+
+  if (
+    !Number.isInteger(year) ||
+    !Number.isInteger(month) ||
+    year < 1 ||
+    month < 1 ||
+    month > 12
+  ) {
+    toast.error('Seleccioná un mes válido.');
+    return;
+  }
+
+  try {
+    generatingFees.value = true;
+
+    const result = await feesService.generateMonthlyFees(year, month);
+
+    showGenerateModal.value = false;
+
+    toast.success(
+      `Cuotas generadas: ${result.generated}. Omitidas: ${result.skipped}.`,
+    );
+
+    await loadData();
+  } catch (err) {
+    toast.error(
+      err instanceof Error ? err.message : 'No se pudieron generar las cuotas.',
+    );
+  } finally {
+    generatingFees.value = false;
+  }
+}
+
 onMounted(loadData);
 </script>
 
 <template>
   <div class="space-y-5">
     <!-- Encabezado -->
-    <div>
-      <h1 class="text-2xl font-bold text-slate-900">Cuotas y pagos</h1>
+    <!-- Encabezado -->
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">Cuotas y pagos</h1>
 
-      <p class="mt-1 text-sm text-slate-500">
-        Gestión general de cuotas y seguimiento de pagos de socios.
-      </p>
+        <p class="mt-1 text-sm text-slate-500">
+          Gestión general de cuotas y seguimiento de pagos de socios.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="flex items-center gap-2 rounded-lg bg-ccisj px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+        @click="showGenerateModal = true"
+      >
+        <Plus class="h-4 w-4" />
+        Generar cuotas
+      </button>
     </div>
 
     <!-- Loading -->
@@ -648,6 +704,58 @@ onMounted(loadData);
             @click="saveConfigurationEdit"
           >
             {{ savingEdit ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      v-if="showGenerateModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+    >
+      <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+        <h2 class="text-lg font-semibold text-slate-900">
+          Generar cuotas mensuales
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Se generarán las cuotas de todos los socios activos para el mes
+          seleccionado. Las cuotas existentes no se duplicarán.
+        </p>
+
+        <div class="mt-5">
+          <label
+            for="generate-month"
+            class="mb-1.5 block text-sm font-medium text-slate-700"
+          >
+            Mes a generar
+          </label>
+
+          <input
+            id="generate-month"
+            v-model="selectedMonth"
+            type="month"
+            class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-ccisj"
+          />
+        </div>
+
+        <div class="mt-6 flex justify-end gap-3">
+          <button
+            type="button"
+            :disabled="generatingFees"
+            class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+            @click="showGenerateModal = false"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="button"
+            :disabled="generatingFees || !selectedMonth"
+            class="rounded-lg bg-ccisj px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            @click="handleGenerateFees"
+          >
+            {{ generatingFees ? 'Generando...' : 'Confirmar generación' }}
           </button>
         </div>
       </div>
