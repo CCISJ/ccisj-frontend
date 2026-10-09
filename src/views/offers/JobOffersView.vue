@@ -109,9 +109,7 @@ const filteredOffers = computed(() => {
 });
 
 function closesToday(offer: Offer) {
-  return (
-    !!offer.fechaCierre && uruguayDay(offer.fechaCierre) === uruguayDay()
-  );
+  return !!offer.fechaCierre && uruguayDay(offer.fechaCierre) === uruguayDay();
 }
 
 function closingLabel(offer: Offer) {
