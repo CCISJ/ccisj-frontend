@@ -19,13 +19,27 @@ export async function apiFetch<T>(
   endpoint: string,
   options: RequestInit = {},
 ): Promise<T> {
+  // `RequestInit.headers` admite tres formas: un objeto plano, un `Headers`
+  // o un arreglo de pares. Esto antes hacía `{ ...options.headers }`, que
+  // solo funciona con la primera: esparcir un `Headers` da un objeto vacío
+  // —las cabeceras se pierden en silencio— y esparcir un arreglo de pares da
+  // índices numéricos como nombres de cabecera. `new Headers()` normaliza las
+  // tres formas.
+  //
+  // Hoy ningún llamador pasa cabeceras, así que esto no cambia nada: cierra
+  // la trampa antes de que alguien la pise.
+  const headers = new Headers(options.headers);
+
+  // Solo si el llamador no definió la suya, para no pisarle un
+  // `Content-Type` distinto (por ejemplo al subir un archivo).
+  if (!headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
+  }
+
   const response = await fetch(`${API_URL}${endpoint}`, {
     ...options,
     credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
+    headers,
   });
 
   if (!response.ok) {
