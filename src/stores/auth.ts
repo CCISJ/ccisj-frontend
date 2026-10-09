@@ -56,7 +56,11 @@ export const useAuthStore = defineStore('auth', {
         };
 
         return this.user;
-      } catch (error) {
+      } catch {
+        // Que esto falle es la respuesta normal a "¿hay sesión?": si
+        // `/auth/me` contesta 401, no hay nadie logueado y no hay nada que
+        // manejar. El error se descarta a propósito, no por descuido; el
+        // `catch` sin variable lo deja dicho.
         this.user = null;
 
         return null;
