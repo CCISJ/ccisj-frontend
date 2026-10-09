@@ -1,0 +1,10 @@
+# Dependencias y salidas del build: no se escriben a mano.
+node_modules
+dist
+coverage
+pnpm-lock.yaml
+
+# Markdown: el formateo de prettier reacomoda los párrafos y los saltos de
+# línea, así que ensucia el diff de la documentación sin aportar nada. Se deja
+# afuera a propósito; el chequeo de formato es para el código.
+*.md
