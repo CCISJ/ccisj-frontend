@@ -141,12 +141,18 @@ const router = createRouter({
           path: 'cuotas',
           name: 'cuotas',
           component: () => import('@/views/fees/FeesView.vue'),
+          meta: {
+            roles: ['ADMIN'],
+          },
         },
 
         {
           path: 'caja',
           name: 'caja',
           component: () => import('@/views/cash/CashView.vue'),
+          meta: {
+            roles: ['ADMIN'],
+          },
         },
 
         // Cualquier otra URL dentro del sistema cae acá en vez de dejar la
