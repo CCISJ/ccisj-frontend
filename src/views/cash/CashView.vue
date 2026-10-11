@@ -198,9 +198,11 @@ onMounted(loadCash);
 <template>
   <div class="space-y-6">
     <input
+      id="cash-receipt-file"
       ref="receiptInput"
       type="file"
       accept=".pdf,.jpg,.jpeg,.png"
+      aria-label="Seleccionar comprobante del movimiento"
       class="hidden"
       @change="handleReceiptSelected"
     />
