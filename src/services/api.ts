@@ -32,7 +32,7 @@ export async function apiFetch<T>(
 
   // Solo si el llamador no definió la suya, para no pisarle un
   // `Content-Type` distinto (por ejemplo al subir un archivo).
-  if (!headers.has('Content-Type')) {
+  if (!headers.has('Content-Type') && !(options.body instanceof FormData)) {
     headers.set('Content-Type', 'application/json');
   }
 

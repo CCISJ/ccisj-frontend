@@ -73,3 +73,20 @@ export function cancelCashMovement(id: number, motivo: string) {
     body: JSON.stringify({ motivo }),
   });
 }
+
+export function uploadCashMovementReceipt(id: number, file: File) {
+  const formData = new FormData();
+  formData.append('comprobante', file);
+
+  return apiFetch<{ comprobanteUrl: string }>(
+    `/caja/movimientos/${id}/comprobante`,
+    {
+      method: 'POST',
+      body: formData,
+    },
+  );
+}
+
+export function getCashMovementReceipt(id: number) {
+  return apiFetch<{ url: string }>(`/caja/movimientos/${id}/comprobante`);
+}

@@ -18,6 +18,7 @@ export type CashMovement = {
   categoriaId: number;
   registradoPorId: number;
   pagoCuotaId: number | null;
+  comprobanteUrl: string | null;
 
   anulado: boolean;
   fechaAnulacion: string | null;

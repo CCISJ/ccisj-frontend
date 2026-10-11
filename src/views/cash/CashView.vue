@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 
-import { Plus, Settings2, UserRoundCheck } from 'lucide-vue-next';
+import {
+  Eye,
+  EyeClosed,
+  Paperclip,
+  Plus,
+  Settings2,
+  UserRoundCheck,
+} from 'lucide-vue-next';
 
 import CashCategoriesModal from '@/components/cash/CashCategoriesModal.vue';
 import RegisterCashMovementModal from '@/components/cash/RegisterCashMovementModal.vue';
@@ -10,8 +17,10 @@ import RegisterMemberPaymentModal from '@/components/cash/RegisterMemberPaymentM
 import {
   cancelCashMovement,
   getCashCategories,
+  getCashMovementReceipt,
   getCashMovements,
   getSummary,
+  uploadCashMovementReceipt,
 } from '@/services/cashService';
 
 import { useToastStore } from '@/stores/toast';
@@ -42,6 +51,78 @@ const showRegisterMemberPaymentModal = ref(false);
 const movementToCancel = ref<CashMovement | null>(null);
 const cancellationReason = ref('');
 const cancelling = ref(false);
+
+const uploadingReceiptId = ref<number | null>(null);
+const receiptInput = ref<HTMLInputElement | null>(null);
+const selectedMovementId = ref<number | null>(null);
+
+function selectReceipt(movementId: number) {
+  selectedMovementId.value = movementId;
+  receiptInput.value?.click();
+}
+
+async function handleReceiptSelected(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  const movementId = selectedMovementId.value;
+
+  if (!file || movementId === null) return;
+
+  if (
+    !['application/pdf', 'image/jpeg', 'image/png'].includes(file.type) ||
+    file.size > 5 * 1024 * 1024
+  ) {
+    toast.error('Seleccioná un PDF, JPG o PNG de hasta 5 MB');
+    input.value = '';
+    return;
+  }
+
+  uploadingReceiptId.value = movementId;
+
+  try {
+    await uploadCashMovementReceipt(movementId, file);
+    toast.success('Comprobante guardado correctamente');
+    await loadCash();
+  } catch (err) {
+    toast.error(
+      err instanceof Error ? err.message : 'Error al subir el comprobante',
+    );
+  } finally {
+    uploadingReceiptId.value = null;
+    selectedMovementId.value = null;
+    input.value = '';
+  }
+}
+
+async function viewReceipt(movementId: number) {
+  const tab = window.open('', '_blank');
+
+  if (tab) {
+    tab.document.title = 'Cargando comprobante...';
+    tab.document.body.style.cssText =
+      'margin:0;display:flex;align-items:center;justify-content:center;' +
+      'min-height:100vh;font-family:Arial,sans-serif;' +
+      'background:#f8fafc;color:#475569;';
+
+    tab.document.body.textContent = 'Cargando comprobante...';
+  }
+
+  try {
+    const { url } = await getCashMovementReceipt(movementId);
+
+    if (tab && !tab.closed) {
+      tab.location.replace(url);
+    } else {
+      window.location.href = url;
+    }
+  } catch (err) {
+    tab?.close();
+
+    toast.error(
+      err instanceof Error ? err.message : 'Error al abrir el comprobante',
+    );
+  }
+}
 
 async function loadCash() {
   loading.value = true;
@@ -116,6 +197,13 @@ onMounted(loadCash);
 
 <template>
   <div class="space-y-6">
+    <input
+      ref="receiptInput"
+      type="file"
+      accept=".pdf,.jpg,.jpeg,.png"
+      class="hidden"
+      @change="handleReceiptSelected"
+    />
     <div class="flex flex-wrap items-start justify-between gap-4">
       <div>
         <h1 class="text-2xl font-bold text-slate-900">Caja</h1>
@@ -390,23 +478,50 @@ onMounted(loadCash);
               </td>
 
               <td class="whitespace-nowrap px-5 py-3.5">
-                <span
-                  v-if="movement.anulado"
-                  class="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-500"
-                >
-                  Anulado
-                </span>
+                <div class="flex flex-wrap items-center justify-center gap-2">
+                  <span
+                    v-if="movement.anulado"
+                    class="rounded-md bg-slate-100 px-2.5 py-1.5 text-xs font-medium text-slate-500"
+                  >
+                    Anulado
+                  </span>
 
-                <button
-                  v-else-if="!movement.pagoCuota"
-                  type="button"
-                  class="text-sm font-semibold text-red-600 transition hover:text-red-700"
-                  @click="movementToCancel = movement"
-                >
-                  Anular
-                </button>
+                  <button
+                    v-else-if="!movement.pagoCuota"
+                    type="button"
+                    class="rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-100"
+                    @click="movementToCancel = movement"
+                  >
+                    Anular
+                  </button>
 
-                <span v-else class="text-xs text-slate-400"> — </span>
+                  <button
+                    v-if="movement.comprobanteUrl"
+                    type="button"
+                    class="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:border-ccisj hover:bg-ccisj-light hover:text-ccisj"
+                    @click="viewReceipt(movement.id)"
+                  >
+                    <Eye class="h-3.5 w-3.5" />
+                    Ver
+                  </button>
+
+                  <button
+                    v-if="!movement.anulado"
+                    type="button"
+                    :disabled="uploadingReceiptId === movement.id"
+                    class="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:border-ccisj hover:bg-ccisj-light hover:text-ccisj disabled:opacity-50"
+                    @click="selectReceipt(movement.id)"
+                  >
+                    <Paperclip class="h-3.5 w-3.5" />
+                    {{
+                      uploadingReceiptId === movement.id
+                        ? 'Subiendo...'
+                        : movement.comprobanteUrl
+                          ? 'Reemplazar'
+                          : 'Adjuntar'
+                    }}
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
