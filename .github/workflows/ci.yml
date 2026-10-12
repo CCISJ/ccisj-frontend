@@ -1,0 +1,52 @@
+# Integración continua: en cada PR y en cada push a main, GitHub levanta una
+# máquina limpia y corre los mismos chequeos que cada uno corre en su máquina.
+# Si alguno falla, el PR aparece en rojo antes de mergearlo.
+#
+# SonarCloud analiza el código pero no lo compila: un error de tipos o un
+# build roto le pasan de largo. Esto los atrapa.
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Solo lee el código: no puede escribir en el repo ni comentar en los PR.
+permissions:
+  contents: read
+
+# Si se sube otro commit al mismo PR, se cancela la corrida anterior.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    name: Lint y build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12.3.4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Formato
+        run: pnpm format:check
+
+      - name: Build (incluye el chequeo de tipos)
+        run: pnpm build
