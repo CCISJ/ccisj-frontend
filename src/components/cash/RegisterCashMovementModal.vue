@@ -135,11 +135,15 @@ watch(
       <!-- Tipo y categoría -->
       <div class="grid gap-4 sm:grid-cols-2">
         <div>
-          <label class="mb-1.5 block text-sm font-medium text-slate-700">
+          <label
+            for="cash-movement-tipo"
+            class="mb-1.5 block text-sm font-medium text-slate-700"
+          >
             Tipo
           </label>
 
           <select
+            id="cash-movement-tipo"
             v-model="tipo"
             class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-ccisj"
           >
@@ -150,11 +154,15 @@ watch(
         </div>
 
         <div>
-          <label class="mb-1.5 block text-sm font-medium text-slate-700">
+          <label
+            for="cash-movement-categoria"
+            class="mb-1.5 block text-sm font-medium text-slate-700"
+          >
             Categoría
           </label>
 
           <select
+            id="cash-movement-categoria"
             v-model="categoriaId"
             class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-ccisj"
             required
@@ -181,11 +189,15 @@ watch(
 
       <!-- Concepto -->
       <div>
-        <label class="mb-1.5 block text-sm font-medium text-slate-700">
+        <label
+          for="cash-movement-concepto"
+          class="mb-1.5 block text-sm font-medium text-slate-700"
+        >
           Concepto
         </label>
 
         <input
+          id="cash-movement-concepto"
           v-model="concepto"
           type="text"
           maxlength="255"
@@ -197,7 +209,10 @@ watch(
       <!-- Importe y fecha -->
       <div class="grid gap-4 sm:grid-cols-2">
         <div>
-          <label class="mb-1.5 block text-sm font-medium text-slate-700">
+          <label
+            for="cash-movement-importe"
+            class="mb-1.5 block text-sm font-medium text-slate-700"
+          >
             Importe
           </label>
 
@@ -209,6 +224,7 @@ watch(
             </span>
 
             <input
+              id="cash-movement-importe"
               v-model.number="importe"
               type="number"
               min="0.01"
@@ -220,11 +236,15 @@ watch(
         </div>
 
         <div>
-          <label class="mb-1.5 block text-sm font-medium text-slate-700">
+          <label
+            for="cash-movement-fecha"
+            class="mb-1.5 block text-sm font-medium text-slate-700"
+          >
             Fecha
           </label>
 
           <input
+            id="cash-movement-fecha"
             v-model="fecha"
             type="date"
             class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-ccisj"
@@ -234,12 +254,16 @@ watch(
 
       <!-- Observaciones -->
       <div>
-        <label class="mb-1.5 block text-sm font-medium text-slate-700">
+        <label
+          for="cash-movement-observaciones"
+          class="mb-1.5 block text-sm font-medium text-slate-700"
+        >
           Observaciones
           <span class="font-normal text-slate-400"> (opcional) </span>
         </label>
 
         <textarea
+          id="cash-movement-observaciones"
           v-model="observaciones"
           rows="3"
           maxlength="500"

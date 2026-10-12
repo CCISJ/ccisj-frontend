@@ -215,8 +215,10 @@ async function confirmDelete() {
         />
 
         <input
+          id="members-search"
           v-model="search"
           type="search"
+          aria-label="Buscar socios"
           :placeholder="
             isAdmin
               ? 'Buscar por empresa, RUT, titular, giro o contacto...'
@@ -227,7 +229,9 @@ async function confirmDelete() {
       </div>
 
       <select
+        id="members-type-filter"
         v-model="typeFilter"
+        aria-label="Filtrar por tipo de socio"
         class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 outline-none transition focus:border-ccisj"
       >
         <option value="TODOS">Todos los tipos</option>
@@ -239,7 +243,9 @@ async function confirmDelete() {
 
       <select
         v-if="isAdmin"
+        id="members-status-filter"
         v-model="statusFilter"
+        aria-label="Filtrar por estado"
         class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 outline-none transition focus:border-ccisj"
       >
         <option value="TODOS">Todos los estados</option>
