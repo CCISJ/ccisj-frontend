@@ -100,11 +100,18 @@ watch(
     <div class="p-5">
       <!-- Tipo -->
       <div>
-        <label class="mb-2 block text-sm font-semibold text-slate-700">
+        <p
+          id="fee-adjustment-tipo"
+          class="mb-2 block text-sm font-semibold text-slate-700"
+        >
           Tipo de ajuste
-        </label>
+        </p>
 
-        <div class="grid grid-cols-2 gap-3">
+        <div
+          class="grid grid-cols-2 gap-3"
+          role="group"
+          aria-labelledby="fee-adjustment-tipo"
+        >
           <button
             type="button"
             class="flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-semibold transition"

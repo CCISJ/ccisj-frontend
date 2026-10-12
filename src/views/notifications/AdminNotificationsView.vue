@@ -272,8 +272,10 @@ onMounted(async () => {
             >
               <div class="border-b border-slate-200 p-3">
                 <input
+                  id="notification-recipient-search"
                   v-model="recipientSearch"
                   type="text"
+                  aria-label="Buscar destinatarios"
                   placeholder="Buscar por nombre o email..."
                   class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-ccisj"
                 />
@@ -408,14 +410,18 @@ onMounted(async () => {
         <div class="shrink-0 border-b border-slate-200 p-4">
           <div class="grid gap-3 md:grid-cols-[1fr_160px_170px]">
             <input
+              id="notification-search"
               v-model="search"
               type="text"
+              aria-label="Buscar notificaciones enviadas"
               placeholder="Buscar por título o mensaje..."
               class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-ccisj"
             />
 
             <select
+              id="notification-type-filter"
               v-model="filterType"
+              aria-label="Filtrar por tipo"
               class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-ccisj"
             >
               <option value="TODOS">Todos los tipos</option>
@@ -424,7 +430,9 @@ onMounted(async () => {
             </select>
 
             <select
+              id="notification-recipient-filter"
               v-model="filterRecipient"
+              aria-label="Filtrar por destinatario"
               class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-ccisj"
             >
               <option value="TODOS">Todos los destinatarios</option>

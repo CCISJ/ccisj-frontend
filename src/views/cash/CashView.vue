@@ -298,11 +298,15 @@ onMounted(loadCash);
       <div class="border-b border-slate-100 bg-slate-50/50 px-5 py-4">
         <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
           <div>
-            <label class="mb-1 block text-xs font-medium text-slate-500">
+            <label
+              for="cash-desde"
+              class="mb-1 block text-xs font-medium text-slate-500"
+            >
               Desde
             </label>
 
             <input
+              id="cash-desde"
               v-model="filters.desde"
               type="date"
               class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-ccisj"
@@ -310,11 +314,15 @@ onMounted(loadCash);
           </div>
 
           <div>
-            <label class="mb-1 block text-xs font-medium text-slate-500">
+            <label
+              for="cash-hasta"
+              class="mb-1 block text-xs font-medium text-slate-500"
+            >
               Hasta
             </label>
 
             <input
+              id="cash-hasta"
               v-model="filters.hasta"
               type="date"
               class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-ccisj"
@@ -322,11 +330,15 @@ onMounted(loadCash);
           </div>
 
           <div>
-            <label class="mb-1 block text-xs font-medium text-slate-500">
+            <label
+              for="cash-tipo"
+              class="mb-1 block text-xs font-medium text-slate-500"
+            >
               Tipo
             </label>
 
             <select
+              id="cash-tipo"
               v-model="filters.tipo"
               class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-ccisj"
             >
@@ -337,11 +349,15 @@ onMounted(loadCash);
           </div>
 
           <div>
-            <label class="mb-1 block text-xs font-medium text-slate-500">
+            <label
+              for="cash-categoria"
+              class="mb-1 block text-xs font-medium text-slate-500"
+            >
               Categoría
             </label>
 
             <select
+              id="cash-categoria"
               v-model="filters.categoriaId"
               class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-ccisj"
             >
@@ -358,11 +374,15 @@ onMounted(loadCash);
           </div>
 
           <div>
-            <label class="mb-1 block text-xs font-medium text-slate-500">
+            <label
+              for="cash-concepto"
+              class="mb-1 block text-xs font-medium text-slate-500"
+            >
               Concepto
             </label>
 
             <input
+              id="cash-concepto"
               v-model="filters.buscar"
               type="text"
               placeholder="Buscar..."
@@ -577,11 +597,15 @@ onMounted(loadCash);
         </div>
 
         <div class="mt-4">
-          <label class="mb-1 block text-sm font-medium text-slate-700">
+          <label
+            for="cash-motivo-de-anulacion"
+            class="mb-1 block text-sm font-medium text-slate-700"
+          >
             Motivo de anulación
           </label>
 
           <textarea
+            id="cash-motivo-de-anulacion"
             v-model="cancellationReason"
             rows="3"
             maxlength="500"

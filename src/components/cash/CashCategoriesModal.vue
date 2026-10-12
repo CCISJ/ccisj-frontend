@@ -144,11 +144,15 @@ watch(
 
           <div class="grid gap-3 sm:grid-cols-2">
             <div>
-              <label class="mb-1.5 block text-xs font-medium text-slate-500">
+              <label
+                for="cash-category-tipo"
+                class="mb-1.5 block text-xs font-medium text-slate-500"
+              >
                 Tipo
               </label>
 
               <select
+                id="cash-category-tipo"
                 v-model="tipo"
                 class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-ccisj"
               >
@@ -158,11 +162,15 @@ watch(
             </div>
 
             <div>
-              <label class="mb-1.5 block text-xs font-medium text-slate-500">
+              <label
+                for="cash-category-nombre"
+                class="mb-1.5 block text-xs font-medium text-slate-500"
+              >
                 Nombre
               </label>
 
               <input
+                id="cash-category-nombre"
                 v-model="nombre"
                 type="text"
                 maxlength="100"

@@ -613,11 +613,15 @@ onMounted(loadData);
 
         <div class="mt-5 space-y-4">
           <div>
-            <label class="mb-1.5 block text-sm font-medium text-slate-700">
+            <label
+              for="fees-nuevo-importe"
+              class="mb-1.5 block text-sm font-medium text-slate-700"
+            >
               Nuevo importe
             </label>
 
             <input
+              id="fees-nuevo-importe"
               v-model.number="newFeeAmount"
               type="number"
               min="1"
@@ -675,11 +679,15 @@ onMounted(loadData);
         </p>
 
         <div class="mt-5">
-          <label class="mb-1.5 block text-sm font-medium text-slate-700">
+          <label
+            for="fees-importe"
+            class="mb-1.5 block text-sm font-medium text-slate-700"
+          >
             Importe
           </label>
 
           <input
+            id="fees-importe"
             v-model.number="editFeeAmount"
             type="number"
             min="1"

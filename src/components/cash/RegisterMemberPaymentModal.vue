@@ -173,11 +173,15 @@ watch(
     <form class="space-y-5 p-6" @submit.prevent="submit">
       <!-- Socio -->
       <div>
-        <label class="mb-1.5 block text-sm font-medium text-slate-700">
+        <label
+          for="member-payment-socio"
+          class="mb-1.5 block text-sm font-medium text-slate-700"
+        >
           Socio
         </label>
 
         <select
+          id="member-payment-socio"
           v-model="selectedMemberId"
           class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-ccisj"
           :disabled="loadingMembers"
@@ -239,7 +243,10 @@ watch(
       <!-- Importe y fecha -->
       <div class="grid gap-4 sm:grid-cols-2">
         <div>
-          <label class="mb-1.5 block text-sm font-medium text-slate-700">
+          <label
+            for="member-payment-importe"
+            class="mb-1.5 block text-sm font-medium text-slate-700"
+          >
             Importe
           </label>
 
@@ -251,6 +258,7 @@ watch(
             </span>
 
             <input
+              id="member-payment-importe"
               v-model.number="importe"
               type="number"
               min="0.01"
@@ -263,11 +271,15 @@ watch(
         </div>
 
         <div>
-          <label class="mb-1.5 block text-sm font-medium text-slate-700">
+          <label
+            for="member-payment-fecha"
+            class="mb-1.5 block text-sm font-medium text-slate-700"
+          >
             Fecha
           </label>
 
           <input
+            id="member-payment-fecha"
             v-model="fechaPago"
             type="date"
             class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-ccisj"
@@ -278,11 +290,15 @@ watch(
 
       <!-- Medio de pago -->
       <div>
-        <label class="mb-1.5 block text-sm font-medium text-slate-700">
+        <label
+          for="member-payment-medio-de-pago"
+          class="mb-1.5 block text-sm font-medium text-slate-700"
+        >
           Medio de pago
         </label>
 
         <select
+          id="member-payment-medio-de-pago"
           v-model="medioPago"
           class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-ccisj"
         >
@@ -294,11 +310,15 @@ watch(
 
       <!-- Comprobante -->
       <div v-if="medioPago === 'TARJETA'">
-        <label class="mb-1.5 block text-sm font-medium text-slate-700">
+        <label
+          for="member-payment-comprobante"
+          class="mb-1.5 block text-sm font-medium text-slate-700"
+        >
           Comprobante
         </label>
 
         <input
+          id="member-payment-comprobante"
           v-model="comprobanteUrl"
           type="text"
           class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-ccisj"
@@ -313,12 +333,16 @@ watch(
 
       <!-- Observaciones -->
       <div>
-        <label class="mb-1.5 block text-sm font-medium text-slate-700">
+        <label
+          for="member-payment-observaciones"
+          class="mb-1.5 block text-sm font-medium text-slate-700"
+        >
           Observaciones
           <span class="font-normal text-slate-400">(opcional)</span>
         </label>
 
         <textarea
+          id="member-payment-observaciones"
           v-model="observaciones"
           rows="3"
           maxlength="500"
