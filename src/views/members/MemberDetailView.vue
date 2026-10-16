@@ -3,10 +3,12 @@ import { computed, onMounted, ref } from 'vue';
 
 import { useRoute, useRouter } from 'vue-router';
 
+import { useReceiptViewer } from '@/composables/useReceiptViewer';
 import {
   ArrowLeft,
   CircleCheck,
   Clock3,
+  Eye,
   Pencil,
   Plus,
   Trash2,
@@ -37,6 +39,7 @@ import { formatMoney } from '@/utils/money';
 
 const route = useRoute();
 const router = useRouter();
+const { viewReceipt } = useReceiptViewer();
 
 const feeSummary = ref<MemberFeeSummary | null>(null);
 const memberFees = ref<Fee[]>([]);
@@ -670,18 +673,38 @@ function goBack() {
                 </td>
 
                 <td class="px-5 py-3.5">
-                  <button
-                    v-if="!payment.anulado"
-                    type="button"
-                    class="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600"
-                    title="Anular pago"
-                    @click="
-                      paymentToCancel = payment;
-                      cancellationReason = '';
+                  <div
+                    v-if="
+                      payment.movimientoCaja?.comprobanteUrl || !payment.anulado
                     "
+                    class="flex items-center justify-center gap-1"
                   >
-                    <Trash2 class="h-4 w-4" />
-                  </button>
+                    <!-- El comprobante sigue visible en un pago anulado: es
+                         parte de su historia. -->
+                    <button
+                      v-if="payment.movimientoCaja?.comprobanteUrl"
+                      type="button"
+                      class="rounded-lg p-2 text-slate-400 transition hover:bg-ccisj-light hover:text-ccisj"
+                      title="Ver comprobante"
+                      aria-label="Ver comprobante"
+                      @click="viewReceipt(payment.movimientoCaja.id)"
+                    >
+                      <Eye class="h-4 w-4" />
+                    </button>
+
+                    <button
+                      v-if="!payment.anulado"
+                      type="button"
+                      class="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                      title="Anular pago"
+                      @click="
+                        paymentToCancel = payment;
+                        cancellationReason = '';
+                      "
+                    >
+                      <Trash2 class="h-4 w-4" />
+                    </button>
+                  </div>
 
                   <span v-else class="text-sm text-slate-300">—</span>
                 </td>

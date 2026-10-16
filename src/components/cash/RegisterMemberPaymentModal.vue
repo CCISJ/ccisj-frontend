@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 
+import ReceiptFileInput from '@/components/fees/ReceiptFileInput.vue';
+
 import { feesService } from '@/services/feesService';
 import { getMembers, isFullMember } from '@/services/membersService';
 
@@ -31,7 +33,7 @@ const feeSummary = ref<MemberFeeSummary | null>(null);
 const importe = ref<number | null>(null);
 const fechaPago = ref(todayLocal());
 const medioPago = ref('EFECTIVO');
-const comprobanteUrl = ref('');
+const comprobante = ref<File | null>(null);
 const observaciones = ref('');
 
 const loadingMembers = ref(false);
@@ -99,7 +101,7 @@ function resetForm() {
   importe.value = null;
   fechaPago.value = todayLocal();
   medioPago.value = 'EFECTIVO';
-  comprobanteUrl.value = '';
+  comprobante.value = null;
   observaciones.value = '';
 }
 
@@ -121,7 +123,7 @@ async function submit() {
     return;
   }
 
-  if (medioPago.value === 'TARJETA' && !comprobanteUrl.value.trim()) {
+  if (medioPago.value === 'TARJETA' && !comprobante.value) {
     toast.error('El comprobante es obligatorio para pagos con tarjeta');
     return;
   }
@@ -133,7 +135,7 @@ async function submit() {
       importe: importe.value,
       fechaPago: fechaPago.value,
       medioPago: medioPago.value,
-      comprobanteUrl: comprobanteUrl.value.trim() || undefined,
+      comprobante: comprobante.value ?? undefined,
       observaciones: observaciones.value.trim() || undefined,
     });
 
@@ -308,28 +310,12 @@ watch(
         </select>
       </div>
 
-      <!-- Comprobante -->
-      <div v-if="medioPago === 'TARJETA'">
-        <label
-          for="member-payment-comprobante"
-          class="mb-1.5 block text-sm font-medium text-slate-700"
-        >
-          Comprobante
-        </label>
-
-        <input
-          id="member-payment-comprobante"
-          v-model="comprobanteUrl"
-          type="text"
-          class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-ccisj"
-          placeholder="URL del comprobante"
-          required
-        />
-
-        <p class="mt-1.5 text-xs text-slate-400">
-          El comprobante es obligatorio para pagos con tarjeta.
-        </p>
-      </div>
+      <!-- Comprobante: obligatorio con tarjeta, opcional con efectivo -->
+      <ReceiptFileInput
+        id="member-payment-comprobante"
+        v-model="comprobante"
+        :required="medioPago === 'TARJETA'"
+      />
 
       <!-- Observaciones -->
       <div>

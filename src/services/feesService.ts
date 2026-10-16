@@ -150,9 +150,25 @@ export const feesService = {
   },
 
   async createPayment(socioId: number, data: CreateFeePaymentData) {
+    // Multipart y no JSON: el comprobante es un archivo y viaja en el mismo
+    // request que el pago, para que el backend grabe los dos juntos.
+    const formData = new FormData();
+
+    formData.append('importe', String(data.importe));
+    formData.append('fechaPago', data.fechaPago);
+    formData.append('medioPago', data.medioPago);
+
+    if (data.observaciones) {
+      formData.append('observaciones', data.observaciones);
+    }
+
+    if (data.comprobante) {
+      formData.append('comprobante', data.comprobante);
+    }
+
     return apiFetch(`/cuotas/socio/${socioId}/pagos`, {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: formData,
     });
   },
 
