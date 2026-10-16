@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 
+import { useReceiptViewer } from '@/composables/useReceiptViewer';
 import {
   Eye,
   EyeClosed,
@@ -17,7 +18,6 @@ import RegisterMemberPaymentModal from '@/components/cash/RegisterMemberPaymentM
 import {
   cancelCashMovement,
   getCashCategories,
-  getCashMovementReceipt,
   getCashMovements,
   getSummary,
   uploadCashMovementReceipt,
@@ -43,6 +43,7 @@ const filters = ref<CashMovementFilters>({
   buscar: undefined,
 });
 const toast = useToastStore();
+const { viewReceipt } = useReceiptViewer();
 
 const loading = ref(true);
 const showRegisterModal = ref(false);
@@ -91,36 +92,6 @@ async function handleReceiptSelected(event: Event) {
     uploadingReceiptId.value = null;
     selectedMovementId.value = null;
     input.value = '';
-  }
-}
-
-async function viewReceipt(movementId: number) {
-  const tab = window.open('', '_blank');
-
-  if (tab) {
-    tab.document.title = 'Cargando comprobante...';
-    tab.document.body.style.cssText =
-      'margin:0;display:flex;align-items:center;justify-content:center;' +
-      'min-height:100vh;font-family:Arial,sans-serif;' +
-      'background:#f8fafc;color:#475569;';
-
-    tab.document.body.textContent = 'Cargando comprobante...';
-  }
-
-  try {
-    const { url } = await getCashMovementReceipt(movementId);
-
-    if (tab && !tab.closed) {
-      tab.location.replace(url);
-    } else {
-      window.location.href = url;
-    }
-  } catch (err) {
-    tab?.close();
-
-    toast.error(
-      err instanceof Error ? err.message : 'Error al abrir el comprobante',
-    );
   }
 }
 
