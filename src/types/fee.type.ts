@@ -58,9 +58,17 @@ export type FeePayment = {
   importe: number;
   fechaPago: string;
   medioPago: string;
-  comprobanteUrl: string | null;
   observaciones: string | null;
   fechaCreacion: string;
+
+  /**
+   * El movimiento de caja que generó el pago. El comprobante vive ahí: se ve
+   * con `getCashMovementReceipt(movimientoCaja.id)`.
+   */
+  movimientoCaja: {
+    id: number;
+    comprobanteUrl: string | null;
+  } | null;
 
   anulado: boolean;
   fechaAnulacion: string | null;
@@ -145,6 +153,7 @@ export type CreateFeePaymentData = {
   importe: number;
   fechaPago: string;
   medioPago: string;
-  comprobanteUrl?: string;
+  /** Obligatorio con tarjeta. PDF, JPG o PNG, hasta 5 MB. */
+  comprobante?: File;
   observaciones?: string;
 };

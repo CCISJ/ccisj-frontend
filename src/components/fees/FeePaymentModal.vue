@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 
+import ReceiptFileInput from '@/components/fees/ReceiptFileInput.vue';
+
 import type { CreateFeePaymentData } from '@/types/fee.type';
 
 const props = defineProps<{
@@ -16,7 +18,7 @@ const emit = defineEmits<{
 const importe = ref<number | null>(null);
 const fechaPago = ref('');
 const medioPago = ref('EFECTIVO');
-const comprobanteUrl = ref('');
+const comprobante = ref<File | null>(null);
 const observaciones = ref('');
 
 const valid = computed(() => {
@@ -24,7 +26,8 @@ const valid = computed(() => {
     importe.value !== null &&
     importe.value > 0 &&
     fechaPago.value !== '' &&
-    medioPago.value !== ''
+    medioPago.value !== '' &&
+    (medioPago.value !== 'TARJETA' || comprobante.value !== null)
   );
 });
 
@@ -42,7 +45,7 @@ function reset() {
   importe.value = null;
   fechaPago.value = today();
   medioPago.value = 'EFECTIVO';
-  comprobanteUrl.value = '';
+  comprobante.value = null;
   observaciones.value = '';
 }
 
@@ -57,7 +60,7 @@ function confirm() {
     importe: importe.value,
     fechaPago: fechaPago.value,
     medioPago: medioPago.value,
-    comprobanteUrl: comprobanteUrl.value.trim() || undefined,
+    comprobante: comprobante.value ?? undefined,
     observaciones: observaciones.value.trim() || undefined,
   });
 }
@@ -140,24 +143,11 @@ watch(
           </select>
         </div>
 
-        <div>
-          <label
-            for="payment-proof"
-            class="mb-1.5 block text-sm font-medium text-slate-700"
-          >
-            Comprobante
-            <span class="font-normal text-slate-400">(opcional)</span>
-          </label>
-
-          <input
-            id="payment-proof"
-            v-model="comprobanteUrl"
-            type="text"
-            maxlength="500"
-            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-ccisj focus:ring-1 focus:ring-ccisj"
-            placeholder="URL del comprobante"
-          />
-        </div>
+        <ReceiptFileInput
+          id="payment-proof"
+          v-model="comprobante"
+          :required="medioPago === 'TARJETA'"
+        />
 
         <div>
           <label
