@@ -3,6 +3,7 @@ import { computed } from 'vue';
 
 import { useRouter } from 'vue-router';
 
+import ApplicantDashboard from '@/views/applicants/DashboardView.vue';
 import MemberDashboard from '@/views/members/DashboardView.vue';
 import { Plus, Users } from 'lucide-vue-next';
 
@@ -67,6 +68,8 @@ const shortcuts = computed(() => {
 
 <template>
   <MemberDashboard v-if="auth.role === 'SOCIO'" />
+
+  <ApplicantDashboard v-else-if="auth.role === 'POSTULANTE'" />
 
   <div v-else>
     <span

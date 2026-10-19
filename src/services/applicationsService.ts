@@ -1,9 +1,15 @@
 import type {
   MemberApplicationStatus,
+  OwnApplication,
   ReceivedApplication,
 } from '@/types/application.type';
 
 import { apiFetch } from './api';
+
+/** Las postulaciones del postulante de la sesión, la más reciente primero. */
+export function getMyApplications() {
+  return apiFetch<OwnApplication[]>('/postulaciones/mias');
+}
 
 export function getReceivedApplications() {
   return apiFetch<ReceivedApplication[]>('/postulaciones/recibidas');
