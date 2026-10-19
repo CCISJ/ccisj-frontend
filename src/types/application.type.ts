@@ -1,4 +1,4 @@
-import type { OfferStatus } from './offer.type';
+import type { OfferModality, OfferStatus } from './offer.type';
 
 export type ApplicationStatus =
   'ENVIADA' | 'EN_REVISION' | 'SELECCIONADO' | 'NO_SELECCIONADO' | 'FINALIZADA';
@@ -6,6 +6,15 @@ export type ApplicationStatus =
 /** Cómo ve la empresa cada estado. ENVIADA es una postulación que nadie miró. */
 export const APPLICATION_STATUS_LABELS: Record<ApplicationStatus, string> = {
   ENVIADA: 'Nueva',
+  EN_REVISION: 'En revisión',
+  SELECCIONADO: 'Seleccionado',
+  NO_SELECCIONADO: 'No seleccionado',
+  FINALIZADA: 'Finalizada',
+};
+
+/** Cómo ve el postulante cada estado de sus propias postulaciones. */
+export const APPLICANT_STATUS_LABELS: Record<ApplicationStatus, string> = {
+  ENVIADA: 'Enviada',
   EN_REVISION: 'En revisión',
   SELECCIONADO: 'Seleccionado',
   NO_SELECCIONADO: 'No seleccionado',
@@ -56,5 +65,23 @@ export type ReceivedApplication = {
     usuario: { email: string };
     // El más reciente primero.
     cvs: ApplicantCv[];
+  };
+};
+
+/** Una postulación del postulante de la sesión (`GET /postulaciones/mias`). */
+export type OwnApplication = {
+  id: number;
+  fechaPostulacion: string;
+  estado: ApplicationStatus;
+  // El mensaje que dejó al postularse.
+  observaciones: string | null;
+  oferta: {
+    id: number;
+    titulo: string;
+    estado: OfferStatus;
+    ubicacion: string | null;
+    modalidad: OfferModality | null;
+    fechaCierre: string | null;
+    socio: { razonSocial: string };
   };
 };

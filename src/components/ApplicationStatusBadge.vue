@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import {
+  APPLICANT_STATUS_LABELS,
   APPLICATION_STATUS_LABELS,
   type ApplicationStatus,
 } from '@/types/application.type';
 
-defineProps<{
+const props = defineProps<{
   status: ApplicationStatus;
+  // El postulante ve "Enviada" donde la empresa ve "Nueva".
+  applicant?: boolean;
 }>();
 
 const STATUS_CLASSES: Record<ApplicationStatus, string> = {
@@ -22,6 +25,10 @@ const STATUS_CLASSES: Record<ApplicationStatus, string> = {
     class="inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium"
     :class="STATUS_CLASSES[status]"
   >
-    {{ APPLICATION_STATUS_LABELS[status] }}
+    {{
+      (props.applicant ? APPLICANT_STATUS_LABELS : APPLICATION_STATUS_LABELS)[
+        status
+      ]
+    }}
   </span>
 </template>
