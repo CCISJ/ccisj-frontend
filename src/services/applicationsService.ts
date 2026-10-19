@@ -11,6 +11,13 @@ export function getMyApplications() {
   return apiFetch<OwnApplication[]>('/postulaciones/mias');
 }
 
+/** Retira (borra) una postulación propia. */
+export function withdrawApplication(id: number) {
+  return apiFetch<void>(`/postulaciones/${id}`, {
+    method: 'DELETE',
+  });
+}
+
 export function getReceivedApplications() {
   return apiFetch<ReceivedApplication[]>('/postulaciones/recibidas');
 }

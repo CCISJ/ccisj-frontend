@@ -92,6 +92,14 @@ const router = createRouter({
           },
         },
         {
+          path: 'mis-postulaciones',
+          name: 'mis-postulaciones',
+          component: () => import('@/views/applicants/MyApplicationsView.vue'),
+          meta: {
+            roles: ['POSTULANTE'],
+          },
+        },
+        {
           path: 'mis-ofertas',
           name: 'mis-ofertas',
           component: () => import('@/views/offers/MyOffersView.vue'),
