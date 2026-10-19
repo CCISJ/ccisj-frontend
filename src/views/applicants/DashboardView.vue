@@ -76,20 +76,16 @@ const firstName = computed(
   () => auth.user?.displayName?.trim().split(/\s+/)[0] ?? '',
 );
 
-// Cifras
+// Resumen
 
-/** Las que todavía esperan respuesta de la empresa. */
-const inProgress = computed(
-  () =>
-    applications.value.filter(
-      (item) => item.estado === 'ENVIADA' || item.estado === 'EN_REVISION',
-    ).length,
-);
+/** "1 postulación" / "3 postulaciones"; vacío si todavía no tiene. */
+const summary = computed(() => {
+  const total = applications.value.length;
 
-const selected = computed(
-  () =>
-    applications.value.filter((item) => item.estado === 'SELECCIONADO').length,
-);
+  if (total === 0) return '';
+
+  return `${total} ${total === 1 ? 'postulación' : 'postulaciones'}`;
+});
 
 // Listados
 
@@ -166,60 +162,27 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
       </button>
     </div>
 
-    <!-- Cifras -->
-    <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
-      <div :class="[card, 'p-4']">
-        <p class="text-xs font-medium text-slate-500">Mis postulaciones</p>
-
-        <p class="mt-1 text-2xl font-bold tabular-nums text-slate-900">
-          {{ loading || failed.applications ? '—' : applications.length }}
-        </p>
-
-        <p class="mt-0.5 text-xs text-slate-400">En total</p>
-      </div>
-
-      <div :class="[card, 'p-4']">
-        <p class="text-xs font-medium text-slate-500">En curso</p>
-
-        <p class="mt-1 text-2xl font-bold tabular-nums text-slate-900">
-          {{ loading || failed.applications ? '—' : inProgress }}
-        </p>
-
-        <p class="mt-0.5 text-xs text-slate-400">Esperando respuesta</p>
-      </div>
-
-      <div :class="[card, 'p-4']">
-        <p class="text-xs font-medium text-slate-500">Seleccionado</p>
-
-        <p
-          class="mt-1 text-2xl font-bold tabular-nums"
-          :class="selected > 0 ? 'text-ccisj' : 'text-slate-900'"
-        >
-          {{ loading || failed.applications ? '—' : selected }}
-        </p>
-
-        <p class="mt-0.5 text-xs text-slate-400">La empresa te eligió</p>
-      </div>
-
-      <RouterLink
-        :to="{ name: 'ofertas' }"
-        :class="[card, 'p-4 transition hover:border-ccisj']"
-      >
-        <p class="text-xs font-medium text-slate-500">Ofertas abiertas</p>
-
-        <p class="mt-1 text-2xl font-bold tabular-nums text-slate-900">
-          {{ loading || failed.offers ? '—' : offers.length }}
-        </p>
-
-        <p class="mt-0.5 text-xs text-slate-400">Para postularte</p>
-      </RouterLink>
-    </div>
-
     <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
       <!-- Mis postulaciones -->
       <section :class="[card, 'lg:col-span-2']">
         <div :class="cardHeader">
           <h2 :class="cardTitle">Mis últimas postulaciones</h2>
+
+          <div class="flex min-w-0 items-center gap-4">
+            <span
+              v-if="!loading && !failed.applications && summary"
+              class="hidden truncate text-xs text-slate-400 sm:inline"
+            >
+              {{ summary }}
+            </span>
+
+            <RouterLink
+              :to="{ name: 'mis-postulaciones' }"
+              :class="[cardLink, 'shrink-0']"
+            >
+              Ver todas
+            </RouterLink>
+          </div>
         </div>
 
         <p v-if="loading" class="px-5 py-8 text-center text-sm text-slate-400">
