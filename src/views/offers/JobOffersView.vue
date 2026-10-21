@@ -11,8 +11,10 @@ import {
   X,
 } from 'lucide-vue-next';
 
+import { getMyCv } from '@/services/cvService';
 import { getOffers } from '@/services/offersService';
 
+import { useAuthStore } from '@/stores/auth';
 import { useToastStore } from '@/stores/toast';
 
 import {
@@ -24,6 +26,25 @@ import {
 import { formatDate, uruguayDay } from '@/utils/date';
 
 const toast = useToastStore();
+const auth = useAuthStore();
+
+// Rubros que eligió el postulante (vacío = todos). Por defecto se muestran
+// solo esas ofertas, con un botón para ver todas.
+const preferred = ref<{ id: number; nombre: string }[]>([]);
+const showAll = ref(false);
+
+async function loadPreferences() {
+  if (auth.user?.role !== 'POSTULANTE') return;
+
+  try {
+    const cv = await getMyCv();
+
+    preferred.value = cv.categorias.map(({ categoria }) => categoria);
+  } catch {
+    // Sin preferencias se ve todo, como antes.
+    preferred.value = [];
+  }
+}
 
 const offers = ref<Offer[]>([]);
 const loading = ref(true);
@@ -50,7 +71,22 @@ async function loadOffers() {
   }
 }
 
-onMounted(loadOffers);
+onMounted(() => {
+  void loadOffers();
+  void loadPreferences();
+});
+
+// Si elige una categoría en el filtro, manda esa elección.
+const usingPreferences = computed(
+  () =>
+    preferred.value.length > 0 &&
+    !showAll.value &&
+    categoryFilter.value === 'TODAS',
+);
+
+const preferredNames = computed(() =>
+  preferred.value.map((category) => category.nombre).join(', '),
+);
 
 // Solo las categorías que tienen alguna oferta abierta: filtrar por una vacía
 // no mostraría nada.
@@ -104,7 +140,15 @@ const filteredOffers = computed(() => {
       modalityFilter.value === 'TODAS' ||
       offer.modalidad === modalityFilter.value;
 
-    return matchesSearch && matchesCategory && matchesModality;
+    const matchesPreferences =
+      !usingPreferences.value ||
+      offer.categorias.some(({ categoria }) =>
+        preferred.value.some((category) => category.id === categoria.id),
+      );
+
+    return (
+      matchesSearch && matchesCategory && matchesModality && matchesPreferences
+    );
   });
 });
 
@@ -216,6 +260,28 @@ function details(offer: Offer) {
       </button>
     </div>
 
+    <!-- Mis rubros -->
+    <div
+      v-if="preferred.length > 0 && categoryFilter === 'TODAS'"
+      class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-ccisj-light px-4 py-3"
+    >
+      <p class="text-sm text-slate-700">
+        <template v-if="usingPreferences">
+          Mostrando ofertas de tus rubros:
+          <span class="font-semibold text-ccisj">{{ preferredNames }}</span>
+        </template>
+        <template v-else>Mostrando todas las ofertas</template>
+      </p>
+
+      <button
+        type="button"
+        class="rounded-lg border border-ccisj bg-white px-3 py-1.5 text-sm font-semibold text-ccisj transition hover:bg-emerald-50"
+        @click="showAll = !showAll"
+      >
+        {{ usingPreferences ? 'Ver todas' : 'Ver solo mis rubros' }}
+      </button>
+    </div>
+
     <!-- Cargando -->
     <div
       v-if="loading && offers.length === 0"
@@ -273,10 +339,24 @@ function details(offer: Offer) {
         class="rounded-xl border border-slate-200 bg-white p-12 text-center"
       >
         <p class="text-sm text-slate-500">
-          Ninguna oferta coincide con esos filtros.
+          {{
+            usingPreferences && !hasFilters
+              ? 'Por ahora no hay ofertas de tus rubros.'
+              : 'Ninguna oferta coincide con esos filtros.'
+          }}
         </p>
 
         <button
+          v-if="usingPreferences && !hasFilters"
+          type="button"
+          class="mt-2 text-sm font-medium text-ccisj hover:underline"
+          @click="showAll = true"
+        >
+          Ver todas las ofertas
+        </button>
+
+        <button
+          v-else
           type="button"
           class="mt-2 text-sm font-medium text-ccisj hover:underline"
           @click="clearFilters"

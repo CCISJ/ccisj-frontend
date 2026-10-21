@@ -1,3 +1,4 @@
+import type { Cv } from './cv.type';
 import type { OfferModality, OfferStatus } from './offer.type';
 
 export type ApplicationStatus =
@@ -34,13 +35,8 @@ export const MEMBER_APPLICATION_STATES = [
 export type MemberApplicationStatus =
   (typeof MEMBER_APPLICATION_STATES)[number];
 
-export type ApplicantCv = {
-  id: number;
-  // Hoy es una ruta o URL sin validar: se enlaza solo si es https.
-  archivoUrl: string | null;
-  descripcion: string | null;
-  fechaActualizacion: string;
-};
+// El CV completo del postulante, como lo ve la empresa.
+export type ApplicantCv = Cv;
 
 /**
  * Una postulación a una oferta de la empresa del socio
@@ -57,15 +53,8 @@ export type ReceivedApplication = {
     titulo: string;
     estado: OfferStatus;
   };
-  postulante: {
-    id: number;
-    nombre: string;
-    apellido: string;
-    telefono: string | null;
-    usuario: { email: string };
-    // El más reciente primero.
-    cvs: ApplicantCv[];
-  };
+  // Datos de contacto y CV (formulario y PDF, el más reciente primero).
+  postulante: ApplicantCv;
 };
 
 /** Una postulación del postulante de la sesión (`GET /postulaciones/mias`). */
