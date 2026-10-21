@@ -389,7 +389,8 @@ async function handleRegister() {
             </p>
 
             <p class="mb-3 text-xs text-slate-400">
-              Tocá para marcar o desmarcar. Lo podés cambiar después en Mi perfil.
+              Tocá para marcar o desmarcar. Lo podés cambiar después en Mi
+              perfil.
             </p>
 
             <CategoryPicker

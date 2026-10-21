@@ -196,7 +196,11 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
     >
       <div
         class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
-        :class="cvPercent < 100 ? 'bg-amber-100 text-amber-700' : 'bg-ccisj-light text-ccisj'"
+        :class="
+          cvPercent < 100
+            ? 'bg-amber-100 text-amber-700'
+            : 'bg-ccisj-light text-ccisj'
+        "
       >
         <FileUser class="h-5 w-5" />
       </div>

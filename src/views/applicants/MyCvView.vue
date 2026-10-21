@@ -369,7 +369,9 @@ const empty = 'text-sm text-slate-400';
           </div>
 
           <div>
-            <label for="cv-nacimiento" :class="label">Fecha de nacimiento</label>
+            <label for="cv-nacimiento" :class="label"
+              >Fecha de nacimiento</label
+            >
             <input
               id="cv-nacimiento"
               v-model="form.fechaNacimiento"
@@ -432,7 +434,11 @@ const empty = 'text-sm text-slate-400';
             <p class="text-xs text-slate-400">{{ group.hint }}</p>
           </div>
 
-          <button type="button" :class="addButton" @click="addEducation(group.tipo)">
+          <button
+            type="button"
+            :class="addButton"
+            @click="addEducation(group.tipo)"
+          >
             <Plus class="h-3.5 w-3.5" /> Agregar
           </button>
         </div>
@@ -474,7 +480,7 @@ const empty = 'text-sm text-slate-400';
 
               <div>
                 <label :class="label">Desde</label>
-<input
+                <input
                   v-model="study.fechaInicio"
                   type="date"
                   :max="today"
@@ -484,7 +490,7 @@ const empty = 'text-sm text-slate-400';
 
               <div>
                 <label :class="label">Hasta</label>
-<input
+                <input
                   v-model="study.fechaFin"
                   type="date"
                   :max="today"
@@ -493,7 +499,9 @@ const empty = 'text-sm text-slate-400';
                 />
               </div>
 
-              <label class="inline-flex w-fit cursor-pointer items-center gap-2 self-center text-sm text-slate-600">
+              <label
+                class="inline-flex w-fit cursor-pointer items-center gap-2 self-center text-sm text-slate-600"
+              >
                 <input v-model="study.enCurso" type="checkbox" />
                 En curso
               </label>
@@ -554,7 +562,7 @@ const empty = 'text-sm text-slate-400';
 
               <div>
                 <label :class="label">Desde</label>
-<input
+                <input
                   v-model="job.fechaInicio"
                   type="date"
                   :max="today"
@@ -564,7 +572,7 @@ const empty = 'text-sm text-slate-400';
 
               <div>
                 <label :class="label">Hasta</label>
-<input
+                <input
                   v-model="job.fechaFin"
                   type="date"
                   :max="today"
@@ -573,7 +581,9 @@ const empty = 'text-sm text-slate-400';
                 />
               </div>
 
-              <label class="inline-flex w-fit cursor-pointer items-center gap-2 self-center text-sm text-slate-600">
+              <label
+                class="inline-flex w-fit cursor-pointer items-center gap-2 self-center text-sm text-slate-600"
+              >
                 <input v-model="job.actual" type="checkbox" />
                 Trabajo actual
               </label>
@@ -614,7 +624,11 @@ const empty = 'text-sm text-slate-400';
         <div :class="cardHeader">
           <h2 :class="cardTitle">{{ group.title }}</h2>
 
-          <button type="button" :class="addButton" @click="addReference(group.tipo)">
+          <button
+            type="button"
+            :class="addButton"
+            @click="addReference(group.tipo)"
+          >
             <Plus class="h-3.5 w-3.5" /> Agregar
           </button>
         </div>
@@ -641,7 +655,11 @@ const empty = 'text-sm text-slate-400';
             <div class="grid gap-3 pr-8 sm:grid-cols-2">
               <div>
                 <label :class="label">Nombre</label>
-                <input v-model="reference.nombre" maxlength="150" :class="input" />
+                <input
+                  v-model="reference.nombre"
+                  maxlength="150"
+                  :class="input"
+                />
               </div>
 
               <div>
@@ -744,7 +762,11 @@ const empty = 'text-sm text-slate-400';
           />
         </div>
 
-        <p v-if="files.length === 0" class="px-5 py-6 text-center" :class="empty">
+        <p
+          v-if="files.length === 0"
+          class="px-5 py-6 text-center"
+          :class="empty"
+        >
           Todavía no subiste ningún PDF.
         </p>
 

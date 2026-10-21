@@ -14,16 +14,16 @@ import {
 
 import ApplicationStatusBadge from '@/components/ApplicationStatusBadge.vue';
 
+import { getReceivedCvFileUrl, openSignedFile } from '@/services/cvService';
+
+import { useToastStore } from '@/stores/toast';
+
 import {
   APPLICATION_STATUS_LABELS,
   MEMBER_APPLICATION_STATES,
   type MemberApplicationStatus,
   type ReceivedApplication,
 } from '@/types/application.type';
-
-import { getReceivedCvFileUrl, openSignedFile } from '@/services/cvService';
-
-import { useToastStore } from '@/stores/toast';
 
 import { formatDate } from '@/utils/date';
 import { telHref } from '@/utils/url';
@@ -69,7 +69,10 @@ const cvBlocks = computed(() => {
       .filter((item) => item.tipo === tipo)
       .map((item) => ({
         main: item.titulo,
-        sub: [item.institucion, period(item.fechaInicio, item.fechaFin, item.enCurso)]
+        sub: [
+          item.institucion,
+          period(item.fechaInicio, item.fechaFin, item.enCurso),
+        ]
           .filter(Boolean)
           .join(' · '),
         detail: item.descripcion,
@@ -80,7 +83,9 @@ const cvBlocks = computed(() => {
       .filter((item) => item.tipo === tipo)
       .map((item) => ({
         main: item.nombre,
-        sub: [item.relacion, item.telefono, item.email].filter(Boolean).join(' · '),
+        sub: [item.relacion, item.telefono, item.email]
+          .filter(Boolean)
+          .join(' · '),
         detail: null,
       }));
 
@@ -288,11 +293,7 @@ const sectionTitle =
               </div>
             </dl>
 
-            <div
-              v-for="block in cvBlocks"
-              :key="block.title"
-              class="mt-4"
-            >
+            <div v-for="block in cvBlocks" :key="block.title" class="mt-4">
               <p class="mb-1.5 text-xs font-semibold text-slate-500">
                 {{ block.title }}
               </p>
