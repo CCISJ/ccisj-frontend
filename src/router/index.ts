@@ -100,6 +100,22 @@ const router = createRouter({
           },
         },
         {
+          path: 'mi-perfil',
+          name: 'mi-perfil',
+          component: () => import('@/views/applicants/MyProfileView.vue'),
+          meta: {
+            roles: ['POSTULANTE'],
+          },
+        },
+        {
+          path: 'mi-cv',
+          name: 'mi-cv',
+          component: () => import('@/views/applicants/MyCvView.vue'),
+          meta: {
+            roles: ['POSTULANTE'],
+          },
+        },
+        {
           path: 'mis-ofertas',
           name: 'mis-ofertas',
           component: () => import('@/views/offers/MyOffersView.vue'),

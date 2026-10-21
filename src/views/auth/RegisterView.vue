@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 
 import { useRoute, useRouter } from 'vue-router';
 
@@ -14,7 +14,13 @@ import {
   UserRound,
 } from 'lucide-vue-next';
 
+import CategoryPicker from '@/components/CategoryPicker.vue';
+
 import { PASSWORD_MAX, PASSWORD_MIN } from '@/services/accountService';
+import {
+  type ActiveCategory,
+  getActiveCategories,
+} from '@/services/categoriesService';
 
 import { useAuthStore } from '@/stores/auth';
 
@@ -43,6 +49,19 @@ const form = reactive({
   telefono: '',
   password: '',
   confirmPassword: '',
+  // Vacía = todas, que es lo que viene marcado.
+  categoriaIds: [] as number[],
+});
+
+const categories = ref<ActiveCategory[]>([]);
+
+// Si no cargan, el registro sigue igual y recibe todas.
+onMounted(async () => {
+  try {
+    categories.value = await getActiveCategories();
+  } catch {
+    categories.value = [];
+  }
 });
 
 const error = ref('');
@@ -65,8 +84,13 @@ const passwordChecks = computed(() => [
 ]);
 
 function validate() {
-  if (!form.nombre.trim() || !form.apellido.trim() || !form.email.trim()) {
-    return 'Completá nombre, apellido y correo electrónico.';
+  if (
+    !form.nombre.trim() ||
+    !form.apellido.trim() ||
+    !form.email.trim() ||
+    !form.telefono.trim()
+  ) {
+    return 'Completá nombre, apellido, correo electrónico y teléfono.';
   }
 
   if (passwordChecks.value.some((check) => !check.ok)) {
@@ -98,8 +122,9 @@ async function handleRegister() {
       nombre: form.nombre.trim(),
       apellido: form.apellido.trim(),
       email: form.email.trim(),
-      telefono: form.telefono.trim() || undefined,
+      telefono: form.telefono.trim(),
       password: form.password,
+      categoriaIds: form.categoriaIds,
     });
 
     await router.replace(redirectTarget());
@@ -256,7 +281,6 @@ async function handleRegister() {
               class="mb-2 block text-sm font-medium text-slate-700"
             >
               Teléfono
-              <span class="font-normal text-slate-400">(opcional)</span>
             </label>
 
             <div class="relative">
@@ -356,6 +380,24 @@ async function handleRegister() {
                 @input="error = ''"
               />
             </div>
+          </div>
+
+          <!-- Categorías -->
+          <div v-if="categories.length > 0">
+            <p class="mb-1 text-sm font-medium text-slate-700">
+              ¿De qué rubros querés recibir ofertas?
+            </p>
+
+            <p class="mb-3 text-xs text-slate-400">
+              Tocá para marcar o desmarcar. Lo podés cambiar después en Mi
+              perfil.
+            </p>
+
+            <CategoryPicker
+              v-model="form.categoriaIds"
+              :categories="categories"
+              :disabled="loading"
+            />
           </div>
 
           <!-- Error -->

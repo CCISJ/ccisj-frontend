@@ -8,6 +8,7 @@ import { storeToRefs } from 'pinia';
 import {
   Briefcase,
   ChevronRight,
+  FileUser,
   MapPin,
   RefreshCw,
   Search,
@@ -16,6 +17,7 @@ import {
 import ApplicationStatusBadge from '@/components/ApplicationStatusBadge.vue';
 
 import { getMyApplications } from '@/services/applicationsService';
+import { cvProgress, getMyCv } from '@/services/cvService';
 import { getOffers } from '@/services/offersService';
 
 import { useAuthStore } from '@/stores/auth';
@@ -34,6 +36,10 @@ const { notifications } = storeToRefs(notificationsStore);
 
 const applications = ref<OwnApplication[]>([]);
 const offers = ref<Offer[]>([]);
+// null mientras carga o si falló: en ese caso el aviso del CV no se muestra.
+const cvPercent = ref<number | null>(null);
+// Rubros elegidos (vacío = todos): "Ofertas recientes" muestra esos primero.
+const preferredIds = ref<number[]>([]);
 
 // Cada bloque carga por separado: si falla uno, el resto del Inicio se ve.
 const loading = ref(true);
@@ -46,12 +52,20 @@ const failed = ref({
 async function load() {
   loading.value = true;
 
-  const [applicationsResult, offersResult, notificationsResult] =
+  const [applicationsResult, offersResult, notificationsResult, cvResult] =
     await Promise.allSettled([
       getMyApplications(),
       getOffers(),
       notificationsStore.fetchMine(),
+      getMyCv(),
     ]);
+
+  cvPercent.value =
+    cvResult.status === 'fulfilled' ? cvProgress(cvResult.value) : null;
+  preferredIds.value =
+    cvResult.status === 'fulfilled'
+      ? cvResult.value.categorias.map(({ categoria }) => categoria.id)
+      : [];
 
   if (applicationsResult.status === 'fulfilled') {
     applications.value = applicationsResult.value;
@@ -97,7 +111,14 @@ const appliedOfferIds = computed(
 
 /** Las más nuevas primero; el backend ya manda solo las abiertas. */
 const latestOffers = computed(() =>
-  [...offers.value]
+  offers.value
+    .filter(
+      (offer) =>
+        preferredIds.value.length === 0 ||
+        offer.categorias.some(({ categoria }) =>
+          preferredIds.value.includes(categoria.id),
+        ),
+    )
     .sort((a, b) => b.fechaPublicacion.localeCompare(a.fechaPublicacion))
     .slice(0, 4),
 );
@@ -161,6 +182,59 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
         Reintentar
       </button>
     </div>
+
+    <!-- Mi CV -->
+    <RouterLink
+      v-if="cvPercent !== null"
+      :to="{ name: 'mi-cv' }"
+      class="flex items-center gap-4 rounded-xl border px-5 py-4 transition"
+      :class="
+        cvPercent < 100
+          ? 'border-amber-200 bg-amber-50 hover:bg-amber-100'
+          : 'border-slate-200 bg-white hover:bg-slate-50'
+      "
+    >
+      <div
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+        :class="
+          cvPercent < 100
+            ? 'bg-amber-100 text-amber-700'
+            : 'bg-ccisj-light text-ccisj'
+        "
+      >
+        <FileUser class="h-5 w-5" />
+      </div>
+
+      <div class="min-w-0 flex-1">
+        <p class="text-sm font-semibold text-slate-900">
+          {{ cvPercent < 100 ? 'Completá tu CV' : 'Mi CV' }}
+        </p>
+
+        <p class="text-xs text-slate-500">
+          {{
+            cvPercent < 100
+              ? `Está completo al ${cvPercent}%. Las empresas lo ven cuando te postulás.`
+              : 'Tu CV está completo. Podés actualizarlo cuando quieras.'
+          }}
+        </p>
+
+        <div
+          v-if="cvPercent < 100"
+          class="mt-2 h-1.5 max-w-xs overflow-hidden rounded-full bg-amber-100"
+        >
+          <div
+            class="h-full rounded-full bg-amber-500"
+            :style="{ width: `${cvPercent}%` }"
+          />
+        </div>
+      </div>
+
+      <span
+        class="shrink-0 rounded-lg bg-ccisj px-3 py-1.5 text-xs font-semibold text-white"
+      >
+        {{ cvPercent < 100 ? 'Completar' : 'Ver mi CV' }}
+      </span>
+    </RouterLink>
 
     <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
       <!-- Mis postulaciones -->

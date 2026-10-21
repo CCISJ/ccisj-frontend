@@ -13,8 +13,10 @@ export type RegisterData = {
   nombre: string;
   apellido: string;
   email: string;
-  telefono?: string;
+  telefono: string;
   password: string;
+  // Categorías de las que recibir ofertas; vacía = todas.
+  categoriaIds: number[];
 };
 
 export type MeResponse = {

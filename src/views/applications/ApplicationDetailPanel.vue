@@ -14,6 +14,10 @@ import {
 
 import ApplicationStatusBadge from '@/components/ApplicationStatusBadge.vue';
 
+import { getReceivedCvFileUrl, openSignedFile } from '@/services/cvService';
+
+import { useToastStore } from '@/stores/toast';
+
 import {
   APPLICATION_STATUS_LABELS,
   MEMBER_APPLICATION_STATES,
@@ -22,7 +26,9 @@ import {
 } from '@/types/application.type';
 
 import { formatDate } from '@/utils/date';
-import { safeHttpsUrl, telHref } from '@/utils/url';
+import { telHref } from '@/utils/url';
+
+const toast = useToastStore();
 
 const props = defineProps<{
   application: ReceivedApplication;
@@ -44,12 +50,70 @@ const phoneHref = computed(() =>
   telHref(props.application.postulante.telefono),
 );
 
-const cvs = computed(() =>
-  props.application.postulante.cvs.map((cv) => ({
-    ...cv,
-    href: safeHttpsUrl(cv.archivoUrl),
-  })),
-);
+const cv = computed(() => props.application.postulante);
+
+const period = (from: string | null, to: string | null, current: boolean) => {
+  if (!from && !to && !current) return '';
+
+  return `${from ? formatDate(from) : '?'} – ${
+    current ? 'Actualidad' : to ? formatDate(to) : '?'
+  }`;
+};
+
+/** El CV del formulario, listo para mostrar por bloques. */
+const cvBlocks = computed(() => {
+  const { estudios, experiencias, referencias } = cv.value;
+
+  const education = (tipo: 'CURRICULAR' | 'NO_CURRICULAR') =>
+    estudios
+      .filter((item) => item.tipo === tipo)
+      .map((item) => ({
+        main: item.titulo,
+        sub: [
+          item.institucion,
+          period(item.fechaInicio, item.fechaFin, item.enCurso),
+        ]
+          .filter(Boolean)
+          .join(' · '),
+        detail: item.descripcion,
+      }));
+
+  const references = (tipo: 'LABORAL' | 'PERSONAL') =>
+    referencias
+      .filter((item) => item.tipo === tipo)
+      .map((item) => ({
+        main: item.nombre,
+        sub: [item.relacion, item.telefono, item.email]
+          .filter(Boolean)
+          .join(' · '),
+        detail: null,
+      }));
+
+  return [
+    { title: 'Estudios curriculares', lines: education('CURRICULAR') },
+    { title: 'Estudios no curriculares', lines: education('NO_CURRICULAR') },
+    {
+      title: 'Experiencia laboral',
+      lines: experiencias.map((item) => ({
+        main: `${item.cargo} — ${item.empresa}`,
+        sub: period(item.fechaInicio, item.fechaFin, item.actual),
+        detail: item.tareas,
+      })),
+    },
+    { title: 'Referencias laborales', lines: references('LABORAL') },
+    { title: 'Referencias personales', lines: references('PERSONAL') },
+  ].filter((block) => block.lines.length > 0);
+});
+
+async function openCvFile(cvId: number) {
+  try {
+    await openSignedFile(() =>
+      getReceivedCvFileUrl(props.application.id, cvId),
+    );
+  } catch (err) {
+    toast.error(err instanceof Error ? err.message : 'Error al abrir el CV');
+  }
+}
 
 const isFinal = computed(() => props.application.estado === 'FINALIZADA');
 
@@ -218,56 +282,82 @@ const sectionTitle =
           <section>
             <h3 :class="sectionTitle">Currículum</h3>
 
-            <p v-if="cvs.length === 0" class="text-sm text-slate-400">
-              No tiene un CV cargado.
+            <dl class="space-y-1 text-sm text-slate-700">
+              <div v-if="cv.fechaNacimiento">
+                <dt class="inline text-slate-400">Nacimiento:</dt>
+                {{ formatDate(cv.fechaNacimiento) }}
+              </div>
+              <div v-if="cv.direccion">
+                <dt class="inline text-slate-400">Dirección:</dt>
+                {{ cv.direccion }}
+              </div>
+            </dl>
+
+            <div v-for="block in cvBlocks" :key="block.title" class="mt-4">
+              <p class="mb-1.5 text-xs font-semibold text-slate-500">
+                {{ block.title }}
+              </p>
+
+              <ul class="space-y-2">
+                <li
+                  v-for="(line, index) in block.lines"
+                  :key="index"
+                  class="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                >
+                  <p class="font-medium text-slate-800">{{ line.main }}</p>
+                  <p v-if="line.sub" class="text-xs text-slate-500">
+                    {{ line.sub }}
+                  </p>
+                  <p
+                    v-if="line.detail"
+                    class="mt-1 whitespace-pre-line break-words text-xs text-slate-600"
+                  >
+                    {{ line.detail }}
+                  </p>
+                </li>
+              </ul>
+            </div>
+
+            <div v-if="cv.otros" class="mt-4">
+              <p class="mb-1.5 text-xs font-semibold text-slate-500">Otros</p>
+              <p class="whitespace-pre-line break-words text-sm text-slate-700">
+                {{ cv.otros }}
+              </p>
+            </div>
+
+            <p class="mb-1.5 mt-4 text-xs font-semibold text-slate-500">
+              CV en PDF
             </p>
 
-            <ul v-else class="space-y-3">
+            <p v-if="cv.cvs.length === 0" class="text-sm text-slate-400">
+              No subió ningún PDF.
+            </p>
+
+            <ul v-else class="space-y-2">
               <li
-                v-for="(cv, index) in cvs"
-                :key="cv.id"
-                class="rounded-lg border border-slate-200 p-3"
+                v-for="file in cv.cvs"
+                :key="file.id"
+                class="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2"
               >
-                <div class="flex items-start gap-2">
-                  <FileText class="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+                <FileText class="h-4 w-4 shrink-0 text-slate-400" />
 
-                  <div class="min-w-0 flex-1">
-                    <p class="text-xs text-slate-400">
-                      Actualizado el {{ formatDate(cv.fechaActualizacion) }}
-                      <span
-                        v-if="cvs.length > 1 && index === 0"
-                        class="ml-1 font-medium text-ccisj"
-                      >
-                        · Más reciente
-                      </span>
-                    </p>
-
-                    <p
-                      v-if="cv.descripcion"
-                      class="mt-1 whitespace-pre-line break-words text-sm text-slate-700"
-                    >
-                      {{ cv.descripcion }}
-                    </p>
-
-                    <a
-                      v-if="cv.href"
-                      :href="cv.href"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-ccisj hover:underline"
-                    >
-                      Ver archivo
-                      <ExternalLink class="h-3.5 w-3.5" />
-                    </a>
-
-                    <p
-                      v-else-if="cv.archivoUrl"
-                      class="mt-2 text-xs text-slate-400"
-                    >
-                      El archivo todavía no se puede abrir desde el portal.
-                    </p>
-                  </div>
+                <div class="min-w-0 flex-1">
+                  <p class="truncate text-sm text-slate-700">
+                    {{ file.nombreArchivo ?? file.descripcion ?? 'CV' }}
+                  </p>
+                  <p class="text-xs text-slate-400">
+                    {{ formatDate(file.fechaActualizacion) }}
+                  </p>
                 </div>
+
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-1 text-sm font-medium text-ccisj hover:underline"
+                  @click="openCvFile(file.id)"
+                >
+                  Ver
+                  <ExternalLink class="h-3.5 w-3.5" />
+                </button>
               </li>
             </ul>
           </section>
