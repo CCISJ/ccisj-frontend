@@ -464,8 +464,11 @@ const empty = 'text-sm text-slate-400';
 
             <div class="grid gap-3 pr-8 sm:grid-cols-2">
               <div>
-                <label :class="label">Institución</label>
+                <label :for="`estudio-${index}-institucion`" :class="label"
+                  >Institución</label
+                >
                 <input
+                  :id="`estudio-${index}-institucion`"
                   v-model="study.institucion"
                   maxlength="150"
                   placeholder="Ej. Liceo N°1, UTEC, INEFOP"
@@ -474,13 +477,23 @@ const empty = 'text-sm text-slate-400';
               </div>
 
               <div>
-                <label :class="label">Título o curso</label>
-                <input v-model="study.titulo" maxlength="150" :class="input" />
+                <label :for="`estudio-${index}-titulo`" :class="label"
+                  >Título o curso</label
+                >
+                <input
+                  :id="`estudio-${index}-titulo`"
+                  v-model="study.titulo"
+                  maxlength="150"
+                  :class="input"
+                />
               </div>
 
               <div>
-                <label :class="label">Desde</label>
+                <label :for="`estudio-${index}-fechaInicio`" :class="label"
+                  >Desde</label
+                >
                 <input
+                  :id="`estudio-${index}-fechaInicio`"
                   v-model="study.fechaInicio"
                   type="date"
                   :max="today"
@@ -489,8 +502,11 @@ const empty = 'text-sm text-slate-400';
               </div>
 
               <div>
-                <label :class="label">Hasta</label>
+                <label :for="`estudio-${index}-fechaFin`" :class="label"
+                  >Hasta</label
+                >
                 <input
+                  :id="`estudio-${index}-fechaFin`"
                   v-model="study.fechaFin"
                   type="date"
                   :max="today"
@@ -507,8 +523,11 @@ const empty = 'text-sm text-slate-400';
               </label>
 
               <div class="sm:col-span-2">
-                <label :class="label">Detalle (opcional)</label>
+                <label :for="`estudio-${index}-descripcion`" :class="label"
+                  >Detalle (opcional)</label
+                >
                 <textarea
+                  :id="`estudio-${index}-descripcion`"
                   v-model="study.descripcion"
                   rows="2"
                   maxlength="2000"
@@ -551,18 +570,35 @@ const empty = 'text-sm text-slate-400';
 
             <div class="grid gap-3 pr-8 sm:grid-cols-2">
               <div>
-                <label :class="label">Empresa</label>
-                <input v-model="job.empresa" maxlength="150" :class="input" />
-              </div>
-
-              <div>
-                <label :class="label">Cargo</label>
-                <input v-model="job.cargo" maxlength="150" :class="input" />
-              </div>
-
-              <div>
-                <label :class="label">Desde</label>
+                <label :for="`experiencia-${index}-empresa`" :class="label"
+                  >Empresa</label
+                >
                 <input
+                  :id="`experiencia-${index}-empresa`"
+                  v-model="job.empresa"
+                  maxlength="150"
+                  :class="input"
+                />
+              </div>
+
+              <div>
+                <label :for="`experiencia-${index}-cargo`" :class="label"
+                  >Cargo</label
+                >
+                <input
+                  :id="`experiencia-${index}-cargo`"
+                  v-model="job.cargo"
+                  maxlength="150"
+                  :class="input"
+                />
+              </div>
+
+              <div>
+                <label :for="`experiencia-${index}-fechaInicio`" :class="label"
+                  >Desde</label
+                >
+                <input
+                  :id="`experiencia-${index}-fechaInicio`"
                   v-model="job.fechaInicio"
                   type="date"
                   :max="today"
@@ -571,8 +607,11 @@ const empty = 'text-sm text-slate-400';
               </div>
 
               <div>
-                <label :class="label">Hasta</label>
+                <label :for="`experiencia-${index}-fechaFin`" :class="label"
+                  >Hasta</label
+                >
                 <input
+                  :id="`experiencia-${index}-fechaFin`"
                   v-model="job.fechaFin"
                   type="date"
                   :max="today"
@@ -589,8 +628,11 @@ const empty = 'text-sm text-slate-400';
               </label>
 
               <div class="sm:col-span-2">
-                <label :class="label">Tareas</label>
+                <label :for="`experiencia-${index}-tareas`" :class="label"
+                  >Tareas</label
+                >
                 <textarea
+                  :id="`experiencia-${index}-tareas`"
                   v-model="job.tareas"
                   rows="2"
                   maxlength="2000"
@@ -654,8 +696,11 @@ const empty = 'text-sm text-slate-400';
 
             <div class="grid gap-3 pr-8 sm:grid-cols-2">
               <div>
-                <label :class="label">Nombre</label>
+                <label :for="`referencia-${index}-nombre`" :class="label"
+                  >Nombre</label
+                >
                 <input
+                  :id="`referencia-${index}-nombre`"
                   v-model="reference.nombre"
                   maxlength="150"
                   :class="input"
@@ -663,8 +708,11 @@ const empty = 'text-sm text-slate-400';
               </div>
 
               <div>
-                <label :class="label">{{ group.relation }}</label>
+                <label :for="`referencia-${index}-relacion`" :class="label">{{
+                  group.relation
+                }}</label>
                 <input
+                  :id="`referencia-${index}-relacion`"
                   v-model="reference.relacion"
                   maxlength="150"
                   :class="input"
@@ -672,8 +720,11 @@ const empty = 'text-sm text-slate-400';
               </div>
 
               <div>
-                <label :class="label">Teléfono</label>
+                <label :for="`referencia-${index}-telefono`" :class="label"
+                  >Teléfono</label
+                >
                 <input
+                  :id="`referencia-${index}-telefono`"
                   v-model="reference.telefono"
                   type="tel"
                   maxlength="50"
@@ -682,8 +733,11 @@ const empty = 'text-sm text-slate-400';
               </div>
 
               <div>
-                <label :class="label">Email</label>
+                <label :for="`referencia-${index}-email`" :class="label"
+                  >Email</label
+                >
                 <input
+                  :id="`referencia-${index}-email`"
                   v-model="reference.email"
                   type="email"
                   maxlength="255"
@@ -708,7 +762,9 @@ const empty = 'text-sm text-slate-400';
         </div>
 
         <div class="p-5">
+          <label for="cv-otros" class="sr-only">Otros</label>
           <textarea
+            id="cv-otros"
             v-model="form.otros"
             rows="4"
             maxlength="2000"
@@ -752,7 +808,9 @@ const empty = 'text-sm text-slate-400';
             {{ uploading ? 'Subiendo...' : 'Subir PDF' }}
           </button>
 
+          <label for="cv-archivos" class="sr-only">Subir CV en PDF</label>
           <input
+            id="cv-archivos"
             ref="fileInput"
             type="file"
             accept="application/pdf"
