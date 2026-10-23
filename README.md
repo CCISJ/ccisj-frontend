@@ -314,11 +314,32 @@ para evitar realizar peticiones HTTP directamente desde las vistas.
 
 # Scripts disponibles
 
-| Comando        | Descripción                          |
-| -------------- | ------------------------------------ |
-| `pnpm dev`     | Inicia Vite en modo desarrollo       |
-| `pnpm build`   | Genera el build de producción        |
-| `pnpm preview` | Ejecuta localmente el build generado |
+| Comando              | Descripción                                    |
+| -------------------- | ---------------------------------------------- |
+| `pnpm dev`           | Inicia Vite en modo desarrollo                 |
+| `pnpm build`         | Genera el build de producción                  |
+| `pnpm preview`       | Ejecuta localmente el build generado           |
+| `pnpm test`          | Corre los tests y los repite al guardar        |
+| `pnpm test:run`      | Corre los tests una vez (es lo que usa el CI)  |
+| `pnpm test:coverage` | Corre los tests y mide la cobertura            |
+
+---
+
+# Tests
+
+Los tests usan **Vitest** y **Vue Test Utils**, en un navegador simulado
+(jsdom). No necesitan el backend ni la base: los que hablan con la API reemplazan
+`fetch`, así que ninguno sale a la red.
+Van en una carpeta `__tests__/` al lado de lo que prueban, con el nombre
+`*.spec.ts`.
+
+Corren en **hora de Uruguay** (lo fija `vitest.config.ts`), para que un error
+de un día en las fechas falle también en una máquina que está en UTC.
+
+**Al agregar una ruta** en `src/router/index.ts` hay que declararla en la tabla
+`ACCESO` de `src/router/__tests__/guard.spec.ts`, con los roles que pueden
+entrar. Si no, el test falla: es a propósito, para que cada pantalla nueva
+tenga decidido quién la ve.
 
 ---
 
