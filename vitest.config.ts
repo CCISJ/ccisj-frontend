@@ -32,7 +32,8 @@ export default defineConfig({
       provider: 'v8',
       include: ['src/**/*.{ts,vue}'],
       exclude: ['src/**/__tests__/**', 'src/types/**'],
-      reporter: ['text-summary', 'lcov'],
+      // `json-summary` lo usa el CI para el resumen de cada corrida.
+      reporter: ['text-summary', 'json-summary', 'lcov'],
     },
   },
 });
