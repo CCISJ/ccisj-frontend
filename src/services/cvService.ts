@@ -76,14 +76,26 @@ export async function openSignedFile(getUrl: () => Promise<{ url: string }>) {
   }
 }
 
-/** Cuánto del CV está completo, para el aviso del Inicio. */
-export function cvProgress(cv: Cv) {
+/**
+ * Cuánto del CV del formulario está completo (4 partes de 25%). Los PDF no
+ * cuentan: son opcionales y se eligen al postularse.
+ */
+export function cvProgress(
+  cv: Pick<
+    Cv,
+    | 'telefono'
+    | 'direccion'
+    | 'fechaNacimiento'
+    | 'estudios'
+    | 'experiencias'
+    | 'referencias'
+  >,
+) {
   const steps = [
     Boolean(cv.telefono && cv.direccion && cv.fechaNacimiento),
     cv.estudios.length > 0,
     cv.experiencias.length > 0,
     cv.referencias.length > 0,
-    cv.cvs.length > 0,
   ];
 
   return Math.round((steps.filter(Boolean).length / steps.length) * 100);

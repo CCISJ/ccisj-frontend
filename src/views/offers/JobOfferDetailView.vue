@@ -8,23 +8,103 @@ import {
   Building2,
   CalendarClock,
   CalendarX,
+  CheckCircle2,
+  FileText,
   Laptop,
+  LoaderCircle,
   MapPin,
   Send,
   UserPlus,
   Users,
 } from 'lucide-vue-next';
 
+import {
+  applyToOffer,
+  getMyApplications,
+} from '@/services/applicationsService';
+import { cvProgress, getMyCv } from '@/services/cvService';
 import { getOffer } from '@/services/offersService';
 
 import { useAuthStore } from '@/stores/auth';
+import { useToastStore } from '@/stores/toast';
 
+import type { Cv } from '@/types/cv.type';
 import { OFFER_MODALITY_LABELS, type Offer } from '@/types/offer.type';
 
 import { formatDate, uruguayDay } from '@/utils/date';
 
 const route = useRoute();
 const auth = useAuthStore();
+const toast = useToastStore();
+
+const isApplicant = computed(() => auth.user?.role === 'POSTULANTE');
+
+// Postulación: el postulante elige a mano qué PDF manda (o ninguno).
+const cv = ref<Cv | null>(null);
+const alreadyApplied = ref(false);
+const message = ref('');
+// 'NINGUNO' = solo el CV del formulario; '' = todavía no eligió.
+const selectedCv = ref<number | 'NINGUNO' | ''>('');
+const applying = ref(false);
+
+const hasFormCv = computed(
+  () =>
+    !!cv.value &&
+    (cv.value.estudios.length > 0 || cv.value.experiencias.length > 0),
+);
+
+/** Lo mismo que exige el backend: un PDF o el formulario con algo. */
+const canApply = computed(
+  () => !!cv.value && (cv.value.cvs.length > 0 || hasFormCv.value),
+);
+
+async function loadApplicantData(offerId: number) {
+  if (!isApplicant.value) return;
+
+  try {
+    const [myCv, applications] = await Promise.all([
+      getMyCv(),
+      getMyApplications(),
+    ]);
+
+    cv.value = myCv;
+    alreadyApplied.value = applications.some(
+      (item) => item.oferta.id === offerId,
+    );
+    // Sin PDF no hay nada que elegir: va el formulario.
+    selectedCv.value = myCv.cvs.length === 0 ? 'NINGUNO' : '';
+  } catch {
+    cv.value = null;
+  }
+}
+
+async function apply() {
+  if (!offer.value || applying.value) return;
+
+  if (selectedCv.value === '') {
+    toast.error('Elegí qué CV querés enviar.');
+    return;
+  }
+
+  applying.value = true;
+
+  try {
+    await applyToOffer({
+      ofertaId: offer.value.id,
+      observaciones: message.value.trim() || undefined,
+      cvId: selectedCv.value === 'NINGUNO' ? null : selectedCv.value,
+    });
+
+    alreadyApplied.value = true;
+    toast.success('¡Listo! Te postulaste a esta oferta.');
+  } catch (err) {
+    toast.error(
+      err instanceof Error ? err.message : 'No se pudo enviar la postulación',
+    );
+  } finally {
+    applying.value = false;
+  }
+}
 
 const offer = ref<Offer | null>(null);
 const loading = ref(true);
@@ -52,7 +132,10 @@ async function loadOffer(id: number) {
 
 watch(
   () => Number(route.params.id),
-  (id) => loadOffer(id),
+  (id) => {
+    void loadOffer(id);
+    void loadApplicantData(id);
+  },
   { immediate: true },
 );
 
@@ -179,8 +262,8 @@ const closingLabel = computed(() => {
 
       <!--
         Sin sesión se invita a entrar o a crear la cuenta, llevando `volver`
-        para no perder la oferta que estaba mirando. Con sesión el botón sigue
-        deshabilitado hasta que la postulación esté conectada.
+        para no perder la oferta que estaba mirando. El postulante elige a mano
+        qué PDF manda (o ninguno, si completó el CV en el portal).
       -->
       <footer
         class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4"
@@ -208,21 +291,138 @@ const closingLabel = computed(() => {
           </div>
         </template>
 
-        <template v-else>
-          <p class="text-sm text-slate-500">
-            Muy pronto vas a poder postularte desde acá.
+        <!-- Socios y administración no se postulan -->
+        <p v-else-if="!isApplicant" class="text-sm text-slate-500">
+          Solo las cuentas de postulante pueden postularse a las ofertas.
+        </p>
+
+        <!-- Ya se postuló -->
+        <div
+          v-else-if="alreadyApplied"
+          class="flex w-full flex-wrap items-center justify-between gap-3"
+        >
+          <p class="flex items-center gap-2 text-sm font-medium text-ccisj">
+            <CheckCircle2 class="h-4 w-4" />
+            Ya te postulaste a esta oferta.
           </p>
 
-          <button
-            type="button"
-            disabled
-            title="Próximamente"
-            class="flex cursor-not-allowed items-center gap-2 rounded-xl bg-ccisj px-5 py-2.5 text-sm font-semibold text-white opacity-50"
+          <RouterLink
+            :to="{ name: 'mis-postulaciones' }"
+            class="text-sm font-medium text-ccisj hover:underline"
           >
-            <Send class="h-4 w-4" />
-            Postularme
-          </button>
-        </template>
+            Ver mis postulaciones
+          </RouterLink>
+        </div>
+
+        <!-- Sin CV todavía -->
+        <div
+          v-else-if="cv && !canApply"
+          class="flex w-full flex-wrap items-center justify-between gap-3"
+        >
+          <p class="text-sm text-slate-600">
+            Para postularte, completá tu CV o subí uno en PDF.
+          </p>
+
+          <RouterLink
+            :to="{ name: 'mi-cv' }"
+            class="rounded-xl bg-ccisj px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-ccisj-dark"
+          >
+            Completar mi CV
+          </RouterLink>
+        </div>
+
+        <!-- Formulario de postulación -->
+        <form v-else-if="cv" class="w-full space-y-4" @submit.prevent="apply">
+          <fieldset v-if="cv.cvs.length > 0">
+            <legend class="mb-2 text-sm font-medium text-slate-700">
+              ¿Qué CV querés enviar?
+            </legend>
+
+            <div class="space-y-2">
+              <label
+                v-for="file in cv.cvs"
+                :key="file.id"
+                class="flex cursor-pointer items-center gap-3 rounded-lg border bg-white px-3 py-2.5 text-sm transition"
+                :class="
+                  selectedCv === file.id
+                    ? 'border-ccisj bg-ccisj-light'
+                    : 'border-slate-200 hover:border-slate-300'
+                "
+              >
+                <input
+                  v-model="selectedCv"
+                  type="radio"
+                  name="cv"
+                  :value="file.id"
+                  class="accent-ccisj"
+                />
+                <FileText class="h-4 w-4 shrink-0 text-slate-400" />
+                <span class="truncate text-slate-700">
+                  {{ file.nombreArchivo ?? 'CV' }}
+                </span>
+              </label>
+
+              <label
+                v-if="hasFormCv"
+                class="flex cursor-pointer items-center gap-3 rounded-lg border bg-white px-3 py-2.5 text-sm transition"
+                :class="
+                  selectedCv === 'NINGUNO'
+                    ? 'border-ccisj bg-ccisj-light'
+                    : 'border-slate-200 hover:border-slate-300'
+                "
+              >
+                <input
+                  v-model="selectedCv"
+                  type="radio"
+                  name="cv"
+                  value="NINGUNO"
+                  class="accent-ccisj"
+                />
+                <span class="text-slate-700">
+                  No adjuntar PDF (solo mi CV cargado en el portal)
+                </span>
+              </label>
+            </div>
+          </fieldset>
+
+          <p v-else class="text-sm text-slate-500">
+            Se enviará el CV que completaste en el portal ({{ cvProgress(cv) }}%
+            completo).
+          </p>
+
+          <div>
+            <label
+              for="mensaje"
+              class="mb-1.5 block text-sm font-medium text-slate-700"
+            >
+              Mensaje para la empresa
+              <span class="font-normal text-slate-400">(opcional)</span>
+            </label>
+
+            <textarea
+              id="mensaje"
+              v-model="message"
+              rows="3"
+              maxlength="2000"
+              placeholder="Contá brevemente por qué te interesa el puesto"
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100"
+            />
+          </div>
+
+          <div class="flex justify-end">
+            <button
+              type="submit"
+              :disabled="applying || selectedCv === ''"
+              class="flex items-center gap-2 rounded-xl bg-ccisj px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-ccisj-dark disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <LoaderCircle v-if="applying" class="h-4 w-4 animate-spin" />
+              <Send v-else class="h-4 w-4" />
+              {{ applying ? 'Enviando...' : 'Postularme' }}
+            </button>
+          </div>
+        </form>
+
+        <p v-else class="text-sm text-slate-500">Cargando...</p>
       </footer>
     </article>
   </div>

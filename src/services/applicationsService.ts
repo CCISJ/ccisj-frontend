@@ -11,6 +11,18 @@ export function getMyApplications() {
   return apiFetch<OwnApplication[]>('/postulaciones/mias');
 }
 
+/** Se postula a una oferta, con el PDF que eligió (o ninguno). */
+export function applyToOffer(data: {
+  ofertaId: number;
+  observaciones?: string;
+  cvId: number | null;
+}) {
+  return apiFetch<{ id: number }>('/postulaciones', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
 /** Retira (borra) una postulación propia. */
 export function withdrawApplication(id: number) {
   return apiFetch<void>(`/postulaciones/${id}`, {

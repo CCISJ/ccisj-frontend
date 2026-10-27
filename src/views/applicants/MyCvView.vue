@@ -114,15 +114,7 @@ async function load() {
 
 onMounted(load);
 
-const progress = computed(() =>
-  cvProgress({
-    id: 0,
-    usuario: { email: email.value },
-    cvs: files.value,
-    categorias: [],
-    ...form,
-  }),
-);
+const progress = computed(() => cvProgress(form));
 
 // Listas
 
@@ -792,7 +784,8 @@ const empty = 'text-sm text-slate-400';
           <div>
             <h2 :class="cardTitle">Mis CV en PDF</h2>
             <p class="text-xs text-slate-400">
-              Podés tener varios (por ejemplo, uno por rubro). Hasta
+              Opcional. Podés tener varios (por ejemplo, uno por rubro) y elegir
+              cuál mandar en cada postulación. Hasta
               {{ CV_MAX_FILE_MB }} MB cada uno.
             </p>
           </div>

@@ -469,7 +469,7 @@ async function confirmStatusChange() {
               <!-- CV -->
               <td class="px-5 py-3.5 text-center">
                 <FileText
-                  v-if="item.postulante.cvs.length > 0"
+                  v-if="item.cv"
                   class="mx-auto h-4 w-4 text-ccisj"
                   aria-label="Tiene CV"
                 />

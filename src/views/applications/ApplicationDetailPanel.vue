@@ -326,16 +326,16 @@ const sectionTitle =
             </div>
 
             <p class="mb-1.5 mt-4 text-xs font-semibold text-slate-500">
-              CV en PDF
+              CV en PDF enviado
             </p>
 
-            <p v-if="cv.cvs.length === 0" class="text-sm text-slate-400">
-              No subió ningún PDF.
+            <p v-if="!application.cv" class="text-sm text-slate-400">
+              No adjuntó un PDF en esta postulación.
             </p>
 
             <ul v-else class="space-y-2">
               <li
-                v-for="file in cv.cvs"
+                v-for="file in [application.cv]"
                 :key="file.id"
                 class="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2"
               >
