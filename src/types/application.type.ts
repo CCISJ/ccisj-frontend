@@ -1,4 +1,4 @@
-import type { Cv } from './cv.type';
+import type { Cv, CvFile } from './cv.type';
 import type { OfferModality, OfferStatus } from './offer.type';
 
 export type ApplicationStatus =
@@ -35,8 +35,8 @@ export const MEMBER_APPLICATION_STATES = [
 export type MemberApplicationStatus =
   (typeof MEMBER_APPLICATION_STATES)[number];
 
-// El CV completo del postulante, como lo ve la empresa.
-export type ApplicantCv = Cv;
+// El CV del formulario del postulante, como lo ve la empresa (sin sus PDF).
+export type ApplicantCv = Omit<Cv, 'cvs'>;
 
 /**
  * Una postulación a una oferta de la empresa del socio
@@ -55,6 +55,8 @@ export type ReceivedApplication = {
   };
   // Datos de contacto y CV (formulario y PDF, el más reciente primero).
   postulante: ApplicantCv;
+  // El PDF que eligió mandar a esta oferta; null si no mandó ninguno.
+  cv: CvFile | null;
 };
 
 /** Una postulación del postulante de la sesión (`GET /postulaciones/mias`). */

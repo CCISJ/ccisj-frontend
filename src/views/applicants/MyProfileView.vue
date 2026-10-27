@@ -136,7 +136,7 @@ const cvSummary = computed(() => {
       value: count(cv.value.referencias.length, 'referencia', 'referencias'),
     },
     {
-      label: 'CV en PDF',
+      label: 'CV en PDF (opcional)',
       value: count(cv.value.cvs.length, 'archivo', 'archivos'),
     },
   ];
