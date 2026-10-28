@@ -148,13 +148,6 @@ async function visit(actor: Actor, url: string) {
   stubSession(actor);
   const router = await freshRouter();
 
-  // `/login` es la única pantalla que no consulta la sesión antes de
-  // mostrarse. Quien ya entró llega ahí con la sesión cargada (desde otra
-  // pantalla), así que primero se pasa por el inicio.
-  if (url === '/login' && actor !== 'anonimo') {
-    await router.push('/');
-  }
-
   await router.push(url);
 
   return router.currentRoute.value.fullPath;
@@ -210,5 +203,38 @@ describe('guard del router', () => {
 
     expect(router.currentRoute.value.fullPath).toBe('/caja');
     expect(meCalls).toBe(1);
+  });
+
+  describe('si el servidor no responde', () => {
+    function stubDown() {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async () =>
+          Response.json({ message: 'Error interno' }, { status: 500 }),
+        ),
+      );
+    }
+
+    it('una pantalla con sesión manda al login avisando el problema', async () => {
+      stubDown();
+      const router = await freshRouter();
+
+      await router.push('/socios');
+
+      expect(router.currentRoute.value.name).toBe('login');
+      expect(router.currentRoute.value.query).toMatchObject({
+        error: 'conexion',
+        volver: '/socios',
+      });
+    });
+
+    it('el login se muestra igual, sin redirigirse a sí mismo', async () => {
+      stubDown();
+      const router = await freshRouter();
+
+      await router.push('/login');
+
+      expect(router.currentRoute.value.fullPath).toBe('/login');
+    });
   });
 });
