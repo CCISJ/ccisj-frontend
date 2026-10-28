@@ -235,6 +235,16 @@ router.beforeEach(async (to) => {
         },
       };
     }
+  } else {
+    // También en el login: quien ya tiene la sesión abierta y escribe la
+    // dirección a mano va al inicio en vez de ver el formulario. Si el
+    // servidor no responde, el login se muestra igual: mandarlo de nuevo al
+    // login con `error=conexion` entraría acá otra vez, sin fin.
+    try {
+      await auth.initialize();
+    } catch {
+      // El formulario sigue sirviendo para reintentar.
+    }
   }
 
   if (!auth.isAuthenticated && !isPublic) {
