@@ -32,6 +32,8 @@ import type {
   CashSummary,
 } from '@/types/cash.type';
 
+import { formatDate } from '@/utils/date';
+
 const movements = ref<CashMovement[]>([]);
 const summary = ref<CashSummary | null>(null);
 const categories = ref<CashCategory[]>([]);
@@ -420,7 +422,7 @@ onMounted(loadCash);
               class="border-t border-slate-100"
             >
               <td class="whitespace-nowrap px-5 py-3.5 text-sm text-slate-500">
-                {{ new Date(movement.fecha).toLocaleDateString('es-UY') }}
+                {{ formatDate(movement.fecha) }}
               </td>
 
               <td class="px-5 py-3.5">
