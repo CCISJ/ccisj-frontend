@@ -61,6 +61,11 @@ async function openCv(cvId: number) {
     return;
   }
 
+  // Sin esto, el archivo abierto (lo subió el postulante) podría navegar esta
+  // pestaña con `window.opener` (reverse tabnabbing), como en
+  // `useReceiptViewer` y `openSignedFile`.
+  tab.opener = null;
+
   openingCv.value = cvId;
   pdfError.value = '';
 
