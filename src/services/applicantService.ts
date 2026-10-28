@@ -1,7 +1,6 @@
 import { apiFetch } from '@/services/api';
 
 import type {
-  Candidate,
   CandidateDetail,
   CandidateFilters,
   CandidateResponse,
