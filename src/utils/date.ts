@@ -103,3 +103,18 @@ export function todayLocal() {
 
   return `${year}-${month}-${day}`;
 }
+
+export function formatPeriod(
+  start: string | null,
+  end: string | null,
+  current: boolean,
+) {
+  const from = start ? formatMonth(start) : null;
+  const to = current ? 'Actualidad' : end ? formatMonth(end) : null;
+
+  if (from && to) return `${from} – ${to}`;
+  if (from) return `Desde ${from}`;
+  if (to) return `Hasta ${to}`;
+
+  return current ? 'Actualidad' : 'Fechas no especificadas';
+}

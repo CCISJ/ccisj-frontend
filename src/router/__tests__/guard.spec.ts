@@ -56,6 +56,7 @@ const SESIONES: Record<Actor, MeResponse['user'] | null> = {
 
 const SOCIOS: Actor[] = ['empresa', 'directivo'];
 const CON_SESION: Actor[] = ['postulante', 'empresa', 'directivo', 'admin'];
+const ADMIN_DIRECTIVOS: Actor[] = ['directivo', 'admin'];
 
 // Ruta → una URL concreta para navegar y quiénes pueden entrar.
 const ACCESO: Record<string, { url: string; entran: Actor[] }> = {
@@ -69,11 +70,27 @@ const ACCESO: Record<string, { url: string; entran: Actor[] }> = {
   'socio-editar': { url: '/socios/7/editar', entran: ['admin'] },
   'mi-empresa': { url: '/mi-empresa', entran: SOCIOS },
 
-  ofertas: { url: '/ofertas', entran: ['anonimo', 'postulante'] },
-  'oferta-detalle': { url: '/ofertas/12', entran: ['anonimo', 'postulante'] },
+  ofertas: {
+    url: '/ofertas',
+    entran: ['anonimo', 'postulante', 'admin'],
+  },
+  'oferta-detalle': {
+    url: '/ofertas/12',
+    entran: ['anonimo', 'postulante', 'admin'],
+  },
   'mis-postulaciones': { url: '/mis-postulaciones', entran: ['postulante'] },
   'mi-perfil': { url: '/mi-perfil', entran: ['postulante'] },
   'mi-cv': { url: '/mi-cv', entran: ['postulante'] },
+
+  // Buscador de candidatos: administración y socios directivos.
+  candidatos: {
+    url: '/candidatos',
+    entran: ADMIN_DIRECTIVOS,
+  },
+  'candidato-detalle': {
+    url: '/candidatos/12',
+    entran: ADMIN_DIRECTIVOS,
+  },
 
   'mis-ofertas': { url: '/mis-ofertas', entran: SOCIOS },
   'mis-ofertas-nueva': { url: '/mis-ofertas/nueva', entran: SOCIOS },

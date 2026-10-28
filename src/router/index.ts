@@ -79,7 +79,7 @@ const router = createRouter({
           component: () => import('@/views/offers/JobOffersView.vue'),
           meta: {
             publico: true,
-            roles: ['POSTULANTE'],
+            roles: ['POSTULANTE', 'ADMIN'],
           },
         },
         {
@@ -88,7 +88,7 @@ const router = createRouter({
           component: () => import('@/views/offers/JobOfferDetailView.vue'),
           meta: {
             publico: true,
-            roles: ['POSTULANTE'],
+            roles: ['POSTULANTE', 'ADMIN'],
           },
         },
         {
@@ -113,6 +113,24 @@ const router = createRouter({
           component: () => import('@/views/applicants/MyCvView.vue'),
           meta: {
             roles: ['POSTULANTE'],
+          },
+        },
+        {
+          path: 'candidatos',
+          name: 'candidatos',
+          component: () => import('@/views/applicants/CandidatesView.vue'),
+          meta: {
+            roles: ['ADMIN', 'SOCIO'],
+            directivoOnly: true,
+          },
+        },
+        {
+          path: 'candidatos/:id(\\d+)',
+          name: 'candidato-detalle',
+          component: () => import('@/views/applicants/CandidateDetailView.vue'),
+          meta: {
+            roles: ['ADMIN', 'SOCIO'],
+            directivoOnly: true,
           },
         },
         {
@@ -206,7 +224,17 @@ router.beforeEach(async (to) => {
   const isPublic = isAuthPath || to.meta.publico === true;
 
   if (to.path !== '/login') {
-    await auth.initialize();
+    try {
+      await auth.initialize();
+    } catch {
+      return {
+        name: 'login',
+        query: {
+          error: 'conexion',
+          volver: to.fullPath,
+        },
+      };
+    }
   }
 
   if (!auth.isAuthenticated && !isPublic) {

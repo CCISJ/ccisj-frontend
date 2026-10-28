@@ -15,6 +15,16 @@ export function setUnauthorizedHandler(handler: () => void) {
   unauthorizedHandler = handler;
 }
 
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number,
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
 export async function apiFetch<T>(
   endpoint: string,
   options: RequestInit = {},
@@ -49,7 +59,10 @@ export async function apiFetch<T>(
       unauthorizedHandler?.();
     }
 
-    throw new Error(error?.message ?? 'Error al comunicarse con el servidor');
+    throw new ApiError(
+      error?.message ?? 'Error al comunicarse con el servidor',
+      response.status,
+    );
   }
 
   if (response.status === 204) {
