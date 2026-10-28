@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-import { apiFetch } from '@/services/api';
+import { ApiError, apiFetch } from '@/services/api';
 
 import type { AuthUser, MeResponse, RegisterData } from '@/types/auth.type';
 
@@ -56,14 +56,13 @@ export const useAuthStore = defineStore('auth', {
         };
 
         return this.user;
-      } catch {
-        // Que esto falle es la respuesta normal a "¿hay sesión?": si
-        // `/auth/me` contesta 401, no hay nadie logueado y no hay nada que
-        // manejar. El error se descarta a propósito, no por descuido; el
-        // `catch` sin variable lo deja dicho.
-        this.user = null;
+      } catch (error) {
+        if (error instanceof ApiError && error.status === 401) {
+          this.user = null;
+          return null;
+        }
 
-        return null;
+        throw error;
       }
     },
 
@@ -73,7 +72,6 @@ export const useAuthStore = defineStore('auth', {
       }
 
       await this.fetchMe();
-
       this.initialized = true;
     },
 

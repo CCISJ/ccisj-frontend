@@ -15,6 +15,32 @@ const auth = useAuthStore();
 // Llegó acá porque la sesión dejó de valer mientras usaba el sistema.
 const sessionExpired = computed(() => route.query.sesion === 'vencida');
 
+const connectionError = computed(() => route.query.error === 'conexion');
+const retrying = ref(false);
+const retryError = ref('');
+
+async function retrySession() {
+  if (retrying.value) return;
+
+  retrying.value = true;
+  retryError.value = '';
+
+  try {
+    await auth.initialize();
+
+    if (auth.isAuthenticated) {
+      await router.replace(redirectTarget());
+    } else {
+      await router.replace({ name: 'login' });
+    }
+  } catch {
+    retryError.value =
+      'Todavía no pudimos conectar con el servidor. Intentá nuevamente.';
+  } finally {
+    retrying.value = false;
+  }
+}
+
 // A dónde volver después de entrar. Solo rutas internas: `//otro-sitio.com`
 // también empieza con "/" y llevaría afuera.
 function redirectTarget() {
@@ -110,6 +136,30 @@ async function handleLogin() {
           >
             Tu sesión se cerró. Volvé a iniciar sesión para continuar.
           </p>
+
+          <div
+            v-if="connectionError"
+            role="alert"
+            class="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+          >
+            <p>
+              No pudimos verificar tu sesión. Puede haber un problema de
+              conexión con el servidor.
+            </p>
+
+            <button
+              type="button"
+              :disabled="retrying"
+              class="mt-3 font-semibold underline disabled:opacity-50"
+              @click="retrySession"
+            >
+              {{ retrying ? 'Reintentando...' : 'Reintentar conexión' }}
+            </button>
+
+            <p v-if="retryError" class="mt-2 text-sm text-red-600">
+              {{ retryError }}
+            </p>
+          </div>
         </div>
 
         <form class="space-y-5" @submit.prevent="handleLogin">

@@ -9,7 +9,6 @@ import {
   Briefcase,
   Building2,
   ClipboardList,
-  FileText,
   FileUser,
   LayoutDashboard,
   Settings,
@@ -54,7 +53,19 @@ function isAvailable(path: string) {
 
   const roles = resolved.meta.roles as string[] | undefined;
 
-  return !roles || (!!auth.role && roles.includes(auth.role));
+  if (roles && (!auth.role || !roles.includes(auth.role))) {
+    return false;
+  }
+
+  if (
+    resolved.meta.directivoOnly &&
+    auth.role === 'SOCIO' &&
+    auth.user?.memberType !== 'DIRECTIVO'
+  ) {
+    return false;
+  }
+
+  return true;
 }
 
 const groups = computed<NavGroup[]>(() => {
@@ -85,7 +96,6 @@ const groups = computed<NavGroup[]>(() => {
               icon: UserRoundSearch,
               to: '/candidatos',
             },
-            { label: 'Postulantes', icon: UserRound, to: '/postulantes' },
           ],
         },
         {
@@ -103,6 +113,17 @@ const groups = computed<NavGroup[]>(() => {
 
       if (auth.user?.memberType === 'DIRECTIVO') {
         empresaItems.unshift({ label: 'Socios', icon: Users, to: '/socios' });
+      }
+
+      if (auth.user?.memberType === 'DIRECTIVO') {
+        empresaItems.unshift(
+          { label: 'Socios', icon: Users, to: '/socios' },
+          {
+            label: 'Buscar candidatos',
+            icon: UserRoundSearch,
+            to: '/candidatos',
+          },
+        );
       }
 
       return [
