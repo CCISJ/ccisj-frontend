@@ -41,6 +41,14 @@ Corren de a uno (`workers: 1`) y cada uno crea sus datos con un sufijo único,
 así que se pueden correr varias veces sobre la misma base. Las cuentas fijas
 son las del seed del backend (`admin@ccisj.uy`, `empresa@ccisj.uy`).
 
+## En el CI
+
+El job "E2E (Playwright)" de `.github/workflows/ci.yml` los corre en cada PR
+con Chrome, contra el `main` del backend. No es un chequeo obligatorio: un PR
+que necesita un cambio del backend todavía sin mergear va a estar en rojo
+hasta que ese cambio entre. Si falla, las capturas y trazas quedan en el
+artefacto `e2e-resultados` de la corrida.
+
 ## Cuando uno falla
 
 Queda una captura y una traza en `test-results/`. La traza muestra cada paso
