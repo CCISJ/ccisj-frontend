@@ -23,7 +23,7 @@ import type {
   RecentFeePayment,
 } from '@/types/fee.type';
 
-import { formatDate, formatDateTime, getCurrentMonth } from '@/utils/date';
+import { formatDate, getCurrentMonth, uruguayDay } from '@/utils/date';
 import { formatMoney } from '@/utils/money';
 
 const configuration = ref<FeeConfiguration | null>(null);
@@ -57,27 +57,31 @@ const totalSocios = computed(() => {
 });
 
 const nextEffectiveDate = computed(() => {
-  const currentYear = new Date().getFullYear();
+  const currentYear = Number(uruguayDay().slice(0, 4));
 
   return `${currentYear + 1}-01-01`;
 });
 
+// La vigencia es un día sin hora: llega como medianoche UTC
+// (`2027-01-01T00:00:00.000Z`). Comparada como instante con `new Date()`, la
+// del año nuevo pasaba a "Actual" el 31/12 a las 21 de Uruguay. Se comparan
+// días en texto `AAAA-MM-DD`, igual que hace el backend con el día de acá.
+function effectiveDay(item: FeeConfigurationHistory) {
+  return item.vigenciaDesde.slice(0, 10);
+}
+
 const currentConfigurationId = computed(() => {
-  const now = new Date();
+  const today = uruguayDay();
 
   const current = configurationHistory.value
-    .filter((item) => new Date(item.vigenciaDesde) <= now)
-    .sort(
-      (a, b) =>
-        new Date(b.vigenciaDesde).getTime() -
-        new Date(a.vigenciaDesde).getTime(),
-    )[0];
+    .filter((item) => effectiveDay(item) <= today)
+    .sort((a, b) => effectiveDay(b).localeCompare(effectiveDay(a)))[0];
 
   return current?.id ?? null;
 });
 
 function getConfigurationStatus(item: FeeConfigurationHistory) {
-  if (new Date(item.vigenciaDesde) > new Date()) {
+  if (effectiveDay(item) > uruguayDay()) {
     return 'FUTURO';
   }
 
@@ -499,7 +503,7 @@ onMounted(loadData);
                   <td
                     class="whitespace-nowrap px-5 py-3.5 text-xs text-slate-500"
                   >
-                    {{ formatDateTime(payment.fechaPago) }}
+                    {{ formatDate(payment.fechaPago) }}
                   </td>
                 </tr>
               </tbody>
