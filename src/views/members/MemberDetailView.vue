@@ -6,8 +6,6 @@ import { useRoute, useRouter } from 'vue-router';
 import { useReceiptViewer } from '@/composables/useReceiptViewer';
 import {
   ArrowLeft,
-  CircleCheck,
-  Clock3,
   Eye,
   Pencil,
   Plus,
@@ -18,6 +16,11 @@ import {
 import ConfirmModal from '@/components/ConfirmModal.vue';
 import FeeAdjustmentModal from '@/components/fees/FeeAdjustmentModal.vue';
 import FeePaymentModal from '@/components/fees/FeePaymentModal.vue';
+import CancelPaymentModal from '@/components/members/CancelPaymentModal.vue';
+import MemberFeeAdjustments from '@/components/members/MemberFeeAdjustments.vue';
+import MemberFeeHistory from '@/components/members/MemberFeeHistory.vue';
+import MemberFeeSummary from '@/components/members/MemberFeeSummary.vue';
+import MemberPaymentHistory from '@/components/members/MemberPaymentHistory.vue';
 
 import { feesService } from '@/services/feesService';
 import { getMember, isFullMember } from '@/services/membersService';
@@ -30,18 +33,17 @@ import type {
   Fee,
   FeeAdjustment,
   FeePayment,
-  MemberFeeSummary,
+  MemberFeeSummary as MemberFeeSummaryType,
 } from '@/types/fee.type.ts';
 import type { Member, MemberDirectoryEntry } from '@/types/member.type';
 
 import { formatDate, formatMonth } from '@/utils/date';
-import { formatMoney } from '@/utils/money';
 
 const route = useRoute();
 const router = useRouter();
 const { viewReceipt } = useReceiptViewer();
 
-const feeSummary = ref<MemberFeeSummary | null>(null);
+const feeSummary = ref<MemberFeeSummaryType | null>(null);
 const memberFees = ref<Fee[]>([]);
 const adjustmentModalOpen = ref(false);
 const feeAdjustments = ref<FeeAdjustment[]>([]);
@@ -271,50 +273,6 @@ const sections = computed(() => {
   ];
 });
 
-function feeStatusLabel() {
-  if (!feeSummary.value) return 'Sin información';
-
-  if (feeSummary.value.estado === 'AL_DIA') return 'Al día';
-  if (feeSummary.value.estado === 'PENDIENTE') return 'Pendiente';
-
-  return 'Deudor';
-}
-
-function feeStatusClass() {
-  if (!feeSummary.value) {
-    return 'bg-slate-100 text-slate-600';
-  }
-
-  if (feeSummary.value.estado === 'AL_DIA') {
-    return 'bg-emerald-50 text-emerald-700';
-  }
-
-  if (feeSummary.value.estado === 'PENDIENTE') {
-    return 'bg-amber-50 text-amber-700';
-  }
-
-  return 'bg-red-50 text-red-600';
-}
-
-function individualFeeStatusLabel(status: Fee['estado']) {
-  if (status === 'PAGADA') return 'Pagada';
-  if (status === 'ANULADA') return 'Anulada';
-
-  return 'Pendiente';
-}
-
-function individualFeeStatusClass(status: Fee['estado']) {
-  if (status === 'PAGADA') {
-    return 'bg-emerald-50 text-emerald-700';
-  }
-
-  if (status === 'ANULADA') {
-    return 'bg-slate-100 text-slate-500';
-  }
-
-  return 'bg-amber-50 text-amber-700';
-}
-
 function goBack() {
   router.push({ name: 'socios' });
 }
@@ -419,407 +377,27 @@ function goBack() {
       </div>
 
       <!-- Estado de cuenta -->
-      <section class="rounded-xl border border-slate-200 bg-white p-5">
-        <div class="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h2
-              class="text-xs font-semibold uppercase tracking-wide text-slate-400"
-            >
-              Estado de cuenta
-            </h2>
+      <MemberFeeSummary :summary="feeSummary" />
 
-            <p class="mt-1 text-sm text-slate-500">
-              Situación actual de las cuotas del socio.
-            </p>
-          </div>
-
-          <span
-            class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
-            :class="feeStatusClass()"
-          >
-            {{ feeStatusLabel() }}
-          </span>
-        </div>
-
-        <div v-if="feeSummary" class="mt-5 grid gap-4 sm:grid-cols-2">
-          <div class="rounded-xl bg-slate-50 p-4">
-            <div class="flex items-center justify-between">
-              <p class="text-xs font-medium text-slate-500">
-                Cuotas pendientes
-              </p>
-
-              <Clock3 class="h-4 w-4 text-slate-400" />
-            </div>
-
-            <p class="mt-2 text-xl font-bold text-slate-900">
-              {{ feeSummary.cuotasPendientes }}
-            </p>
-          </div>
-
-          <div class="rounded-xl bg-slate-50 p-4">
-            <div class="flex items-center justify-between">
-              <p class="text-xs font-medium text-slate-500">Deuda total</p>
-
-              <TriangleAlert
-                v-if="feeSummary.deudaTotal > 0"
-                class="h-4 w-4 text-red-500"
-              />
-
-              <CircleCheck v-else class="h-4 w-4 text-emerald-600" />
-            </div>
-
-            <p class="mt-2 text-xl font-bold text-slate-900">
-              {{ formatMoney(feeSummary.deudaTotal) }}
-            </p>
-          </div>
-        </div>
-
-        <div
-          v-else
-          class="mt-5 rounded-lg bg-slate-50 p-5 text-center text-sm text-slate-400"
-        >
-          No hay información de cuotas disponible para este socio.
-        </div>
-      </section>
-
-      <section
+      <MemberFeeAdjustments
         v-if="fullMember"
-        class="rounded-xl border border-slate-200 bg-white p-5"
-      >
-        <div class="mb-4 flex items-center justify-between">
-          <div>
-            <h2 class="text-base font-semibold text-slate-900">
-              Ajustes programados
-            </h2>
-            <p class="mt-1 text-sm text-slate-500">
-              Adicionales y descuentos aplicados a las cuotas del socio.
-            </p>
-          </div>
-        </div>
-
-        <div
-          v-if="feeAdjustments.length === 0"
-          class="rounded-lg bg-slate-50 px-4 py-6 text-center text-sm text-slate-500"
-        >
-          No hay ajustes registrados.
-        </div>
-
-        <div v-else class="divide-y divide-slate-100">
-          <div
-            v-for="adjustment in feeAdjustments"
-            :key="adjustment.id"
-            class="flex items-center justify-between gap-4 py-3"
-          >
-            <div class="min-w-0">
-              <div class="flex items-center gap-2">
-                <span
-                  class="font-semibold"
-                  :class="
-                    adjustment.tipo === 'ADICIONAL'
-                      ? 'text-red-600'
-                      : 'text-emerald-600'
-                  "
-                >
-                  {{ adjustment.tipo === 'ADICIONAL' ? '+' : '-' }}${{
-                    adjustment.importe.toLocaleString('es-UY')
-                  }}
-                </span>
-
-                <span
-                  class="rounded-full px-2 py-0.5 text-xs font-medium"
-                  :class="
-                    adjustment.tipo === 'ADICIONAL'
-                      ? 'bg-red-50 text-red-700'
-                      : 'bg-emerald-50 text-emerald-700'
-                  "
-                >
-                  {{
-                    adjustment.tipo === 'ADICIONAL' ? 'Adicional' : 'Descuento'
-                  }}
-                </span>
-              </div>
-
-              <p v-if="adjustment.motivo" class="mt-1 text-sm text-slate-600">
-                {{ adjustment.motivo }}
-              </p>
-            </div>
-
-            <div class="flex shrink-0 items-center gap-4">
-              <p class="text-sm text-slate-500">
-                {{ formatMonth(adjustment.fechaDesde) }}
-                →
-                {{
-                  adjustment.fechaHasta
-                    ? formatMonth(adjustment.fechaHasta)
-                    : 'Indefinido'
-                }}
-              </p>
-
-              <button
-                type="button"
-                class="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600"
-                title="Eliminar ajuste"
-                @click="adjustmentToDelete = adjustment"
-              >
-                <Trash2 class="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
+        :adjustments="feeAdjustments"
+        @delete="adjustmentToDelete = $event"
+      />
 
       <!-- Historial de pagos -->
-      <section
+      <MemberPaymentHistory
         v-if="fullMember"
-        class="overflow-hidden rounded-xl border border-slate-200 bg-white"
-      >
-        <div class="px-5 py-4">
-          <h2
-            class="text-xs font-semibold uppercase tracking-wide text-slate-400"
-          >
-            Historial de pagos
-          </h2>
-
-          <p class="mt-1 text-sm text-slate-500">
-            Pagos de cuotas registrados para este socio.
-          </p>
-        </div>
-
-        <div
-          v-if="feePayments.length === 0"
-          class="border-t border-slate-100 p-8 text-center text-sm text-slate-400"
-        >
-          No hay pagos registrados para este socio.
-        </div>
-
-        <div v-else class="overflow-x-auto">
-          <table class="w-full min-w-180 text-left">
-            <thead class="border-t border-slate-100 bg-slate-50">
-              <tr
-                class="text-xs font-semibold uppercase text-center tracking-wide text-slate-500"
-              >
-                <th class="px-5 py-3">Fecha</th>
-                <th class="px-5 py-3">Importe</th>
-                <th class="px-5 py-3">Medio</th>
-                <th class="px-5 py-3">Estado</th>
-                <th class="px-5 py-3">Observaciones</th>
-                <th class="px-5 py-3">Acciones</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr
-                v-for="payment in feePayments"
-                :key="payment.id"
-                class="border-t border-slate-100 text-center"
-                :class="{ 'bg-slate-50/70': payment.anulado }"
-              >
-                <td
-                  class="whitespace-nowrap px-5 py-3.5 text-sm text-slate-600"
-                >
-                  {{ formatDate(payment.fechaPago) }}
-                </td>
-
-                <td
-                  class="whitespace-nowrap px-5 py-3.5 text-sm font-semibold"
-                  :class="
-                    payment.anulado
-                      ? 'text-slate-400 line-through'
-                      : 'text-slate-800'
-                  "
-                >
-                  {{ formatMoney(payment.importe) }}
-                </td>
-
-                <td
-                  class="whitespace-nowrap px-5 py-3.5 text-sm text-slate-600"
-                >
-                  {{ payment.medioPago }}
-                </td>
-
-                <td class="px-5 py-3.5">
-                  <span
-                    v-if="payment.anulado"
-                    class="inline-flex rounded-full bg-red-50 px-2.5 py-1 text-xs font-medium text-red-600"
-                  >
-                    Anulado
-                  </span>
-
-                  <span
-                    v-else
-                    class="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700"
-                  >
-                    Registrado
-                  </span>
-                </td>
-
-                <td class="max-w-64 px-5 py-3.5 text-sm text-slate-500">
-                  <template v-if="payment.anulado">
-                    <p class="font-medium text-red-600">
-                      {{ payment.motivoAnulacion }}
-                    </p>
-
-                    <p
-                      v-if="payment.anuladoPor"
-                      class="mt-1 text-xs text-slate-400"
-                    >
-                      Anulado por {{ payment.anuladoPor.email }}
-                    </p>
-                  </template>
-
-                  <template v-else>
-                    {{ payment.observaciones || '—' }}
-                  </template>
-                </td>
-
-                <td class="px-5 py-3.5">
-                  <div
-                    v-if="
-                      payment.movimientoCaja?.comprobanteUrl || !payment.anulado
-                    "
-                    class="flex items-center justify-center gap-1"
-                  >
-                    <!-- El comprobante sigue visible en un pago anulado: es
-                         parte de su historia. -->
-                    <button
-                      v-if="payment.movimientoCaja?.comprobanteUrl"
-                      type="button"
-                      class="rounded-lg p-2 text-slate-400 transition hover:bg-ccisj-light hover:text-ccisj"
-                      title="Ver comprobante"
-                      aria-label="Ver comprobante"
-                      @click="viewReceipt(payment.movimientoCaja.id)"
-                    >
-                      <Eye class="h-4 w-4" />
-                    </button>
-
-                    <button
-                      v-if="!payment.anulado"
-                      type="button"
-                      class="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600"
-                      title="Anular pago"
-                      @click="
-                        paymentToCancel = payment;
-                        cancellationReason = '';
-                      "
-                    >
-                      <Trash2 class="h-4 w-4" />
-                    </button>
-                  </div>
-
-                  <span v-else class="text-sm text-slate-300">—</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+        :payments="feePayments"
+        @view-receipt="viewReceipt"
+        @cancel-payment="
+          paymentToCancel = $event;
+          cancellationReason = '';
+        "
+      />
 
       <!-- Historial de cuotas -->
-      <section
-        class="overflow-hidden rounded-xl border border-slate-200 bg-white"
-      >
-        <div class="px-5 py-4">
-          <h2
-            class="text-xs font-semibold uppercase tracking-wide text-slate-400"
-          >
-            Historial de cuotas
-          </h2>
-
-          <p class="mt-1 text-sm text-slate-500">
-            Cuotas generadas para este socio.
-          </p>
-        </div>
-
-        <div
-          v-if="memberFees.length === 0"
-          class="border-t border-slate-100 p-8 text-center text-sm text-slate-400"
-        >
-          No hay cuotas registradas para este socio.
-        </div>
-
-        <div v-else class="overflow-x-auto">
-          <table class="w-full min-w-180 text-left">
-            <thead class="border-t border-slate-100 bg-slate-50">
-              <tr
-                class="text-xs font-semibold uppercase tracking-wide text-slate-500"
-              >
-                <th class="px-5 py-3">Período</th>
-
-                <th class="px-5 py-3">Vencimiento</th>
-
-                <th class="px-5 py-3">Base</th>
-
-                <th class="px-5 py-3">Ajustes</th>
-
-                <th class="px-5 py-3">Total</th>
-
-                <th class="px-5 py-3">Estado</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr
-                v-for="fee in memberFees"
-                :key="fee.id"
-                class="border-t border-slate-100"
-              >
-                <td
-                  class="whitespace-nowrap px-5 py-3.5 text-sm text-slate-700"
-                >
-                  {{ formatDate(fee.periodoDesde) }}
-                  <span class="mx-1 text-slate-300">—</span>
-                  {{ formatDate(fee.periodoHasta) }}
-                </td>
-
-                <td
-                  class="whitespace-nowrap px-5 py-3.5 text-sm text-slate-500"
-                >
-                  {{ formatDate(fee.fechaVencimiento) }}
-                </td>
-
-                <td
-                  class="whitespace-nowrap px-5 py-3.5 text-sm text-slate-600"
-                >
-                  {{ formatMoney(fee.importeBase) }}
-                </td>
-
-                <td class="whitespace-nowrap px-5 py-3.5 text-sm">
-                  <span
-                    :class="
-                      fee.importeAjustes > 0
-                        ? 'text-red-600'
-                        : fee.importeAjustes < 0
-                          ? 'text-emerald-700'
-                          : 'text-slate-400'
-                    "
-                  >
-                    {{
-                      fee.importeAjustes > 0
-                        ? `+${formatMoney(fee.importeAjustes)}`
-                        : formatMoney(fee.importeAjustes)
-                    }}
-                  </span>
-                </td>
-
-                <td
-                  class="whitespace-nowrap px-5 py-3.5 text-sm font-semibold text-slate-800"
-                >
-                  {{ formatMoney(fee.importeTotal) }}
-                </td>
-
-                <td class="px-5 py-3.5">
-                  <span
-                    class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
-                    :class="individualFeeStatusClass(fee.estado)"
-                  >
-                    {{ individualFeeStatusLabel(fee.estado) }}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <MemberFeeHistory :fees="memberFees" />
 
       <!-- Fichas por tema -->
       <div
@@ -890,59 +468,15 @@ function goBack() {
       @confirm="handlePaymentConfirm"
     />
 
-    <div
-      v-if="paymentToCancel"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-    >
-      <div class="w-full max-w-md rounded-xl bg-white p-5 shadow-xl">
-        <h2 class="text-lg font-semibold text-slate-900">Anular pago</h2>
-
-        <p class="mt-1 text-sm text-slate-500">
-          El pago seguirá en el historial, pero dejará de contabilizarse en las
-          cuotas y en caja.
-        </p>
-
-        <div class="mt-4">
-          <label
-            for="payment-cancellation-reason"
-            class="mb-1.5 block text-sm font-medium text-slate-700"
-          >
-            Motivo de anulación
-          </label>
-
-          <textarea
-            id="payment-cancellation-reason"
-            v-model="cancellationReason"
-            maxlength="500"
-            rows="4"
-            class="w-full resize-none rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-ccisj focus:ring-1 focus:ring-ccisj"
-            placeholder="Ej: Pago registrado por error"
-          />
-        </div>
-
-        <div class="mt-5 flex justify-end gap-2">
-          <button
-            type="button"
-            class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
-            :disabled="cancellingPayment"
-            @click="
-              paymentToCancel = null;
-              cancellationReason = '';
-            "
-          >
-            Cancelar
-          </button>
-
-          <button
-            type="button"
-            class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
-            :disabled="cancellingPayment || !cancellationReason.trim()"
-            @click="handleCancelPayment"
-          >
-            {{ cancellingPayment ? 'Anulando...' : 'Anular pago' }}
-          </button>
-        </div>
-      </div>
-    </div>
+    <CancelPaymentModal
+      :open="paymentToCancel !== null"
+      v-model:reason="cancellationReason"
+      :loading="cancellingPayment"
+      @confirm="handleCancelPayment"
+      @close="
+        paymentToCancel = null;
+        cancellationReason = '';
+      "
+    />
   </div>
 </template>
