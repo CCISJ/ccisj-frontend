@@ -98,12 +98,6 @@ const groups = computed<NavGroup[]>(() => {
             },
           ],
         },
-        {
-          title: 'Sistema',
-          items: [
-            { label: 'Configuración', icon: Settings, to: '/configuracion' },
-          ],
-        },
       ];
 
     case 'SOCIO': {
