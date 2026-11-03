@@ -49,6 +49,21 @@ que necesita un cambio del backend todavía sin mergear va a estar en rojo
 hasta que ese cambio entre. Si falla, las capturas y trazas quedan en el
 artefacto `e2e-resultados` de la corrida.
 
+## Contra la preproducción
+
+Los mismos recorridos corren contra el sistema armado como en producción: la
+preproducción local del backend (`pnpm preprod` allá), con HTTPS, las imágenes
+de producción y la CSP real. Es la regresión de la fase 9.
+
+```bash
+E2E_URL=https://ccisj.localhost:8443 E2E_API=https://ccisj.localhost:8443/api pnpm test:e2e
+```
+
+Con `E2E_URL`, Playwright no levanta nada: usa lo que ya está corriendo y
+acepta el certificado local de Caddy. Como los recorridos **crean datos**, solo
+acepta destinos locales. Otro destino exige `E2E_DESTINO_REMOTO=1`, y tiene que
+ser un entorno de prueba, nunca la base real.
+
 ## Cuando uno falla
 
 Queda una captura y una traza en `test-results/`. La traza muestra cada paso

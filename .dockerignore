@@ -1,4 +1,13 @@
 node_modules
 dist
 .env
+.env.*
+!.env.example
 .git
+
+# Nada de esto hace falta para construir
+coverage
+test-results
+playwright-report
+CLAUDE.md
+.pnpm-store
