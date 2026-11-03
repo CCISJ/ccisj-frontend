@@ -44,7 +44,11 @@ export async function iniciarSesion(
   await page.getByLabel('Correo electrónico').fill(cuenta.email);
   await page.getByLabel('Contraseña', { exact: true }).fill(cuenta.password);
   await page.getByRole('button', { name: 'Iniciar sesión' }).click();
-  await expect(page).not.toHaveURL(/\/login/);
+
+  // Más que los 5 s por defecto: Argon2 tarda unos 2 s en verificar la
+  // contraseña, y en el primer test vite todavía compila la pantalla de
+  // inicio. Juntos llegaron a pasarse de los 5 s sin que nada anduviera mal.
+  await expect(page).not.toHaveURL(/\/login/, { timeout: 15_000 });
 }
 
 export async function cerrarSesion(page: Page, nombre: string) {
