@@ -5,8 +5,11 @@ import {
   expect,
 } from '@playwright/test';
 
-/** La API de los E2E (`pnpm e2e:api` en el backend), sobre la base de Docker. */
-export const API = 'http://localhost:3201';
+/**
+ * La API de los E2E: la de `pnpm e2e:api` en el backend, sobre la base de
+ * Docker, o la que diga E2E_API (ver `playwright.config.ts`).
+ */
+export const API = process.env.E2E_API ?? 'http://localhost:3201';
 
 // Las cuentas del seed del backend (`prisma/seed.ts`). Solo existen en la base
 // de pruebas, y la contraseña es la del seed: no protege nada real.

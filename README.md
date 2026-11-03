@@ -215,6 +215,31 @@ pnpm preview
 
 ---
 
+# Imagen de producción
+
+`Dockerfile` es la de **desarrollo**: el servidor de vite, que expone el
+código fuente. Para desplegar va `Dockerfile.prod`. Compila la app y la sirve
+con nginx sin root, con las cabeceras de seguridad de `nginx/ccisj.conf`:
+CSP estricta, HSTS, sin frames y aislamiento entre sitios.
+
+```bash
+docker build -f Dockerfile.prod --build-arg VITE_API_URL=https://<app>/api -t ccisj-web .
+```
+
+`VITE_API_URL` se fija **al construir**: vite la escribe dentro del
+JavaScript, y la CSP deja llamar solo a ese origen.
+
+La CSP es `'self'` para todo, sin `unsafe-inline`. Funciona porque la app no
+tiene scripts ni estilos en línea y no carga nada de otros sitios. **Mantenerlo
+así:** un CDN, una fuente de Google o un `style="..."` en un template se
+bloquean en producción, aunque en desarrollo anden.
+
+Para probarla con HTTPS junto a la API está la preproducción local del
+backend (`pnpm preprod`, ver `preprod/README.md` allá). Los E2E también
+corren contra ella (ver `e2e/README.md`).
+
+---
+
 # Estructura del proyecto
 
 La estructura principal del frontend es:

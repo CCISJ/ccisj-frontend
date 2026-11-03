@@ -1,0 +1,54 @@
+# Imagen de PRODUCCIÓN del frontend. La de desarrollo es `Dockerfile` (el
+# servidor de vite, que expone el código fuente y recompila en cada cambio);
+# esta compila la app y la sirve como archivos estáticos con nginx y las
+# cabeceras de seguridad de `nginx/ccisj.conf`.
+#
+#   docker build -f Dockerfile.prod --build-arg VITE_API_URL=https://api.ejemplo.uy -t ccisj-web .
+#   docker run -p 8080:8080 ccisj-web
+#
+# VITE_API_URL se fija al construir, no al arrancar: vite la escribe dentro
+# del JavaScript. Otra URL de la API es otra imagen.
+
+# --- Build -------------------------------------------------------------------
+FROM node:24-alpine AS build
+
+# Ver el comentario en `Dockerfile`.
+ENV COREPACK_HOME=/opt/corepack
+RUN corepack enable \
+  && corepack prepare pnpm@12.3.4 --activate \
+  && pnpm --version \
+  && chmod -R a+rX "$COREPACK_HOME"
+
+RUN mkdir -p /app && chown node:node /app
+WORKDIR /app
+USER node
+
+COPY --chown=node:node package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN pnpm install --frozen-lockfile
+
+COPY --chown=node:node . .
+
+# Sin URL de la API la app no funciona (las llamadas irían a
+# `undefined/...`): mejor que el build falle acá.
+ARG VITE_API_URL
+RUN test -n "$VITE_API_URL" || { echo "Falta --build-arg VITE_API_URL"; exit 1; }
+
+# `pnpm build` incluye el chequeo de tipos.
+RUN pnpm build
+
+# La CSP deja llamar solo al origen de la API (esquema, host y puerto).
+RUN ORIGEN=$(node -e "console.log(new URL(process.argv[1]).origin)" "$VITE_API_URL") \
+  && sed "s#__ORIGEN_API__#$ORIGEN#" nginx/ccisj.conf > /app/nginx.conf
+
+# --- La imagen final: nginx sin root -----------------------------------------
+# La variante "unprivileged" corre como el usuario `nginx` y escucha en el
+# 8080: no necesita root para abrir un puerto menor a 1024.
+FROM nginxinc/nginx-unprivileged:1.29-alpine
+
+COPY --from=build /app/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /usr/share/nginx/html
+
+EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+  CMD wget -q -O /dev/null http://127.0.0.1:8080/ || exit 1
