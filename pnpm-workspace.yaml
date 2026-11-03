@@ -1,0 +1,11 @@
+# Versiones forzadas en dependencias de otras dependencias, cuando la que
+# trae la corrección todavía no la pide. Sacar cada una cuando el paquete de
+# arriba se actualice solo.
+overrides:
+  # GHSA-g3hv-75wg-m249 (DoS con patrones armados, moderada). Lo traen el
+  # plugin de Prettier que ordena los imports (minimatch 9) y @vue/test-utils
+  # vía editorconfig (minimatch 10). Ninguna 9.x ni 10.x está corregida.
+  minimatch: ^11.0.1
+  # GHSA-3g3m-2fjr-6pw4 (cancelar un recorrido no lo frena, moderada). Lo
+  # trae @vue/test-utils vía js-beautify. Ninguna 13.x está corregida.
+  glob: ^14.0.2
