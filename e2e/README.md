@@ -36,6 +36,14 @@ hay algo corriendo en esos puertos, Playwright lo reutiliza.
 | `socios.spec.ts` | La administración da de alta un socio, y el socio entra con la contraseña inicial que se le mostró |
 | `cuotas.spec.ts` | Generar las cuotas del mes, pagar con tarjeta (el comprobante es obligatorio) y abrir el comprobante |
 | `postulacion.spec.ts` | Alguien se registra, sube su CV en PDF y se postula; la empresa ve la postulación y abre ese PDF |
+| `caja.spec.ts` | La administración registra un ingreso (el resumen del mes sube), le adjunta el comprobante y lo abre, y lo anula con motivo (queda en el historial y sale del resumen) |
+| `ofertas.spec.ts` | Una empresa publica una oferta; alguien sin sesión la encuentra en la bolsa de trabajo y la abre; la empresa la cierra y deja de verse, también por el enlace directo |
+| `notificaciones.spec.ts` | La administración manda un aviso importante a un socio puntual: le aparece en una ventana al entrar, queda sin leer hasta que lo abre, y otro socio no lo ve |
+
+`apoyo.ts` tiene lo que comparten: las cuentas del seed, `iniciarSesion`,
+`altaDeSocio` (por la API, devuelve la contraseña inicial), `otroNavegador`
+(otra sesión a la vez, para ver lo mismo desde dos cuentas), `abrirArchivo` e
+`importe` (lee un monto como lo muestra la pantalla).
 
 Corren de a uno (`workers: 1`) y cada uno crea sus datos con un sufijo único,
 así que se pueden correr varias veces sobre la misma base. Las cuentas fijas

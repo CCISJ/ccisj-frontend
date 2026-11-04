@@ -1,6 +1,13 @@
 import { expect, test } from '@playwright/test';
 
-import { ADMIN, API, abrirArchivo, iniciarSesion, pdf, unico } from './apoyo';
+import {
+  ADMIN,
+  abrirArchivo,
+  altaDeSocio,
+  iniciarSesion,
+  pdf,
+  unico,
+} from './apoyo';
 
 test('la administración genera las cuotas del mes y registra un pago con tarjeta y comprobante', async ({
   page,
@@ -12,26 +19,7 @@ test('la administración genera las cuotas del mes y registra un pago con tarjet
   await iniciarSesion(page, ADMIN);
 
   // El alta del socio ya tiene su propio recorrido: acá se hace por la API.
-  // `page.request` comparte las cookies de la página, o sea la sesión.
-  const alta = await page.request.post(`${API}/socios`, {
-    data: {
-      razonSocial,
-      titular: 'Juan Gómez',
-      giroComercial: 'Almacén',
-      tipo: 'COMUN',
-      rut: `22${id}`.slice(0, 12),
-      numeroBps: id.slice(-9),
-      fechaInicioEmpresa: '2010-05-01',
-      fechaAfiliacion: '2020-01-01',
-      direccion: 'Calle 2 2345',
-      ciudad: 'San José de Mayo',
-      celular: '099 111 111',
-      telefono: '4342 1111',
-      email: `almacen-${id}@e2e.test`,
-    },
-  });
-  expect(alta.ok()).toBe(true);
-  const { socioId } = (await alta.json()) as { socioId: number };
+  const { socioId } = await altaDeSocio(page.request, razonSocial);
 
   // Generar las cuotas del mes, como hace la administración cada mes. Las
   // que ya existen no se duplican, así que se puede correr varias veces.
