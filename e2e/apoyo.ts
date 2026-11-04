@@ -1,8 +1,11 @@
 import {
+  type APIRequestContext,
   type APIResponse,
+  type Browser,
   type Locator,
   type Page,
   expect,
+  test,
 } from '@playwright/test';
 
 /**
@@ -52,6 +55,70 @@ export async function iniciarSesion(
   // contraseña, y en el primer test vite todavía compila la pantalla de
   // inicio. Juntos llegaron a pasarse de los 5 s sin que nada anduviera mal.
   await expect(page).not.toHaveURL(/\/login/, { timeout: 15_000 });
+}
+
+/**
+ * Da de alta un socio por la API, con la sesión de la administración que
+ * tenga `request` (`page.request` comparte las cookies de la página). El alta
+ * por la pantalla ya tiene su propio recorrido (`socios.spec.ts`). Devuelve
+ * también la contraseña inicial, que la API muestra una sola vez.
+ */
+export async function altaDeSocio(
+  request: APIRequestContext,
+  razonSocial: string,
+) {
+  const id = unico();
+  const email = `socio-${id}@e2e.test`;
+
+  const alta = await request.post(`${API}/socios`, {
+    data: {
+      razonSocial,
+      titular: 'Juan Gómez',
+      giroComercial: 'Almacén',
+      tipo: 'COMUN',
+      // Con los últimos dígitos: los primeros son la hora y se repiten entre
+      // dos altas seguidas, y el RUT no se puede repetir.
+      rut: `22${id.slice(-10)}`,
+      numeroBps: id.slice(-9),
+      fechaInicioEmpresa: '2010-05-01',
+      fechaAfiliacion: '2020-01-01',
+      direccion: 'Calle 2 2345',
+      ciudad: 'San José de Mayo',
+      celular: '099 111 111',
+      telefono: '4342 1111',
+      email,
+    },
+  });
+  expect(alta.ok()).toBe(true);
+
+  const { socioId, passwordInicial } = (await alta.json()) as {
+    socioId: number;
+    passwordInicial: string;
+  };
+
+  return { socioId, razonSocial, email, password: passwordInicial };
+}
+
+/**
+ * Una pestaña en otro navegador, con su propia sesión: para ver lo mismo
+ * desde dos cuentas a la vez, sin cerrar e iniciar sesión cada vez.
+ */
+export async function otroNavegador(browser: Browser) {
+  const { baseURL, ignoreHTTPSErrors, locale, timezoneId } =
+    test.info().project.use;
+  const context = await browser.newContext({
+    baseURL,
+    ignoreHTTPSErrors,
+    locale,
+    timezoneId,
+  });
+
+  return context.newPage();
+}
+
+/** El número de un importe como lo muestra la pantalla ("$1.234,5"). */
+export function importe(texto: string | null) {
+  return Number((texto ?? '').replace(/[^\d,-]/g, '').replace(',', '.'));
 }
 
 export async function cerrarSesion(page: Page, nombre: string) {
