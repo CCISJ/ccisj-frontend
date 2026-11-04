@@ -4,6 +4,7 @@ import { computed, reactive, ref } from 'vue';
 import { Check, Eye, EyeOff, KeyRound, Lock, X } from 'lucide-vue-next';
 
 import {
+  PASSWORD_HINT,
   PASSWORD_MAX,
   PASSWORD_MIN,
   changePassword,
@@ -272,6 +273,12 @@ const inputClass =
                 {{ rule.label }}
               </li>
             </ul>
+            <p
+              v-if="item.field === 'nueva'"
+              class="mt-1 text-xs text-slate-400"
+            >
+              {{ PASSWORD_HINT }}
+            </p>
           </div>
 
           <p

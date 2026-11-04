@@ -16,7 +16,11 @@ import {
 
 import CategoryPicker from '@/components/CategoryPicker.vue';
 
-import { PASSWORD_MAX, PASSWORD_MIN } from '@/services/accountService';
+import {
+  PASSWORD_HINT,
+  PASSWORD_MAX,
+  PASSWORD_MIN,
+} from '@/services/accountService';
 import {
   type ActiveCategory,
   getActiveCategories,
@@ -352,6 +356,7 @@ async function handleRegister() {
                 {{ check.ok ? '✓' : '•' }} {{ check.label }}
               </li>
             </ul>
+            <p class="mt-1 text-xs text-slate-400">{{ PASSWORD_HINT }}</p>
           </div>
 
           <!-- Confirmar contraseña -->
