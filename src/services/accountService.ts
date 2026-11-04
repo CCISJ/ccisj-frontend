@@ -5,8 +5,11 @@ export type ChangePasswordData = {
   passwordNueva: string;
 };
 
-// Mismas reglas que valida el backend.
-export const PASSWORD_MIN = 10;
+// Mismas reglas que valida el backend. Que no sea fácil de adivinar lo decide
+// solo el backend (zxcvbn): la pantalla lo avisa y muestra su respuesta.
+export const PASSWORD_MIN = 12;
+export const PASSWORD_HINT =
+  'Que no sea fácil de adivinar: evitá palabras comunes, fechas, secuencias como 1234 y tus propios datos. Varias palabras sueltas juntas funcionan bien.';
 export const PASSWORD_MAX = 128;
 
 /**

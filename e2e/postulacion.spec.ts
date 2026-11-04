@@ -20,8 +20,10 @@ test('una persona se registra, sube su CV y se postula; la empresa ve la postula
     nombre: 'Lucía',
     apellido: `E2E ${id}`,
     email: `lucia-${id}@e2e.test`,
-    // Cumple la política: letras, números y más de 10 caracteres.
-    password: `Clave${id}`,
+    // Cumple la política: 12 caracteres o más, letras y números, y difícil
+    // de adivinar. Sin el `id`, que también va en el apellido y el email:
+    // una contraseña armada con los datos de la persona se rechaza.
+    password: 'Gaviota-Faro-Tilo-47',
   };
   const archivo = `cv-${id}.pdf`;
   const marca = `CV E2E ${id}`;
