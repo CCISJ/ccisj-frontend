@@ -148,7 +148,7 @@ function goBack() {
     <div>
       <button
         type="button"
-        class="mb-3 flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-ccisj"
+        class="mb-3 flex items-center gap-2 text-base font-medium text-slate-600 transition hover:text-ccisj"
         @click="router.push({ name: 'socios' })"
       >
         <ArrowLeft class="h-4 w-4" />
@@ -157,21 +157,21 @@ function goBack() {
 
       <h1 class="text-2xl font-bold text-slate-900">Editar socio</h1>
 
-      <p v-if="razonSocial" class="mt-1 text-sm text-slate-500">
+      <p v-if="razonSocial" class="mt-1 text-base text-slate-600">
         {{ razonSocial }}
       </p>
     </div>
 
     <div
       v-if="loading"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500"
+      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
     >
       Cargando socio...
     </div>
 
     <MemberForm
       v-else
-      v-model="form"
+      :model-value="form"
       mode="edit"
       :loading="saving"
       :disabled="!hasChanges"

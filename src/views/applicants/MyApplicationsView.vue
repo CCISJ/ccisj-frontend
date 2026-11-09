@@ -194,14 +194,14 @@ const withdrawMessage = computed(() => {
       <div>
         <h1 class="text-2xl font-bold text-slate-900">Mis postulaciones</h1>
 
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-base text-slate-600">
           Las ofertas a las que te postulaste y en qué estado está cada una.
         </p>
       </div>
 
       <RouterLink
         :to="{ name: 'ofertas' }"
-        class="flex items-center gap-2 rounded-xl bg-ccisj px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+        class="flex items-center gap-2 rounded-xl bg-ccisj px-4 py-2.5 text-base font-semibold text-white transition hover:opacity-90"
       >
         <Search class="h-4 w-4" />
         Buscar ofertas
@@ -215,7 +215,7 @@ const withdrawMessage = computed(() => {
     >
       <div class="relative flex-1">
         <Search
-          class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+          class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600"
         />
 
         <input
@@ -223,14 +223,14 @@ const withdrawMessage = computed(() => {
           type="search"
           placeholder="Buscar por puesto o empresa..."
           aria-label="Buscar postulaciones"
-          class="h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 outline-none transition focus:border-ccisj focus:ring-2 focus:ring-emerald-100"
+          class="h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-base text-slate-700 outline-none transition focus:border-ccisj focus:ring-2 focus:ring-emerald-100"
         />
       </div>
 
       <select
         v-model="statusFilter"
         aria-label="Filtrar por estado"
-        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 outline-none transition focus:border-ccisj"
+        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-base text-slate-600 outline-none transition focus:border-ccisj"
       >
         <option value="TODOS">Todos los estados</option>
         <option v-for="status in STATUS_ORDER" :key="status" :value="status">
@@ -241,7 +241,7 @@ const withdrawMessage = computed(() => {
       <button
         v-if="hasFilters"
         type="button"
-        class="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+        class="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-lg px-3 text-base font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-700"
         @click="clearFilters"
       >
         <X class="h-4 w-4" />
@@ -252,7 +252,7 @@ const withdrawMessage = computed(() => {
     <!-- Cargando -->
     <div
       v-if="loading && applications.length === 0"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500"
+      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
     >
       Cargando postulaciones...
     </div>
@@ -262,18 +262,18 @@ const withdrawMessage = computed(() => {
       v-else-if="applications.length === 0"
       class="rounded-xl border border-slate-200 bg-white p-12 text-center"
     >
-      <p class="text-sm font-medium text-slate-600">
+      <p class="text-base font-medium text-slate-600">
         Todavía no te postulaste a ninguna oferta
       </p>
 
-      <p class="mt-1 text-sm text-slate-400">
+      <p class="mt-1 text-base text-slate-600">
         Cuando te postules, vas a poder seguir el estado de cada postulación
         acá.
       </p>
 
       <RouterLink
         :to="{ name: 'ofertas' }"
-        class="mt-4 inline-flex text-sm font-medium text-ccisj hover:underline"
+        class="mt-4 inline-flex text-base font-medium text-ccisj hover:underline"
       >
         Ver ofertas disponibles
       </RouterLink>
@@ -284,13 +284,13 @@ const withdrawMessage = computed(() => {
       v-else-if="filteredApplications.length === 0"
       class="rounded-xl border border-slate-200 bg-white p-12 text-center"
     >
-      <p class="text-sm text-slate-500">
+      <p class="text-base text-slate-600">
         Ninguna postulación coincide con esos filtros.
       </p>
 
       <button
         type="button"
-        class="mt-2 text-sm font-medium text-ccisj hover:underline"
+        class="mt-2 text-base font-medium text-ccisj hover:underline"
         @click="clearFilters"
       >
         Limpiar filtros
@@ -311,7 +311,7 @@ const withdrawMessage = computed(() => {
             </h2>
 
             <div
-              class="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500"
+              class="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-600"
             >
               <span class="flex items-center gap-1">
                 <Building2 class="h-3.5 w-3.5" />
@@ -340,7 +340,7 @@ const withdrawMessage = computed(() => {
           <div class="flex items-center gap-2">
             <span
               v-if="item.oferta.estado === 'CERRADA'"
-              class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-500"
+              class="rounded-full bg-slate-100 px-2.5 py-1 text-sm font-medium text-slate-600"
             >
               Oferta cerrada
             </span>
@@ -351,7 +351,7 @@ const withdrawMessage = computed(() => {
 
         <p
           v-if="item.observaciones"
-          class="mt-3 line-clamp-3 rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600"
+          class="mt-3 line-clamp-3 rounded-lg bg-slate-50 px-3 py-2 text-base text-slate-600"
         >
           <span class="font-medium text-slate-700">Tu mensaje:</span>
           {{ item.observaciones }}
@@ -364,7 +364,7 @@ const withdrawMessage = computed(() => {
           <button
             v-if="canWithdraw(item)"
             type="button"
-            class="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:border-red-200 hover:bg-red-50 hover:text-red-700"
+            class="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-base font-medium text-slate-600 transition hover:border-red-200 hover:bg-red-50 hover:text-red-700"
             @click="askWithdraw(item)"
           >
             <Trash2 class="h-4 w-4" />
@@ -374,7 +374,7 @@ const withdrawMessage = computed(() => {
           <RouterLink
             v-if="item.oferta.estado === 'ACTIVA'"
             :to="{ name: 'oferta-detalle', params: { id: item.oferta.id } }"
-            class="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-ccisj transition hover:border-ccisj hover:bg-ccisj-light/40"
+            class="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-base font-medium text-ccisj transition hover:border-ccisj hover:bg-ccisj-light/40"
           >
             <ExternalLink class="h-4 w-4" />
             Ver oferta

@@ -145,7 +145,7 @@ const feeStatusClass = computed(() => {
       return 'bg-amber-50 text-amber-700';
 
     case 'DEUDOR':
-      return 'bg-red-50 text-red-600';
+      return 'bg-red-50 text-red-700';
 
     default:
       return 'bg-slate-100 text-slate-600';
@@ -382,9 +382,9 @@ const readOnlyFields = computed(() => {
 });
 
 const inputClass =
-  'w-full rounded-xl border px-3 py-2.5 text-sm outline-none transition focus:ring-2';
+  'w-full rounded-xl border px-3 py-2.5 text-base outline-none transition focus:ring-2';
 
-const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
+const labelClass = 'mb-2 block text-base font-medium text-slate-700';
 </script>
 
 <template>
@@ -392,7 +392,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
     <div>
       <h1 class="text-2xl font-bold text-slate-900">Mi empresa</h1>
 
-      <p class="mt-1 text-sm text-slate-500">
+      <p class="mt-1 text-base text-slate-600">
         Mantené al día los datos de contacto de tu empresa.
       </p>
     </div>
@@ -400,7 +400,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
     <!-- Loading -->
     <div
       v-if="loading"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500"
+      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
     >
       Cargando datos de la empresa...
     </div>
@@ -410,13 +410,13 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
       v-else-if="loadError || !socio"
       class="rounded-xl border border-red-200 bg-red-50 p-6 text-center"
     >
-      <p class="text-sm text-red-600">
+      <p class="text-base text-red-700">
         {{ loadError || 'No se encontraron los datos de tu empresa' }}
       </p>
 
       <button
         type="button"
-        class="mx-auto mt-3 flex items-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+        class="mx-auto mt-3 flex items-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-2 text-base font-medium text-red-700 transition hover:bg-red-50"
         @click="loadCompany"
       >
         <RefreshCw class="h-4 w-4" />
@@ -430,7 +430,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
         class="flex flex-wrap items-center gap-4 rounded-xl border border-slate-200 bg-white p-5"
       >
         <div
-          class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ccisj-light text-sm font-bold text-ccisj"
+          class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ccisj-light text-base font-bold text-ccisj"
         >
           {{ socio.razonSocial.slice(0, 2).toUpperCase() }}
         </div>
@@ -440,13 +440,13 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
             {{ socio.razonSocial }}
           </p>
 
-          <p class="mt-0.5 truncate text-sm text-slate-500">
+          <p class="mt-0.5 truncate text-base text-slate-600">
             {{ socio.giroComercial }}
           </p>
         </div>
 
         <span
-          class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
+          class="inline-flex rounded-full px-2.5 py-1 text-sm font-medium"
           :class="
             socio.tipo === 'DIRECTIVO'
               ? 'bg-amber-50 text-amber-700'
@@ -461,25 +461,23 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
       <section class="rounded-xl border border-slate-200 bg-white p-5">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-2">
-            <Wallet class="h-3.5 w-3.5 text-slate-400" />
+            <Wallet class="h-3.5 w-3.5 text-slate-600" />
 
-            <h2
-              class="text-xs font-semibold uppercase tracking-wide text-slate-400"
-            >
+            <h2 class="text-sm font-semibold text-slate-600">
               Estado de cuenta
             </h2>
           </div>
 
           <span
             v-if="feeSummary"
-            class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
+            class="inline-flex rounded-full px-2.5 py-1 text-sm font-medium"
             :class="feeStatusClass"
           >
             {{ feeStatusLabel }}
           </span>
         </div>
 
-        <p v-if="feeLoading" class="mt-4 text-sm text-slate-500">
+        <p v-if="feeLoading" class="mt-4 text-base text-slate-600">
           Cargando el estado de tu cuota...
         </p>
 
@@ -487,11 +485,11 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
           v-else-if="feeError"
           class="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg bg-slate-50 p-4"
         >
-          <p class="text-sm text-slate-500">{{ feeError }}</p>
+          <p class="text-base text-slate-600">{{ feeError }}</p>
 
           <button
             type="button"
-            class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+            class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-base font-medium text-slate-600 transition hover:bg-slate-50"
             @click="loadFeeStatus(socio.id)"
           >
             <RefreshCw class="h-4 w-4" />
@@ -503,11 +501,11 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
           <div class="mt-5 grid gap-4 sm:grid-cols-2">
             <div class="rounded-xl bg-slate-50 p-4">
               <div class="flex items-center justify-between">
-                <p class="text-xs font-medium text-slate-500">
+                <p class="text-sm font-medium text-slate-600">
                   Cuotas vencidas sin pagar
                 </p>
 
-                <Clock3 class="h-4 w-4 text-slate-400" />
+                <Clock3 class="h-4 w-4 text-slate-600" />
               </div>
 
               <p class="mt-2 text-xl font-bold text-slate-900">
@@ -517,14 +515,14 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
 
             <div class="rounded-xl bg-slate-50 p-4">
               <div class="flex items-center justify-between">
-                <p class="text-xs font-medium text-slate-500">Deuda vencida</p>
+                <p class="text-sm font-medium text-slate-600">Deuda vencida</p>
 
                 <TriangleAlert
                   v-if="feeSummary.deudaTotal > 0"
-                  class="h-4 w-4 text-red-500"
+                  class="h-4 w-4 text-red-700"
                 />
 
-                <CircleCheck v-else class="h-4 w-4 text-emerald-600" />
+                <CircleCheck v-else class="h-4 w-4 text-emerald-700" />
               </div>
 
               <p class="mt-2 text-xl font-bold text-slate-900">
@@ -533,7 +531,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
             </div>
           </div>
 
-          <p class="mt-5 border-t border-slate-100 pt-4 text-xs text-slate-500">
+          <p class="mt-5 border-t border-slate-100 pt-4 text-sm text-slate-600">
             {{ feeStatusHint }} Las cuotas y los pagos los registra la
             administración.
           </p>
@@ -546,9 +544,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
         novalidate
         @submit.prevent="handleSubmit"
       >
-        <h2
-          class="mb-4 text-xs font-semibold uppercase tracking-wide text-slate-400"
-        >
+        <h2 class="mb-4 text-sm font-semibold text-slate-600">
           Contacto y BPS
         </h2>
 
@@ -582,9 +578,9 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
 
             <p
               :id="`mi-empresa-${item.field}-ayuda`"
-              class="mt-1 text-xs"
+              class="mt-1 text-sm"
               :class="
-                visibleError(item.field) ? 'text-red-600' : 'text-slate-400'
+                visibleError(item.field) ? 'text-red-700' : 'text-slate-600'
               "
             >
               <template v-if="visibleError(item.field)">
@@ -594,7 +590,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
               <template v-else-if="item.field === 'email'">
                 Es el email donde el Centro Comercial se comunica con tu
                 empresa. Para iniciar sesión seguís usando
-                <span class="font-medium text-slate-500">{{
+                <span class="font-medium text-slate-600">{{
                   socio.usuario.email
                 }}</span
                 >.
@@ -608,14 +604,14 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
         <div
           class="mt-6 flex flex-wrap items-center justify-end gap-3 border-t border-slate-100 pt-4"
         >
-          <p v-if="isDirty" class="mr-auto text-xs text-slate-500">
+          <p v-if="isDirty" class="mr-auto text-sm text-slate-600">
             Tenés cambios sin guardar.
           </p>
 
           <button
             type="button"
             :disabled="!isDirty || saving"
-            class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-base font-semibold text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
             @click="discardChanges"
           >
             Descartar cambios
@@ -624,7 +620,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
           <button
             type="submit"
             :disabled="!isDirty || saving || (submitted && hasErrors)"
-            class="flex items-center gap-2 rounded-xl bg-ccisj px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+            class="flex items-center gap-2 rounded-xl bg-ccisj px-5 py-2.5 text-base font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Save class="h-4 w-4" />
 
@@ -636,11 +632,9 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
       <!-- Datos de solo lectura -->
       <div class="rounded-xl border border-slate-200 bg-white p-5">
         <div class="mb-4 flex items-center gap-2">
-          <Lock class="h-3.5 w-3.5 text-slate-400" />
+          <Lock class="h-3.5 w-3.5 text-slate-600" />
 
-          <h2
-            class="text-xs font-semibold uppercase tracking-wide text-slate-400"
-          >
+          <h2 class="text-sm font-semibold text-slate-600">
             Datos de la afiliación
           </h2>
         </div>
@@ -649,15 +643,15 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
           class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3"
         >
           <div v-for="field in readOnlyFields" :key="field.label">
-            <dt class="text-xs text-slate-400">{{ field.label }}</dt>
+            <dt class="text-sm text-slate-600">{{ field.label }}</dt>
 
-            <dd class="mt-0.5 break-words text-sm text-slate-800">
+            <dd class="mt-0.5 break-words text-base text-slate-800">
               {{ field.value || '—' }}
             </dd>
           </div>
         </dl>
 
-        <p class="mt-5 border-t border-slate-100 pt-4 text-xs text-slate-500">
+        <p class="mt-5 border-t border-slate-100 pt-4 text-sm text-slate-600">
           Estos datos los gestiona la administración del Centro Comercial. Si
           alguno no es correcto, comunicate con la administración para
           corregirlo.

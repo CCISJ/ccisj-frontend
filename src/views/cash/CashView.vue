@@ -183,7 +183,7 @@ onMounted(loadCash);
       <div>
         <h1 class="text-2xl font-bold text-slate-900">Caja</h1>
 
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-base text-slate-600">
           Gestión de ingresos y egresos de la institución.
         </p>
       </div>
@@ -191,7 +191,7 @@ onMounted(loadCash);
       <div class="flex flex-wrap gap-2">
         <button
           type="button"
-          class="flex items-center gap-2 rounded-lg border border-slate-200 px-3.5 py-2 text-sm font-semibold text-slate-600 transition hover:border-ccisj hover:bg-ccisj-light hover:text-ccisj"
+          class="flex items-center gap-2 rounded-lg border border-slate-200 px-3.5 py-2 text-base font-semibold text-slate-600 transition hover:border-ccisj hover:bg-ccisj-light hover:text-ccisj"
           @click="showCategoriesModal = true"
         >
           <Settings2 class="h-4 w-4" />
@@ -200,7 +200,7 @@ onMounted(loadCash);
 
         <button
           type="button"
-          class="flex items-center gap-2 rounded-lg border border-ccisj px-3.5 py-2 text-sm font-semibold text-ccisj transition hover:bg-ccisj-light"
+          class="flex items-center gap-2 rounded-lg border border-ccisj px-3.5 py-2 text-base font-semibold text-ccisj transition hover:bg-ccisj-light"
           @click="showRegisterMemberPaymentModal = true"
         >
           <UserRoundCheck class="h-4 w-4" />
@@ -209,7 +209,7 @@ onMounted(loadCash);
 
         <button
           type="button"
-          class="flex items-center gap-2 rounded-lg bg-ccisj px-3.5 py-2 text-sm font-semibold text-white transition"
+          class="flex items-center gap-2 rounded-lg bg-ccisj px-3.5 py-2 text-base font-semibold text-white transition"
           @click="showRegisterModal = true"
         >
           <Plus class="h-4 w-4" />
@@ -220,7 +220,7 @@ onMounted(loadCash);
 
     <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <div class="rounded-xl border border-slate-200 bg-white p-5">
-        <p class="text-sm font-medium text-slate-500">Ingresos del mes</p>
+        <p class="text-base font-medium text-slate-600">Ingresos del mes</p>
 
         <p class="mt-2 text-2xl font-bold text-emerald-700">
           ${{ Number(summary?.ingresos ?? 0).toLocaleString('es-UY') }}
@@ -228,20 +228,20 @@ onMounted(loadCash);
       </div>
 
       <div class="rounded-xl border border-slate-200 bg-white p-5">
-        <p class="text-sm font-medium text-slate-500">Egresos del mes</p>
+        <p class="text-base font-medium text-slate-600">Egresos del mes</p>
 
-        <p class="mt-2 text-2xl font-bold text-red-600">
+        <p class="mt-2 text-2xl font-bold text-red-700">
           ${{ Number(summary?.egresos ?? 0).toLocaleString('es-UY') }}
         </p>
       </div>
 
       <div class="rounded-xl border border-slate-200 bg-white p-5">
-        <p class="text-sm font-medium text-slate-500">Balance del mes</p>
+        <p class="text-base font-medium text-slate-600">Balance del mes</p>
 
         <p
           class="mt-2 text-2xl font-bold"
           :class="
-            (summary?.balance ?? 0) >= 0 ? 'text-emerald-700' : 'text-red-600'
+            (summary?.balance ?? 0) >= 0 ? 'text-emerald-700' : 'text-red-700'
           "
         >
           ${{ Number(summary?.balance ?? 0).toLocaleString('es-UY') }}
@@ -249,7 +249,7 @@ onMounted(loadCash);
       </div>
 
       <div class="rounded-xl border border-slate-200 bg-white p-5">
-        <p class="text-sm font-medium text-slate-500">Movimientos del mes</p>
+        <p class="text-base font-medium text-slate-600">Movimientos del mes</p>
 
         <p class="mt-2 text-2xl font-bold text-slate-900">
           {{ summary?.cantidadMovimientos ?? 0 }}
@@ -263,7 +263,7 @@ onMounted(loadCash);
       <div class="border-b border-slate-100 px-5 py-4">
         <h2 class="font-semibold text-slate-900">Movimientos</h2>
 
-        <p class="mt-0.5 text-xs text-slate-400">
+        <p class="mt-0.5 text-sm text-slate-600">
           Historial de ingresos y egresos registrados
         </p>
       </div>
@@ -273,7 +273,7 @@ onMounted(loadCash);
           <div>
             <label
               for="cash-desde"
-              class="mb-1 block text-xs font-medium text-slate-500"
+              class="mb-1 block text-sm font-medium text-slate-600"
             >
               Desde
             </label>
@@ -282,14 +282,14 @@ onMounted(loadCash);
               id="cash-desde"
               v-model="filters.desde"
               type="date"
-              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-ccisj"
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-base text-slate-700 outline-none transition focus:border-ccisj"
             />
           </div>
 
           <div>
             <label
               for="cash-hasta"
-              class="mb-1 block text-xs font-medium text-slate-500"
+              class="mb-1 block text-sm font-medium text-slate-600"
             >
               Hasta
             </label>
@@ -298,14 +298,14 @@ onMounted(loadCash);
               id="cash-hasta"
               v-model="filters.hasta"
               type="date"
-              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-ccisj"
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-base text-slate-700 outline-none transition focus:border-ccisj"
             />
           </div>
 
           <div>
             <label
               for="cash-tipo"
-              class="mb-1 block text-xs font-medium text-slate-500"
+              class="mb-1 block text-sm font-medium text-slate-600"
             >
               Tipo
             </label>
@@ -313,7 +313,7 @@ onMounted(loadCash);
             <select
               id="cash-tipo"
               v-model="filters.tipo"
-              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-ccisj"
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-base text-slate-700 outline-none transition focus:border-ccisj"
             >
               <option :value="undefined">Todos</option>
               <option value="INGRESO">Ingresos</option>
@@ -324,7 +324,7 @@ onMounted(loadCash);
           <div>
             <label
               for="cash-categoria"
-              class="mb-1 block text-xs font-medium text-slate-500"
+              class="mb-1 block text-sm font-medium text-slate-600"
             >
               Categoría
             </label>
@@ -332,7 +332,7 @@ onMounted(loadCash);
             <select
               id="cash-categoria"
               v-model="filters.categoriaId"
-              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-ccisj"
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-base text-slate-700 outline-none transition focus:border-ccisj"
             >
               <option :value="undefined">Todas</option>
 
@@ -349,7 +349,7 @@ onMounted(loadCash);
           <div>
             <label
               for="cash-concepto"
-              class="mb-1 block text-xs font-medium text-slate-500"
+              class="mb-1 block text-sm font-medium text-slate-600"
             >
               Concepto
             </label>
@@ -359,7 +359,7 @@ onMounted(loadCash);
               v-model="filters.buscar"
               type="text"
               placeholder="Buscar..."
-              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj"
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-base text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj"
               @keyup.enter="loadCash"
             />
           </div>
@@ -368,7 +368,7 @@ onMounted(loadCash);
         <div class="mt-3 flex justify-end gap-2">
           <button
             type="button"
-            class="rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+            class="rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-base font-medium text-slate-600 transition hover:bg-slate-50"
             @click="clearFilters"
           >
             Limpiar
@@ -376,7 +376,7 @@ onMounted(loadCash);
 
           <button
             type="button"
-            class="rounded-lg bg-ccisj px-3.5 py-2 text-sm font-semibold text-white transition"
+            class="rounded-lg bg-ccisj px-3.5 py-2 text-base font-semibold text-white transition"
             @click="loadCash"
           >
             Aplicar filtros
@@ -384,13 +384,13 @@ onMounted(loadCash);
         </div>
       </div>
 
-      <div v-if="loading" class="p-10 text-center text-sm text-slate-400">
+      <div v-if="loading" class="p-10 text-center text-base text-slate-600">
         Cargando movimientos...
       </div>
 
       <div
         v-else-if="movements.length === 0"
-        class="p-10 text-center text-sm text-slate-400"
+        class="p-10 text-center text-base text-slate-600"
       >
         No hay movimientos registrados.
       </div>
@@ -398,9 +398,7 @@ onMounted(loadCash);
       <div v-else class="max-h-80 overflow-auto">
         <table class="w-full text-center">
           <thead class="sticky top-0 z-10 bg-slate-50">
-            <tr
-              class="text-xs font-semibold uppercase tracking-wide text-slate-500"
-            >
+            <tr class="text-sm font-semibold text-slate-600">
               <th class="px-5 py-3">Fecha</th>
 
               <th class="px-5 py-3">Concepto</th>
@@ -421,25 +419,27 @@ onMounted(loadCash);
               :key="movement.id"
               class="border-t border-slate-100"
             >
-              <td class="whitespace-nowrap px-5 py-3.5 text-sm text-slate-500">
+              <td
+                class="whitespace-nowrap px-5 py-3.5 text-base text-slate-600"
+              >
                 {{ formatDate(movement.fecha) }}
               </td>
 
               <td class="px-5 py-3.5">
-                <p class="text-sm font-medium text-slate-800">
+                <p class="text-base font-medium text-slate-800">
                   {{ movement.concepto }}
                 </p>
 
                 <p
                   v-if="movement.observaciones"
-                  class="mt-0.5 max-w-xs truncate text-xs text-slate-400"
+                  class="mt-0.5 max-w-xs truncate text-sm text-slate-600"
                 >
                   {{ movement.observaciones }}
                 </p>
               </td>
 
               <td class="px-5 py-3.5">
-                <span class="text-sm text-slate-600">
+                <span class="text-base text-slate-600">
                   {{ movement.categoria.nombre }}
                 </span>
               </td>
@@ -447,25 +447,25 @@ onMounted(loadCash);
               <td class="px-5 py-3.5">
                 <span
                   v-if="movement.tipo === 'INGRESO'"
-                  class="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700"
+                  class="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-sm font-medium text-emerald-700"
                 >
                   Ingreso
                 </span>
 
                 <span
                   v-else
-                  class="inline-flex rounded-full bg-red-50 px-2.5 py-1 text-xs font-medium text-red-600"
+                  class="inline-flex rounded-full bg-red-50 px-2.5 py-1 text-sm font-medium text-red-700"
                 >
                   Egreso
                 </span>
               </td>
 
               <td
-                class="whitespace-nowrap px-5 py-3.5 t text-sm font-semibold"
+                class="whitespace-nowrap px-5 py-3.5 t text-base font-semibold"
                 :class="
                   movement.tipo === 'INGRESO'
                     ? 'text-emerald-700'
-                    : 'text-red-600'
+                    : 'text-red-700'
                 "
               >
                 {{ movement.tipo === 'INGRESO' ? '+' : '-' }}
@@ -476,7 +476,7 @@ onMounted(loadCash);
                 <div class="flex flex-wrap items-center justify-center gap-2">
                   <span
                     v-if="movement.anulado"
-                    class="rounded-md bg-slate-100 px-2.5 py-1.5 text-xs font-medium text-slate-500"
+                    class="rounded-md bg-slate-100 px-2.5 py-1.5 text-sm font-medium text-slate-600"
                   >
                     Anulado
                   </span>
@@ -484,7 +484,7 @@ onMounted(loadCash);
                   <button
                     v-else-if="!movement.pagoCuota"
                     type="button"
-                    class="rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-100"
+                    class="rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 transition hover:bg-red-100"
                     @click="movementToCancel = movement"
                   >
                     Anular
@@ -493,7 +493,7 @@ onMounted(loadCash);
                   <button
                     v-if="movement.comprobanteUrl"
                     type="button"
-                    class="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:border-ccisj hover:bg-ccisj-light hover:text-ccisj"
+                    class="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-ccisj hover:bg-ccisj-light hover:text-ccisj"
                     @click="viewReceipt(movement.id)"
                   >
                     <Eye class="h-3.5 w-3.5" />
@@ -504,7 +504,7 @@ onMounted(loadCash);
                     v-if="!movement.anulado"
                     type="button"
                     :disabled="uploadingReceiptId === movement.id"
-                    class="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:border-ccisj hover:bg-ccisj-light hover:text-ccisj disabled:opacity-50"
+                    class="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-ccisj hover:bg-ccisj-light hover:text-ccisj disabled:opacity-50"
                     @click="selectReceipt(movement.id)"
                   >
                     <Paperclip class="h-3.5 w-3.5" />
@@ -554,17 +554,17 @@ onMounted(loadCash);
       <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
         <h2 class="text-lg font-semibold text-slate-900">Anular movimiento</h2>
 
-        <p class="mt-2 text-sm text-slate-500">
+        <p class="mt-2 text-base text-slate-600">
           El movimiento permanecerá en el historial, pero dejará de
           contabilizarse en Caja.
         </p>
 
         <div class="mt-4 rounded-lg bg-slate-50 p-3">
-          <p class="text-sm font-medium text-slate-800">
+          <p class="text-base font-medium text-slate-800">
             {{ movementToCancel.concepto }}
           </p>
 
-          <p class="mt-1 text-sm text-slate-500">
+          <p class="mt-1 text-base text-slate-600">
             ${{ Number(movementToCancel.importe).toLocaleString('es-UY') }}
           </p>
         </div>
@@ -572,7 +572,7 @@ onMounted(loadCash);
         <div class="mt-4">
           <label
             for="cash-motivo-de-anulacion"
-            class="mb-1 block text-sm font-medium text-slate-700"
+            class="mb-1 block text-base font-medium text-slate-700"
           >
             Motivo de anulación
           </label>
@@ -583,14 +583,14 @@ onMounted(loadCash);
             rows="3"
             maxlength="500"
             placeholder="Ej: Importe registrado incorrectamente"
-            class="w-full resize-none rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-ccisj"
+            class="w-full resize-none rounded-lg border border-slate-200 px-3 py-2 text-base text-slate-700 outline-none transition focus:border-ccisj"
           />
         </div>
 
         <div class="mt-5 flex justify-end gap-2">
           <button
             type="button"
-            class="rounded-lg border border-slate-200 px-3.5 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+            class="rounded-lg border border-slate-200 px-3.5 py-2 text-base font-medium text-slate-600 transition hover:bg-slate-50"
             :disabled="cancelling"
             @click="
               movementToCancel = null;
@@ -602,7 +602,7 @@ onMounted(loadCash);
 
           <button
             type="button"
-            class="rounded-lg bg-red-600 px-3.5 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-50"
+            class="rounded-lg bg-red-600 px-3.5 py-2 text-base font-semibold text-white transition hover:bg-red-700 disabled:opacity-50"
             :disabled="cancelling"
             @click="handleCancelMovement"
           >

@@ -196,7 +196,7 @@ function details(offer: Offer) {
     <div>
       <h1 class="text-2xl font-bold text-slate-900">Ofertas laborales</h1>
 
-      <p class="mt-1 text-sm text-slate-500">
+      <p class="mt-1 text-base text-slate-600">
         Ofertas abiertas de las empresas socias del Centro Comercial.
       </p>
     </div>
@@ -207,7 +207,7 @@ function details(offer: Offer) {
     >
       <div class="relative flex-1">
         <Search
-          class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+          class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600"
         />
 
         <input
@@ -215,14 +215,14 @@ function details(offer: Offer) {
           type="search"
           placeholder="Buscar por puesto, empresa, categoría o ubicación..."
           aria-label="Buscar ofertas"
-          class="h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 outline-none transition focus:border-ccisj focus:ring-2 focus:ring-emerald-100"
+          class="h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-base text-slate-700 outline-none transition focus:border-ccisj focus:ring-2 focus:ring-emerald-100"
         />
       </div>
 
       <select
         v-model="categoryFilter"
         aria-label="Filtrar por categoría"
-        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 outline-none transition focus:border-ccisj"
+        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-base text-slate-600 outline-none transition focus:border-ccisj"
       >
         <option value="TODAS">Todas las categorías</option>
         <option
@@ -237,7 +237,7 @@ function details(offer: Offer) {
       <select
         v-model="modalityFilter"
         aria-label="Filtrar por modalidad"
-        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 outline-none transition focus:border-ccisj"
+        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-base text-slate-600 outline-none transition focus:border-ccisj"
       >
         <option value="TODAS">Todas las modalidades</option>
         <option
@@ -252,7 +252,7 @@ function details(offer: Offer) {
       <button
         v-if="hasFilters"
         type="button"
-        class="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+        class="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-lg px-3 text-base font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-700"
         @click="clearFilters"
       >
         <X class="h-4 w-4" />
@@ -265,7 +265,7 @@ function details(offer: Offer) {
       v-if="preferred.length > 0 && categoryFilter === 'TODAS'"
       class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-ccisj-light px-4 py-3"
     >
-      <p class="text-sm text-slate-700">
+      <p class="text-base text-slate-700">
         <template v-if="usingPreferences">
           Mostrando ofertas de tus rubros:
           <span class="font-semibold text-ccisj">{{ preferredNames }}</span>
@@ -275,7 +275,7 @@ function details(offer: Offer) {
 
       <button
         type="button"
-        class="rounded-lg border border-ccisj bg-white px-3 py-1.5 text-sm font-semibold text-ccisj transition hover:bg-emerald-50"
+        class="rounded-lg border border-ccisj bg-white px-3 py-1.5 text-base font-semibold text-ccisj transition hover:bg-emerald-50"
         @click="showAll = !showAll"
       >
         {{ usingPreferences ? 'Ver todas' : 'Ver solo mis rubros' }}
@@ -285,7 +285,7 @@ function details(offer: Offer) {
     <!-- Cargando -->
     <div
       v-if="loading && offers.length === 0"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500"
+      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
     >
       Cargando ofertas...
     </div>
@@ -295,13 +295,13 @@ function details(offer: Offer) {
       v-else-if="loadError && offers.length === 0"
       class="rounded-xl border border-slate-200 bg-white p-12 text-center"
     >
-      <p class="text-sm font-medium text-slate-600">
+      <p class="text-base font-medium text-slate-600">
         No se pudieron cargar las ofertas
       </p>
 
       <button
         type="button"
-        class="mt-3 text-sm font-medium text-ccisj hover:underline"
+        class="mt-3 text-base font-medium text-ccisj hover:underline"
         @click="loadOffers"
       >
         Intentar de nuevo
@@ -315,18 +315,18 @@ function details(offer: Offer) {
     >
       <Briefcase class="mx-auto h-8 w-8 text-slate-300" />
 
-      <p class="mt-3 text-sm font-medium text-slate-600">
+      <p class="mt-3 text-base font-medium text-slate-600">
         No hay ofertas abiertas en este momento
       </p>
 
-      <p class="mt-1 text-sm text-slate-400">
+      <p class="mt-1 text-base text-slate-600">
         Volvé a revisar más adelante: las empresas publican ofertas nuevas
         seguido.
       </p>
     </div>
 
     <template v-else>
-      <p class="text-sm text-slate-500">
+      <p class="text-base text-slate-600">
         {{ filteredOffers.length }}
         {{
           filteredOffers.length === 1 ? 'oferta abierta' : 'ofertas abiertas'
@@ -338,7 +338,7 @@ function details(offer: Offer) {
         v-if="filteredOffers.length === 0"
         class="rounded-xl border border-slate-200 bg-white p-12 text-center"
       >
-        <p class="text-sm text-slate-500">
+        <p class="text-base text-slate-600">
           {{
             usingPreferences && !hasFilters
               ? 'Por ahora no hay ofertas de tus rubros.'
@@ -349,7 +349,7 @@ function details(offer: Offer) {
         <button
           v-if="usingPreferences && !hasFilters"
           type="button"
-          class="mt-2 text-sm font-medium text-ccisj hover:underline"
+          class="mt-2 text-base font-medium text-ccisj hover:underline"
           @click="showAll = true"
         >
           Ver todas las ofertas
@@ -358,7 +358,7 @@ function details(offer: Offer) {
         <button
           v-else
           type="button"
-          class="mt-2 text-sm font-medium text-ccisj hover:underline"
+          class="mt-2 text-base font-medium text-ccisj hover:underline"
           @click="clearFilters"
         >
           Limpiar filtros
@@ -377,24 +377,24 @@ function details(offer: Offer) {
 
               <span
                 v-if="closingLabel(offer)"
-                class="shrink-0 rounded-full px-2.5 py-1 text-xs font-medium"
+                class="shrink-0 rounded-full px-2.5 py-1 text-sm font-medium"
                 :class="
                   closesToday(offer)
                     ? 'bg-amber-50 text-amber-700'
-                    : 'bg-slate-100 text-slate-500'
+                    : 'bg-slate-100 text-slate-600'
                 "
               >
                 {{ closingLabel(offer) }}
               </span>
             </div>
 
-            <p class="mt-1 flex items-center gap-1.5 text-sm text-slate-600">
-              <Building2 class="h-4 w-4 shrink-0 text-slate-400" />
+            <p class="mt-1 flex items-center gap-1.5 text-base text-slate-600">
+              <Building2 class="h-4 w-4 shrink-0 text-slate-600" />
               {{ offer.socio.razonSocial }}
             </p>
 
             <div
-              class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500"
+              class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-600"
             >
               <span v-if="details(offer)" class="flex items-center gap-1">
                 <MapPin class="h-3.5 w-3.5" />
@@ -413,7 +413,7 @@ function details(offer: Offer) {
               </span>
             </div>
 
-            <p class="mt-3 line-clamp-2 text-sm text-slate-500">
+            <p class="mt-3 line-clamp-2 text-base text-slate-600">
               {{ offer.descripcion }}
             </p>
 

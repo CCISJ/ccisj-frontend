@@ -22,7 +22,7 @@ const emit = defineEmits<{
           Ajustes programados
         </h2>
 
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-base text-slate-600">
           Adicionales y descuentos aplicados a las cuotas del socio.
         </p>
       </div>
@@ -30,7 +30,7 @@ const emit = defineEmits<{
 
     <div
       v-if="adjustments.length === 0"
-      class="rounded-lg bg-slate-50 px-4 py-6 text-center text-sm text-slate-500"
+      class="rounded-lg bg-slate-50 px-4 py-6 text-center text-base text-slate-600"
     >
       No hay ajustes registrados.
     </div>
@@ -47,8 +47,8 @@ const emit = defineEmits<{
               class="font-semibold"
               :class="
                 adjustment.tipo === 'ADICIONAL'
-                  ? 'text-red-600'
-                  : 'text-emerald-600'
+                  ? 'text-red-700'
+                  : 'text-emerald-700'
               "
             >
               {{ adjustment.tipo === 'ADICIONAL' ? '+' : '-' }}${{
@@ -57,7 +57,7 @@ const emit = defineEmits<{
             </span>
 
             <span
-              class="rounded-full px-2 py-0.5 text-xs font-medium"
+              class="rounded-full px-2 py-0.5 text-sm font-medium"
               :class="
                 adjustment.tipo === 'ADICIONAL'
                   ? 'bg-red-50 text-red-700'
@@ -68,13 +68,13 @@ const emit = defineEmits<{
             </span>
           </div>
 
-          <p v-if="adjustment.motivo" class="mt-1 text-sm text-slate-600">
+          <p v-if="adjustment.motivo" class="mt-1 text-base text-slate-600">
             {{ adjustment.motivo }}
           </p>
         </div>
 
         <div class="flex shrink-0 items-center gap-4">
-          <p class="text-sm text-slate-500">
+          <p class="text-base text-slate-600">
             {{ formatMonth(adjustment.fechaDesde) }}
             →
             {{
@@ -86,7 +86,7 @@ const emit = defineEmits<{
 
           <button
             type="button"
-            class="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+            class="rounded-lg p-2 text-slate-600 transition hover:bg-red-50 hover:text-red-600"
             title="Eliminar ajuste"
             aria-label="Eliminar ajuste"
             @click="emit('delete', adjustment)"

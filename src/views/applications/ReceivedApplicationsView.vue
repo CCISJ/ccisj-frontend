@@ -317,7 +317,7 @@ async function confirmStatusChange() {
     <div>
       <h1 class="text-2xl font-bold text-slate-900">Postulantes</h1>
 
-      <p class="mt-1 text-sm text-slate-500">
+      <p class="mt-1 text-base text-slate-600">
         Las personas que se postularon a las ofertas de tu empresa.
       </p>
     </div>
@@ -328,7 +328,7 @@ async function confirmStatusChange() {
     >
       <div class="relative flex-1">
         <Search
-          class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+          class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600"
         />
 
         <input
@@ -336,14 +336,14 @@ async function confirmStatusChange() {
           type="search"
           placeholder="Buscar por nombre o email..."
           aria-label="Buscar postulantes"
-          class="h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 outline-none transition focus:border-ccisj focus:ring-2 focus:ring-emerald-100"
+          class="h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-base text-slate-700 outline-none transition focus:border-ccisj focus:ring-2 focus:ring-emerald-100"
         />
       </div>
 
       <select
         v-model="offerFilter"
         aria-label="Filtrar por oferta"
-        class="h-10 min-w-0 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 outline-none transition focus:border-ccisj lg:max-w-64"
+        class="h-10 min-w-0 rounded-lg border border-slate-200 bg-white px-3 text-base text-slate-600 outline-none transition focus:border-ccisj lg:max-w-64"
       >
         <option value="TODAS">Todas las ofertas</option>
         <option v-for="offer in offers" :key="offer.id" :value="offer.id">
@@ -354,7 +354,7 @@ async function confirmStatusChange() {
       <select
         v-model="statusFilter"
         aria-label="Filtrar por estado"
-        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 outline-none transition focus:border-ccisj"
+        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-base text-slate-600 outline-none transition focus:border-ccisj"
       >
         <option value="TODOS">Todos los estados</option>
         <option v-for="status in STATUS_ORDER" :key="status" :value="status">
@@ -365,7 +365,7 @@ async function confirmStatusChange() {
       <button
         v-if="hasFilters"
         type="button"
-        class="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+        class="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-lg px-3 text-base font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-700"
         @click="clearFilters"
       >
         <X class="h-4 w-4" />
@@ -376,7 +376,7 @@ async function confirmStatusChange() {
     <!-- Loading -->
     <div
       v-if="loading && applications.length === 0"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500"
+      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
     >
       Cargando postulaciones...
     </div>
@@ -386,17 +386,17 @@ async function confirmStatusChange() {
       v-else-if="applications.length === 0"
       class="rounded-xl border border-slate-200 bg-white p-12 text-center"
     >
-      <p class="text-sm font-medium text-slate-600">
+      <p class="text-base font-medium text-slate-600">
         Todavía no recibiste postulaciones
       </p>
 
-      <p class="mt-1 text-sm text-slate-400">
+      <p class="mt-1 text-base text-slate-600">
         Cuando alguien se postule a una de tus ofertas, va a aparecer acá.
       </p>
 
       <RouterLink
         to="/mis-ofertas"
-        class="mt-4 inline-flex text-sm font-medium text-ccisj hover:underline"
+        class="mt-4 inline-flex text-base font-medium text-ccisj hover:underline"
       >
         Ir a Mis ofertas
       </RouterLink>
@@ -407,12 +407,10 @@ async function confirmStatusChange() {
       v-else
       class="overflow-hidden rounded-xl border border-slate-200 bg-white"
     >
-      <div class="overflow-x-auto">
+      <div class="relative overflow-x-auto">
         <table class="w-full min-w-180 text-left">
           <thead class="bg-slate-50">
-            <tr
-              class="text-xs font-semibold uppercase tracking-wide text-slate-500"
-            >
+            <tr class="text-sm font-semibold text-slate-600">
               <th class="px-5 py-3">Postulante</th>
               <th class="px-5 py-3">Oferta</th>
               <th class="px-5 py-3">Fecha</th>
@@ -442,27 +440,29 @@ async function confirmStatusChange() {
                   {{ item.postulante.nombre }} {{ item.postulante.apellido }}
                 </p>
 
-                <p class="mt-0.5 truncate text-xs text-slate-400">
+                <p class="mt-0.5 truncate text-sm text-slate-600">
                   {{ item.postulante.usuario.email }}
                 </p>
               </td>
 
               <!-- Oferta -->
               <td class="max-w-64 px-5 py-3.5">
-                <p class="truncate text-sm text-slate-700">
+                <p class="truncate text-base text-slate-700">
                   {{ item.oferta.titulo }}
                 </p>
 
                 <p
                   v-if="item.oferta.estado === 'CERRADA'"
-                  class="text-xs text-slate-400"
+                  class="text-sm text-slate-600"
                 >
                   Cerrada
                 </p>
               </td>
 
               <!-- Fecha -->
-              <td class="whitespace-nowrap px-5 py-3.5 text-sm text-slate-600">
+              <td
+                class="whitespace-nowrap px-5 py-3.5 text-base text-slate-600"
+              >
                 {{ formatDate(item.fechaPostulacion) }}
               </td>
 
@@ -474,7 +474,7 @@ async function confirmStatusChange() {
                   aria-label="Tiene CV"
                 />
 
-                <span v-else class="text-xs text-slate-400">—</span>
+                <span v-else class="text-sm text-slate-600">—</span>
               </td>
 
               <!-- Estado -->
@@ -486,13 +486,13 @@ async function confirmStatusChange() {
             <!-- Sin resultados para los filtros actuales -->
             <tr v-if="filteredApplications.length === 0">
               <td colspan="5" class="px-5 py-12 text-center">
-                <p class="text-sm text-slate-500">
+                <p class="text-base text-slate-600">
                   Ninguna postulación coincide con esos filtros.
                 </p>
 
                 <button
                   type="button"
-                  class="mt-2 text-sm font-medium text-ccisj hover:underline"
+                  class="mt-2 text-base font-medium text-ccisj hover:underline"
                   @click="clearFilters"
                 >
                   Limpiar filtros
@@ -506,7 +506,7 @@ async function confirmStatusChange() {
       <!-- Footer -->
       <div
         v-if="filteredApplications.length > 0"
-        class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-5 py-3 text-xs text-slate-500"
+        class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-5 py-3 text-sm text-slate-600"
       >
         <span>
           Mostrando {{ rangeStart }}-{{ rangeEnd }} de

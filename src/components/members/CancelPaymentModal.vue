@@ -20,7 +20,7 @@ const emit = defineEmits<{
     <div class="w-full max-w-md rounded-xl bg-white p-5 shadow-xl">
       <h2 class="text-lg font-semibold text-slate-900">Anular pago</h2>
 
-      <p class="mt-1 text-sm text-slate-500">
+      <p class="mt-1 text-base text-slate-600">
         El pago seguirá en el historial, pero dejará de contabilizarse en las
         cuotas y en caja.
       </p>
@@ -28,7 +28,7 @@ const emit = defineEmits<{
       <div class="mt-4">
         <label
           for="payment-cancellation-reason"
-          class="mb-1.5 block text-sm font-medium text-slate-700"
+          class="mb-1.5 block text-base font-medium text-slate-700"
         >
           Motivo de anulación
         </label>
@@ -38,7 +38,7 @@ const emit = defineEmits<{
           :value="reason"
           maxlength="500"
           rows="4"
-          class="w-full resize-none rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-ccisj focus:ring-1 focus:ring-ccisj"
+          class="w-full resize-none rounded-lg border border-slate-300 px-3 py-2 text-base outline-none transition focus:border-ccisj focus:ring-1 focus:ring-ccisj"
           placeholder="Ej: Pago registrado por error"
           @input="
             emit('update:reason', ($event.target as HTMLTextAreaElement).value)
@@ -49,7 +49,7 @@ const emit = defineEmits<{
       <div class="mt-5 flex justify-end gap-2">
         <button
           type="button"
-          class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+          class="rounded-lg border border-slate-300 px-4 py-2 text-base font-medium text-slate-600 transition hover:bg-slate-50"
           :disabled="loading"
           @click="emit('close')"
         >
@@ -58,7 +58,7 @@ const emit = defineEmits<{
 
         <button
           type="button"
-          class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+          class="rounded-lg bg-red-600 px-4 py-2 text-base font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
           :disabled="loading || !reason.trim()"
           @click="emit('confirm')"
         >

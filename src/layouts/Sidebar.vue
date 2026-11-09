@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 
-import { useRoute, useRouter } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 
-import logoVerde from '@/assets/CCISJ logo sin fondo - Letras verdes.png';
+import { storeToRefs } from 'pinia';
+
+import logoBlanco from '@/assets/CCISJ logo sin fondo - Letras blancas.png';
 import {
   Bell,
   Briefcase,
@@ -11,7 +13,7 @@ import {
   ClipboardList,
   FileUser,
   LayoutDashboard,
-  Settings,
+  ReceiptText,
   UserRound,
   UserRoundSearch,
   Users,
@@ -20,12 +22,16 @@ import {
 } from 'lucide-vue-next';
 
 import { useAuthStore } from '@/stores/auth';
+import { useNotificationsStore } from '@/stores/notifications';
 import { useUiStore } from '@/stores/ui';
 
 const auth = useAuthStore();
 const ui = useUiStore();
+const notificationsStore = useNotificationsStore();
 const route = useRoute();
 const router = useRouter();
+
+const { unreadCount } = storeToRefs(notificationsStore);
 
 type NavItem = {
   label: string;
@@ -80,10 +86,10 @@ const groups = computed<NavGroup[]>(() => {
           ],
         },
         {
-          title: 'Administración',
+          title: 'Gestión',
           items: [
             { label: 'Socios', icon: Users, to: '/socios' },
-            { label: 'Cuotas', icon: Wallet, to: '/cuotas' },
+            { label: 'Cuotas', icon: ReceiptText, to: '/cuotas' },
             { label: 'Caja', icon: Wallet, to: '/caja' },
           ],
         },
@@ -177,76 +183,135 @@ const sectionTitle = computed(() => {
   switch (auth.role) {
     case 'ADMIN':
       return 'Administración';
-
     case 'SOCIO':
-      return 'Portal de socios';
-
+      return auth.user?.memberType === 'DIRECTIVO'
+        ? 'Socio directivo'
+        : 'Portal de socios';
     case 'POSTULANTE':
       return 'Postulante';
-
     default:
       return '';
   }
 });
 
+const initials = computed(() => {
+  const words = (auth.user?.displayName ?? '').trim().split(/\s+/);
+  const first = words.at(0) ?? '';
+  const last = words.at(-1) ?? '';
+
+  if (!first) return '';
+  if (!last || first === last) return first.slice(0, 2).toUpperCase();
+
+  return `${first.charAt(0)}${last.charAt(0)}`.toUpperCase();
+});
+
+/**
+ * Activa también en las pantallas de adentro (la ficha de un socio deja
+ * marcado "Socios"), salvo Inicio, que si no estaría siempre marcado.
+ */
+function isCurrent(item: NavItem) {
+  if (item.to === '/') return route.path === '/';
+
+  return route.path === item.to || route.path.startsWith(`${item.to}/`);
+}
+
+function badgeFor(item: NavItem) {
+  return item.to === '/notificaciones' && !auth.isAdmin ? unreadCount.value : 0;
+}
+
+async function handleLogout() {
+  notificationsStore.clear();
+  await auth.logout();
+  await router.replace('/login');
+}
+
 // En pantallas chicas el panel se cierra al navegar.
 watch(() => route.fullPath, ui.closeSidebar);
+
+onMounted(async () => {
+  // El contador de avisos sin leer, para el menú. A la administración no le
+  // llegan avisos: los manda.
+  if (!auth.isAdmin) {
+    try {
+      await notificationsStore.fetchMine();
+    } catch {
+      // Sin el contador, el menú igual funciona.
+    }
+  }
+});
 </script>
 
 <template>
   <!-- Fondo oscuro detrás del panel, solo mientras está abierto en mobile -->
   <div
     v-if="ui.sidebarOpen"
-    class="fixed inset-0 z-40 bg-slate-900/40 lg:hidden"
+    class="fixed inset-0 z-40 bg-slate-900/50 lg:hidden"
     @click="ui.closeSidebar"
   />
 
   <aside
-    class="fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-slate-200 bg-white transition-transform lg:translate-x-0"
+    class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-ccisj-deep text-white transition-transform lg:translate-x-0"
     :class="ui.sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
   >
-    <div
-      class="flex h-20 shrink-0 items-center justify-between border-b border-slate-100 px-5"
-    >
-      <img
-        :src="logoVerde"
-        alt="Centro Comercial e Industrial de San José"
-        class="h-14 max-w-47.5 object-contain object-left"
-      />
+    <div class="flex shrink-0 items-start justify-between gap-2 px-6 pb-4 pt-6">
+      <RouterLink to="/" aria-label="Ir al inicio" class="rounded-lg">
+        <img
+          :src="logoBlanco"
+          alt="Centro Comercial e Industrial de San José"
+          class="h-16 w-auto"
+        />
+      </RouterLink>
 
       <button
         type="button"
-        class="-mr-2 rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 lg:hidden"
+        class="-mr-2 rounded-lg p-2 text-white/80 transition hover:bg-white/10 hover:text-white lg:hidden"
         aria-label="Cerrar menú"
         @click="ui.closeSidebar"
       >
-        <X class="h-5 w-5" />
+        <X class="h-6 w-6" />
       </button>
     </div>
 
-    <nav class="flex-1 overflow-y-auto px-3 py-4">
-      <p
-        class="mb-3 px-3 text-[11px] font-semibold uppercase tracking-wide text-slate-400"
-      >
+    <nav aria-label="Menú principal" class="flex-1 overflow-y-auto px-4 pb-4">
+      <p class="mb-3 px-3 text-sm font-semibold text-ccisj-mist">
         {{ sectionTitle }}
       </p>
 
-      <div v-for="group in groups" :key="group.title" class="mb-4 last:mb-0">
-        <p class="mb-1 px-3 text-[11px] font-medium text-slate-400">
+      <div v-for="group in groups" :key="group.title" class="mb-5 last:mb-0">
+        <p
+          v-if="group.title !== 'General'"
+          class="mb-1 px-3 text-sm text-ccisj-mist"
+        >
           {{ group.title }}
         </p>
 
-        <div class="space-y-0.5">
+        <div class="space-y-1">
           <template v-for="item in group.items" :key="item.to">
             <RouterLink
               v-if="isAvailable(item.to)"
               :to="item.to"
-              class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-ccisj-light hover:text-ccisj"
-              exact-active-class="bg-ccisj-light text-ccisj ring-1 ring-emerald-100"
+              class="flex min-h-12 items-center gap-3 rounded-xl px-3 text-base transition"
+              :class="
+                isCurrent(item)
+                  ? 'bg-white font-bold text-ccisj-deep'
+                  : 'font-medium text-white/90 hover:bg-white/10 hover:text-white'
+              "
+              :aria-current="isCurrent(item) ? 'page' : undefined"
             >
               <component :is="item.icon" class="h-5 w-5 shrink-0" />
-
-              {{ item.label }}
+              <span class="flex-1">{{ item.label }}</span>
+              <span
+                v-if="badgeFor(item) > 0"
+                class="flex min-h-6 min-w-6 items-center justify-center rounded-full px-2 text-sm font-bold"
+                :class="
+                  isCurrent(item)
+                    ? 'bg-ccisj-deep text-white'
+                    : 'bg-white text-ccisj-deep'
+                "
+                :aria-label="`${badgeFor(item)} sin leer`"
+              >
+                {{ badgeFor(item) > 99 ? '99+' : badgeFor(item) }}
+              </span>
             </RouterLink>
 
             <!-- Pantalla todavía no construida: se muestra, pero no navega -->
@@ -254,15 +319,11 @@ watch(() => route.fullPath, ui.closeSidebar);
               v-else
               aria-disabled="true"
               title="Todavía no disponible"
-              class="flex cursor-not-allowed items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-400"
+              class="flex min-h-12 cursor-not-allowed items-center gap-3 rounded-xl px-3 text-base font-medium text-white/50"
             >
               <component :is="item.icon" class="h-5 w-5 shrink-0" />
-
               <span class="flex-1">{{ item.label }}</span>
-
-              <span
-                class="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400"
-              >
+              <span class="rounded-full bg-white/10 px-2 py-0.5 text-sm">
                 Pronto
               </span>
             </span>
@@ -270,5 +331,42 @@ watch(() => route.fullPath, ui.closeSidebar);
         </div>
       </div>
     </nav>
+
+    <!-- Quién está usando el sistema, y salir -->
+    <div class="shrink-0 border-t border-white/15 px-5 py-4">
+      <div class="flex items-center gap-3">
+        <span
+          aria-hidden="true"
+          class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ccisj-light font-bold text-ccisj-deep"
+        >
+          {{ initials }}
+        </span>
+
+        <div class="min-w-0">
+          <p class="truncate font-bold">{{ auth.user?.displayName }}</p>
+          <p class="truncate text-sm text-ccisj-mist">
+            {{ auth.user?.email }}
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-3 flex gap-2">
+        <RouterLink
+          :to="{ name: 'mi-cuenta' }"
+          class="flex min-h-11 flex-1 items-center justify-center rounded-xl border border-white/30 text-base text-white transition hover:bg-white/10"
+          active-class="bg-white/15"
+        >
+          Mi cuenta
+        </RouterLink>
+
+        <button
+          type="button"
+          class="min-h-11 flex-1 rounded-xl border border-white/30 text-base text-white transition hover:bg-white/10"
+          @click="handleLogout"
+        >
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
   </aside>
 </template>

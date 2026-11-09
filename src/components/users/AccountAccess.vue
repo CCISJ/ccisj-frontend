@@ -77,20 +77,20 @@ async function copy() {
           Cuenta de acceso
         </h2>
 
-        <p class="mt-1 text-sm text-slate-600">
+        <p class="mt-1 text-base text-slate-600">
           Entra al sistema con
           <span class="font-medium text-slate-800">{{ email }}</span
           >.
         </p>
 
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-base text-slate-600">
           Si se olvidó la contraseña, generale una nueva y entregásela.
         </p>
       </div>
 
       <button
         type="button"
-        class="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 transition hover:border-ccisj hover:text-ccisj"
+        class="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-base font-semibold text-slate-700 transition hover:border-ccisj hover:text-ccisj"
         @click="start"
       >
         <KeyRound class="h-4 w-4" />
@@ -104,7 +104,7 @@ async function copy() {
       :close-on-backdrop="!password && !loading"
       @close="close"
     >
-      <div class="space-y-3 px-6 py-5 text-sm leading-6 text-slate-600">
+      <div class="space-y-3 px-6 py-5 text-base leading-6 text-slate-600">
         <template v-if="!password">
           <p>
             Se va a generar una contraseña nueva para
@@ -131,12 +131,12 @@ async function copy() {
 
           <p
             data-test="password"
-            class="select-all rounded-lg bg-slate-100 px-4 py-3 text-center font-mono text-lg font-semibold tracking-wider text-slate-900"
+            class="select-all rounded-lg bg-slate-100 px-4 py-3 text-center font-mono text-lg font-semibold text-slate-900"
           >
             {{ password }}
           </p>
 
-          <p class="text-slate-500">
+          <p class="text-slate-600">
             Entra con {{ email }}. Conviene que la cambie desde Mi cuenta apenas
             entre.
           </p>
@@ -148,7 +148,7 @@ async function copy() {
           <template v-if="!password">
             <button
               type="button"
-              class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+              class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-base font-medium text-slate-600 transition hover:bg-slate-50"
               :disabled="loading"
               @click="close"
             >
@@ -157,7 +157,7 @@ async function copy() {
 
             <button
               type="button"
-              class="rounded-lg bg-ccisj px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+              class="rounded-lg bg-ccisj px-4 py-2 text-base font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
               :disabled="loading"
               @click="generate"
             >
@@ -168,7 +168,7 @@ async function copy() {
           <template v-else>
             <button
               type="button"
-              class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+              class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-base font-medium text-slate-600 transition hover:bg-slate-50"
               @click="copy"
             >
               {{ copied ? 'Copiada' : 'Copiar' }}
@@ -176,7 +176,7 @@ async function copy() {
 
             <button
               type="button"
-              class="rounded-lg bg-ccisj px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+              class="rounded-lg bg-ccisj px-4 py-2 text-base font-semibold text-white transition hover:opacity-90"
               @click="close"
             >
               Listo, ya la anoté

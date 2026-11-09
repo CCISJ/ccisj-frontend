@@ -24,8 +24,10 @@ test.describe('Inicio de sesión', () => {
   }) => {
     await iniciarSesion(page, ADMIN);
 
-    await expect(page.getByText('Backoffice CCISJ')).toBeVisible();
-    await expect(page.getByRole('banner')).toContainText(ADMIN.nombre);
+    await expect(
+      page.getByRole('heading', { name: 'Inicio', level: 1 }),
+    ).toBeVisible();
+    await expect(page.getByRole('complementary')).toContainText(ADMIN.nombre);
 
     await cerrarSesion(page, ADMIN.nombre);
 

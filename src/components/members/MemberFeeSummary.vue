@@ -23,7 +23,7 @@ const statusClass = computed(() => {
   if (props.summary.estado === 'AL_DIA')
     return 'bg-emerald-50 text-emerald-700';
   if (props.summary.estado === 'PENDIENTE') return 'bg-amber-50 text-amber-700';
-  return 'bg-red-50 text-red-600';
+  return 'bg-red-50 text-red-700';
 });
 </script>
 
@@ -31,18 +31,14 @@ const statusClass = computed(() => {
   <section class="rounded-xl border border-slate-200 bg-white p-5">
     <div class="flex flex-wrap items-start justify-between gap-4">
       <div>
-        <h2
-          class="text-xs font-semibold uppercase tracking-wide text-slate-400"
-        >
-          Estado de cuenta
-        </h2>
-        <p class="mt-1 text-sm text-slate-500">
+        <h2 class="text-sm font-semibold text-slate-600">Estado de cuenta</h2>
+        <p class="mt-1 text-base text-slate-600">
           Situación actual de las cuotas del socio.
         </p>
       </div>
 
       <span
-        class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
+        class="inline-flex rounded-full px-2.5 py-1 text-sm font-medium"
         :class="statusClass"
       >
         {{ statusLabel }}
@@ -52,8 +48,8 @@ const statusClass = computed(() => {
     <div v-if="summary" class="mt-5 grid gap-4 sm:grid-cols-2">
       <div class="rounded-xl bg-slate-50 p-4">
         <div class="flex items-center justify-between">
-          <p class="text-xs font-medium text-slate-500">Cuotas pendientes</p>
-          <Clock3 class="h-4 w-4 text-slate-400" />
+          <p class="text-sm font-medium text-slate-600">Cuotas pendientes</p>
+          <Clock3 class="h-4 w-4 text-slate-600" />
         </div>
         <p class="mt-2 text-xl font-bold text-slate-900">
           {{ summary.cuotasPendientes }}
@@ -62,12 +58,12 @@ const statusClass = computed(() => {
 
       <div class="rounded-xl bg-slate-50 p-4">
         <div class="flex items-center justify-between">
-          <p class="text-xs font-medium text-slate-500">Deuda total</p>
+          <p class="text-sm font-medium text-slate-600">Deuda total</p>
           <TriangleAlert
             v-if="summary.deudaTotal > 0"
-            class="h-4 w-4 text-red-500"
+            class="h-4 w-4 text-red-700"
           />
-          <CircleCheck v-else class="h-4 w-4 text-emerald-600" />
+          <CircleCheck v-else class="h-4 w-4 text-emerald-700" />
         </div>
         <p class="mt-2 text-xl font-bold text-slate-900">
           {{ formatMoney(summary.deudaTotal) }}
@@ -77,7 +73,7 @@ const statusClass = computed(() => {
 
     <div
       v-else
-      class="mt-5 rounded-lg bg-slate-50 p-5 text-center text-sm text-slate-400"
+      class="mt-5 rounded-lg bg-slate-50 p-5 text-center text-base text-slate-600"
     >
       No hay información de cuotas disponible para este socio.
     </div>

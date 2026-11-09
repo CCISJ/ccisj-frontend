@@ -43,7 +43,7 @@ const toastClasses = computed(() => {
     >
       <component :is="icon" class="h-5 w-5 shrink-0" />
 
-      <p class="flex-1 text-sm font-medium">
+      <p class="flex-1 text-base font-medium">
         {{ toast.message }}
       </p>
 

@@ -89,7 +89,7 @@ onUnmounted(() => {
 
               <button
                 type="button"
-                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-600 transition hover:bg-slate-100 hover:text-slate-600"
                 aria-label="Cerrar"
                 @click="emit('close')"
               >

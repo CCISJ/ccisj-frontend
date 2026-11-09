@@ -78,7 +78,7 @@ function verSocio() {
   <div class="space-y-5">
     <div>
       <button
-        class="mb-3 flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-ccisj"
+        class="mb-3 flex items-center gap-2 text-base font-medium text-slate-600 transition hover:text-ccisj"
         @click="goBack"
       >
         <ArrowLeft class="h-4 w-4" />
@@ -87,7 +87,7 @@ function verSocio() {
 
       <h1 class="text-2xl font-bold text-slate-900">Agregar socio</h1>
 
-      <p class="mt-1 text-sm text-slate-500">
+      <p class="mt-1 text-base text-slate-600">
         Registrá los datos comerciales y de contacto del nuevo socio. Todos los
         campos son obligatorios salvo las observaciones.
       </p>
@@ -99,14 +99,14 @@ function verSocio() {
     >
       <p class="font-semibold text-emerald-800">Socio creado correctamente</p>
 
-      <p class="mt-2 text-sm text-emerald-700">
+      <p class="mt-2 text-base text-emerald-700">
         Contraseña inicial:
         <span class="select-all font-mono font-semibold">
           {{ passwordInicial }}
         </span>
       </p>
 
-      <p class="mt-1 text-xs text-emerald-600">
+      <p class="mt-1 text-sm text-emerald-700">
         Guardá esta contraseña para entregársela al socio: no se vuelve a
         mostrar.
       </p>
@@ -114,7 +114,7 @@ function verSocio() {
       <div class="mt-4 flex flex-wrap gap-2">
         <button
           type="button"
-          class="rounded-lg bg-ccisj px-3.5 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+          class="rounded-lg bg-ccisj px-3.5 py-2 text-base font-semibold text-white transition hover:opacity-90"
           @click="verSocio"
         >
           Ver ficha del socio
@@ -122,7 +122,7 @@ function verSocio() {
 
         <button
           type="button"
-          class="rounded-lg border border-emerald-200 bg-white px-3.5 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
+          class="rounded-lg border border-emerald-200 bg-white px-3.5 py-2 text-base font-semibold text-emerald-700 transition hover:bg-emerald-50"
           @click="goBack"
         >
           Volver a la lista
@@ -132,7 +132,7 @@ function verSocio() {
 
     <MemberForm
       v-else
-      v-model="form"
+      :model-value="form"
       mode="create"
       :loading="loading"
       @submit="handleSubmit"

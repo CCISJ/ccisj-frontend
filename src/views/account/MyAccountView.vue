@@ -137,7 +137,7 @@ const FIELDS: {
 ];
 
 const inputClass =
-  'h-11 w-full rounded-lg border bg-white pl-3 pr-11 text-sm text-slate-800 outline-none transition focus:ring-2';
+  'h-11 w-full rounded-lg border bg-white pl-3 pr-11 text-base text-slate-800 outline-none transition focus:ring-2';
 </script>
 
 <template>
@@ -145,7 +145,7 @@ const inputClass =
     <div>
       <h1 class="text-2xl font-bold text-slate-900">Mi cuenta</h1>
 
-      <p class="mt-1 text-sm text-slate-500">
+      <p class="mt-1 text-base text-slate-600">
         Datos de acceso y contraseña de tu cuenta.
       </p>
     </div>
@@ -156,30 +156,26 @@ const inputClass =
         class="h-fit rounded-xl border border-slate-200 bg-white p-5 lg:col-span-2"
       >
         <div class="mb-4 flex items-center gap-2">
-          <Lock class="h-3.5 w-3.5 text-slate-400" />
+          <Lock class="h-3.5 w-3.5 text-slate-600" />
 
-          <h2
-            class="text-xs font-semibold uppercase tracking-wide text-slate-400"
-          >
-            Acceso
-          </h2>
+          <h2 class="text-sm font-semibold text-slate-600">Acceso</h2>
         </div>
 
         <dl class="space-y-4">
           <div>
-            <dt class="text-xs text-slate-400">Email de acceso</dt>
-            <dd class="mt-0.5 break-all text-sm text-slate-800">
+            <dt class="text-sm text-slate-600">Email de acceso</dt>
+            <dd class="mt-0.5 break-all text-base text-slate-800">
               {{ auth.user?.email }}
             </dd>
           </div>
 
           <div>
-            <dt class="text-xs text-slate-400">Tipo de cuenta</dt>
-            <dd class="mt-0.5 text-sm text-slate-800">{{ roleLabel }}</dd>
+            <dt class="text-sm text-slate-600">Tipo de cuenta</dt>
+            <dd class="mt-0.5 text-base text-slate-800">{{ roleLabel }}</dd>
           </div>
         </dl>
 
-        <p class="mt-5 border-t border-slate-100 pt-4 text-xs text-slate-500">
+        <p class="mt-5 border-t border-slate-100 pt-4 text-sm text-slate-600">
           El email de acceso no se cambia desde el portal. Si necesitás
           cambiarlo, comunicate con la administración del CCISJ.
         </p>
@@ -190,11 +186,9 @@ const inputClass =
         class="rounded-xl border border-slate-200 bg-white p-5 lg:col-span-3"
       >
         <div class="mb-4 flex items-center gap-2">
-          <KeyRound class="h-3.5 w-3.5 text-slate-400" />
+          <KeyRound class="h-3.5 w-3.5 text-slate-600" />
 
-          <h2
-            class="text-xs font-semibold uppercase tracking-wide text-slate-400"
-          >
+          <h2 class="text-sm font-semibold text-slate-600">
             Cambiar contraseña
           </h2>
         </div>
@@ -203,7 +197,7 @@ const inputClass =
           <div v-for="item in FIELDS" :key="item.field">
             <label
               :for="`mi-cuenta-${item.field}`"
-              class="mb-1.5 block text-sm font-medium text-slate-700"
+              class="mb-1.5 block text-base font-medium text-slate-700"
             >
               {{ item.label }}
             </label>
@@ -235,7 +229,7 @@ const inputClass =
 
               <button
                 type="button"
-                class="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-md p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+                class="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-md p-2 text-slate-600 transition hover:bg-slate-100 hover:text-slate-600"
                 :aria-label="
                   visible[item.field]
                     ? 'Ocultar contraseña'
@@ -252,7 +246,7 @@ const inputClass =
             <p
               v-if="submitted && errors[item.field]"
               :id="`mi-cuenta-${item.field}-error`"
-              class="mt-1 text-xs text-red-600"
+              class="mt-1 text-sm text-red-700"
             >
               {{ errors[item.field] }}
             </p>
@@ -265,8 +259,8 @@ const inputClass =
               <li
                 v-for="rule in rules"
                 :key="rule.label"
-                class="flex items-center gap-1.5 text-xs"
-                :class="rule.ok ? 'text-emerald-700' : 'text-slate-400'"
+                class="flex items-center gap-1.5 text-sm"
+                :class="rule.ok ? 'text-emerald-700' : 'text-slate-600'"
               >
                 <Check v-if="rule.ok" class="h-3.5 w-3.5" />
                 <X v-else class="h-3.5 w-3.5" />
@@ -275,7 +269,7 @@ const inputClass =
             </ul>
             <p
               v-if="item.field === 'nueva'"
-              class="mt-1 text-xs text-slate-400"
+              class="mt-1 text-sm text-slate-600"
             >
               {{ PASSWORD_HINT }}
             </p>
@@ -284,7 +278,7 @@ const inputClass =
           <p
             v-if="serverError"
             role="alert"
-            class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+            class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-base text-red-700"
           >
             {{ serverError }}
           </p>
@@ -292,7 +286,7 @@ const inputClass =
           <p
             v-if="changed"
             role="status"
-            class="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800"
+            class="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-base text-emerald-800"
           >
             Contraseña actualizada. Por seguridad, se cerraron las sesiones
             abiertas en otros dispositivos.
@@ -301,13 +295,13 @@ const inputClass =
           <div
             class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4"
           >
-            <p class="text-xs text-slate-500">
+            <p class="text-sm text-slate-600">
               Al cambiarla se cierran tus sesiones en otros dispositivos.
             </p>
 
             <button
               type="submit"
-              class="rounded-xl bg-ccisj px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+              class="rounded-xl bg-ccisj px-5 py-2.5 text-base font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
               :disabled="saving"
             >
               {{ saving ? 'Guardando...' : 'Cambiar contraseña' }}

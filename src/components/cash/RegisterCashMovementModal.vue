@@ -137,7 +137,7 @@ watch(
         <div>
           <label
             for="cash-movement-tipo"
-            class="mb-1.5 block text-sm font-medium text-slate-700"
+            class="mb-1.5 block text-base font-medium text-slate-700"
           >
             Tipo
           </label>
@@ -145,7 +145,7 @@ watch(
           <select
             id="cash-movement-tipo"
             v-model="tipo"
-            class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-ccisj"
+            class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-base text-slate-700 outline-none focus:border-ccisj"
           >
             <option value="INGRESO">Ingreso</option>
 
@@ -156,7 +156,7 @@ watch(
         <div>
           <label
             for="cash-movement-categoria"
-            class="mb-1.5 block text-sm font-medium text-slate-700"
+            class="mb-1.5 block text-base font-medium text-slate-700"
           >
             Categoría
           </label>
@@ -164,7 +164,7 @@ watch(
           <select
             id="cash-movement-categoria"
             v-model="categoriaId"
-            class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-ccisj"
+            class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-base text-slate-700 outline-none focus:border-ccisj"
             required
           >
             <option :value="null" disabled>Seleccionar categoría</option>
@@ -180,7 +180,7 @@ watch(
 
           <p
             v-if="availableCategories.length === 0"
-            class="mt-1.5 text-xs text-amber-600"
+            class="mt-1.5 text-sm text-amber-700"
           >
             No hay categorías disponibles para este tipo.
           </p>
@@ -191,7 +191,7 @@ watch(
       <div>
         <label
           for="cash-movement-concepto"
-          class="mb-1.5 block text-sm font-medium text-slate-700"
+          class="mb-1.5 block text-base font-medium text-slate-700"
         >
           Concepto
         </label>
@@ -201,7 +201,7 @@ watch(
           v-model="concepto"
           type="text"
           maxlength="255"
-          class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-ccisj"
+          class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-base text-slate-700 outline-none placeholder:text-slate-400 focus:border-ccisj"
           placeholder="Ej. Alquiler de salón"
         />
       </div>
@@ -211,14 +211,14 @@ watch(
         <div>
           <label
             for="cash-movement-importe"
-            class="mb-1.5 block text-sm font-medium text-slate-700"
+            class="mb-1.5 block text-base font-medium text-slate-700"
           >
             Importe
           </label>
 
           <div class="relative">
             <span
-              class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400"
+              class="absolute left-3 top-1/2 -translate-y-1/2 text-base text-slate-600"
             >
               $
             </span>
@@ -229,7 +229,7 @@ watch(
               type="number"
               min="0.01"
               step="0.01"
-              class="w-full rounded-lg border border-slate-200 py-2.5 pl-7 pr-3 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-ccisj"
+              class="w-full rounded-lg border border-slate-200 py-2.5 pl-7 pr-3 text-base text-slate-700 outline-none placeholder:text-slate-400 focus:border-ccisj"
               placeholder="0"
             />
           </div>
@@ -238,7 +238,7 @@ watch(
         <div>
           <label
             for="cash-movement-fecha"
-            class="mb-1.5 block text-sm font-medium text-slate-700"
+            class="mb-1.5 block text-base font-medium text-slate-700"
           >
             Fecha
           </label>
@@ -247,7 +247,7 @@ watch(
             id="cash-movement-fecha"
             v-model="fecha"
             type="date"
-            class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-ccisj"
+            class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-base text-slate-700 outline-none focus:border-ccisj"
           />
         </div>
       </div>
@@ -256,10 +256,10 @@ watch(
       <div>
         <label
           for="cash-movement-observaciones"
-          class="mb-1.5 block text-sm font-medium text-slate-700"
+          class="mb-1.5 block text-base font-medium text-slate-700"
         >
           Observaciones
-          <span class="font-normal text-slate-400"> (opcional) </span>
+          <span class="font-normal text-slate-600"> (opcional) </span>
         </label>
 
         <textarea
@@ -267,7 +267,7 @@ watch(
           v-model="observaciones"
           rows="3"
           maxlength="500"
-          class="w-full resize-none rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-ccisj"
+          class="w-full resize-none rounded-lg border border-slate-200 px-3 py-2.5 text-base text-slate-700 outline-none placeholder:text-slate-400 focus:border-ccisj"
           placeholder="Información adicional sobre el movimiento"
         />
       </div>
@@ -276,7 +276,7 @@ watch(
       <div class="flex justify-end gap-3 border-t border-slate-100 pt-5">
         <button
           type="button"
-          class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-50"
+          class="rounded-lg border border-slate-200 px-4 py-2 text-base font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-50"
           :disabled="loading"
           @click="close"
         >
@@ -285,7 +285,7 @@ watch(
 
         <button
           type="submit"
-          class="rounded-lg bg-ccisj px-4 py-2 text-sm font-semibold text-white transition disabled:opacity-50"
+          class="rounded-lg bg-ccisj px-4 py-2 text-base font-semibold text-white transition disabled:opacity-50"
           :disabled="loading"
         >
           {{ loading ? 'Registrando...' : 'Registrar movimiento' }}

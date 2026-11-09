@@ -1,448 +1,420 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 
-import { useRouter } from 'vue-router';
+import { RouterLink } from 'vue-router';
 
-import {
-  ArrowRight,
-  ArrowUpRight,
-  CalendarDays,
-  CheckCircle2,
-  CircleAlert,
-  Clock3,
-  CreditCard,
-  Plus,
-  ReceiptText,
-  RefreshCw,
-  TrendingUp,
-  Users,
-  Wallet,
-} from 'lucide-vue-next';
+import { ArrowRight, RefreshCw } from 'lucide-vue-next';
 
 import { getSummary } from '@/services/cashService';
 import { feesService } from '@/services/feesService';
+import { getMembers, isFullMember } from '@/services/membersService';
 
 import type { CashSummary } from '@/types/cash.type';
 import type { FeesDashboardSummary, RecentFeePayment } from '@/types/fee.type';
+import type { Member } from '@/types/member.type';
 
-const router = useRouter();
+import { formatDate } from '@/utils/date';
+import { formatMoney } from '@/utils/money';
+
+/** Cuántos socios con deuda se listan en el inicio; el resto, en Cuotas. */
+const DEBTORS_SHOWN = 6;
 
 const cash = ref<CashSummary | null>(null);
 const fees = ref<FeesDashboardSummary | null>(null);
 const payments = ref<RecentFeePayment[]>([]);
+const members = ref<Member[]>([]);
 
 const loading = ref(false);
 const cashError = ref(false);
 const feesError = ref(false);
 const paymentsError = ref(false);
+const membersError = ref(false);
 
-const moneyFormatter = new Intl.NumberFormat('es-UY', {
-  style: 'currency',
-  currency: 'UYU',
-  maximumFractionDigits: 2,
-});
-
-const dateFormatter = new Intl.DateTimeFormat('es-UY', {
-  day: '2-digit',
-  month: 'short',
-  year: 'numeric',
-  timeZone: 'America/Montevideo',
-});
-
-const monthLabel = computed(() =>
-  new Intl.DateTimeFormat('es-UY', {
+const monthLabel = computed(() => {
+  const label = new Intl.DateTimeFormat('es-UY', {
     month: 'long',
     year: 'numeric',
     timeZone: 'America/Montevideo',
-  }).format(new Date()),
+  }).format(new Date());
+
+  return label.charAt(0).toUpperCase() + label.slice(1);
+});
+
+function money(value: number | undefined) {
+  return value === undefined ? '—' : formatMoney(value);
+}
+
+/** Los que tienen cuotas vencidas, de mayor a menor deuda. */
+const debtors = computed(() =>
+  members.value
+    .filter(
+      (member) =>
+        member.usuario.activo &&
+        member.estadoCuotas &&
+        member.estadoCuotas.estado !== 'AL_DIA',
+    )
+    .sort(
+      (a, b) =>
+        (b.estadoCuotas?.deudaTotal ?? 0) - (a.estadoCuotas?.deudaTotal ?? 0),
+    ),
 );
 
-function formatMoney(value: number | undefined): string {
-  return value === undefined ? '—' : moneyFormatter.format(value);
-}
+const shownDebtors = computed(() => debtors.value.slice(0, DEBTORS_SHOWN));
 
-function formatDate(value: string): string {
-  const date = new Date(value);
-  return Number.isNaN(date.getTime())
-    ? 'Fecha no disponible'
-    : dateFormatter.format(date);
-}
+/** Proporción al día / pendientes / deudores, para la barra. */
+const split = computed(() => {
+  if (!fees.value) return null;
+
+  const { sociosAlDia, sociosPendientes, sociosDeudores } = fees.value;
+  const total = sociosAlDia + sociosPendientes + sociosDeudores;
+
+  return total > 0
+    ? { total, sociosAlDia, sociosPendientes, sociosDeudores }
+    : null;
+});
 
 async function loadDashboard() {
   loading.value = true;
-  cashError.value = false;
-  feesError.value = false;
-  paymentsError.value = false;
 
-  const [cashResult, feesResult, paymentsResult] = await Promise.allSettled([
-    getSummary(),
-    feesService.getDashboardSummary(),
-    feesService.getRecentPayments(),
-  ]);
+  const [cashResult, feesResult, paymentsResult, membersResult] =
+    await Promise.allSettled([
+      getSummary(),
+      feesService.getDashboardSummary(),
+      feesService.getRecentPayments(),
+      getMembers(),
+    ]);
 
-  if (cashResult.status === 'fulfilled') {
-    cash.value = cashResult.value;
-  } else {
-    cash.value = null;
-    cashError.value = true;
-  }
+  cash.value = cashResult.status === 'fulfilled' ? cashResult.value : null;
+  cashError.value = cashResult.status === 'rejected';
 
-  if (feesResult.status === 'fulfilled') {
-    fees.value = feesResult.value;
-  } else {
-    fees.value = null;
-    feesError.value = true;
-  }
+  fees.value = feesResult.status === 'fulfilled' ? feesResult.value : null;
+  feesError.value = feesResult.status === 'rejected';
 
-  if (paymentsResult.status === 'fulfilled') {
-    payments.value = paymentsResult.value;
-  } else {
-    payments.value = [];
-    paymentsError.value = true;
-  }
+  payments.value =
+    paymentsResult.status === 'fulfilled' ? paymentsResult.value : [];
+  paymentsError.value = paymentsResult.status === 'rejected';
+
+  members.value =
+    membersResult.status === 'fulfilled'
+      ? membersResult.value.filter(isFullMember)
+      : [];
+  membersError.value = membersResult.status === 'rejected';
 
   loading.value = false;
 }
 
-const shortcuts = [
-  {
-    label: 'Agregar socio',
-    description: 'Registrar una nueva empresa',
-    icon: Plus,
-    to: '/socios/nuevo',
-  },
-  {
-    label: 'Consultar socios',
-    description: 'Buscar empresas registradas',
-    icon: Users,
-    to: '/socios',
-  },
-  {
-    label: 'Administrar cuotas',
-    description: 'Consultar y registrar pagos',
-    icon: ReceiptText,
-    to: '/cuotas',
-  },
-  {
-    label: 'Administrar Caja',
-    description: 'Ingresos, egresos y movimientos',
-    icon: Wallet,
-    to: '/caja',
-  },
+const tasks = [
+  { label: 'Agregar un socio', to: '/socios/nuevo', primary: true },
+  { label: 'Anotar un ingreso o un gasto en la caja', to: '/caja' },
+  { label: 'Mandar un aviso a los socios', to: '/notificaciones' },
 ];
 
 onMounted(loadDashboard);
 </script>
 
 <template>
-  <div class="mx-auto max-w-7xl space-y-7 pb-8">
-    <!-- Encabezado -->
-    <header
-      class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-    >
+  <div class="mx-auto max-w-7xl space-y-8 pb-8">
+    <header class="flex flex-wrap items-end justify-between gap-4">
       <div>
-        <span
-          class="inline-flex rounded-full bg-ccisj-light px-3 py-1 text-xs font-semibold text-ccisj ring-1 ring-emerald-100"
-        >
-          Backoffice CCISJ
-        </span>
-
-        <h1
-          class="mt-3 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"
-        >
-          Panel de administración
-        </h1>
-
-        <p class="mt-1 text-sm text-slate-500">
-          Resumen de la gestión del Centro Comercial e Industrial de San José.
+        <h1 class="text-3xl font-bold text-slate-900">Inicio</h1>
+        <p class="mt-2 text-slate-600">
+          Cómo viene el mes y qué hay para atender.
         </p>
       </div>
 
       <button
         type="button"
         :disabled="loading"
-        class="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
+        class="inline-flex min-h-12 items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
         @click="loadDashboard"
       >
-        <RefreshCw class="h-4 w-4" :class="{ 'animate-spin': loading }" />
+        <RefreshCw class="h-5 w-5" :class="{ 'animate-spin': loading }" />
         Actualizar
       </button>
     </header>
 
-    <!-- Estadísticas -->
-    <section>
-      <div class="mb-4 flex items-center justify-between">
-        <div>
-          <h2 class="text-base font-semibold text-slate-900">
-            Resumen general
-          </h2>
-          <p class="mt-1 text-xs capitalize text-slate-500">
-            {{ monthLabel }}
-          </p>
+    <!-- El mes en cuatro cifras -->
+    <section
+      aria-labelledby="mes"
+      class="rounded-2xl border border-slate-200 bg-white"
+    >
+      <h2
+        id="mes"
+        class="border-b border-slate-200 px-6 py-4 font-bold text-slate-900"
+      >
+        {{ monthLabel }}
+      </h2>
+
+      <dl class="grid sm:grid-cols-2 xl:grid-cols-4">
+        <div class="border-slate-100 px-6 py-5 sm:border-r">
+          <dt class="text-slate-600">Cobrado en cuotas</dt>
+          <dd class="mt-1 text-3xl font-bold tabular-nums text-slate-900">
+            {{ money(fees?.cobradoMes) }}
+          </dd>
+          <dd class="mt-1 text-sm text-slate-600">
+            {{ feesError ? 'No se pudo cargar' : 'Pagos registrados este mes' }}
+          </dd>
         </div>
-      </div>
 
-      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <!-- Cobrado en cuotas -->
-        <article class="rounded-xl border border-slate-200 bg-white p-5">
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-slate-500"> Cobrado en cuotas </span>
-            <span class="rounded-lg bg-emerald-50 p-2 text-ccisj">
-              <ReceiptText class="h-5 w-5" />
-            </span>
-          </div>
+        <div class="border-slate-100 px-6 py-5 xl:border-r">
+          <dt class="text-slate-600">Ingresos de caja</dt>
+          <dd class="mt-1 text-3xl font-bold tabular-nums text-slate-900">
+            {{ money(cash?.ingresos) }}
+          </dd>
+          <dd class="mt-1 text-sm text-slate-600">
+            {{
+              cashError
+                ? 'No se pudo cargar'
+                : `Egresos: ${money(cash?.egresos)}`
+            }}
+          </dd>
+        </div>
 
-          <p class="mt-4 text-2xl font-bold text-slate-900">
-            {{ formatMoney(fees?.cobradoMes) }}
-          </p>
-
-          <p class="mt-2 text-xs text-slate-500">
-            {{ feesError ? 'No se pudo cargar' : 'Durante este mes' }}
-          </p>
-        </article>
-
-        <!-- Deuda total -->
-        <article class="rounded-xl border border-slate-200 bg-white p-5">
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-slate-500"> Deuda total </span>
-            <span class="rounded-lg bg-amber-50 p-2 text-amber-600">
-              <CircleAlert class="h-5 w-5" />
-            </span>
-          </div>
-
-          <p class="mt-4 text-2xl font-bold text-slate-900">
-            {{ formatMoney(fees?.deudaTotal) }}
-          </p>
-
-          <p class="mt-2 text-xs text-slate-500">
-            {{ feesError ? 'No se pudo cargar' : 'Deuda acumulada de socios' }}
-          </p>
-        </article>
-
-        <!-- Ingresos de caja -->
-        <article class="rounded-xl border border-slate-200 bg-white p-5">
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-slate-500"> Ingresos de Caja </span>
-            <span class="rounded-lg bg-blue-50 p-2 text-blue-600">
-              <TrendingUp class="h-5 w-5" />
-            </span>
-          </div>
-
-          <p class="mt-4 text-2xl font-bold text-slate-900">
-            {{ formatMoney(cash?.ingresos) }}
-          </p>
-
-          <p class="mt-2 text-xs text-slate-500">
-            {{ cashError ? 'No se pudo cargar' : 'Durante este mes' }}
-          </p>
-        </article>
-
-        <!-- Balance -->
-        <article class="rounded-xl border border-slate-200 bg-white p-5">
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-slate-500"> Balance de Caja </span>
-            <span class="rounded-lg bg-violet-50 p-2 text-violet-600">
-              <Wallet class="h-5 w-5" />
-            </span>
-          </div>
-
-          <p
-            class="mt-4 text-2xl font-bold"
+        <div class="border-slate-100 px-6 py-5 sm:border-r">
+          <dt class="text-slate-600">Balance de caja</dt>
+          <dd
+            class="mt-1 text-3xl font-bold tabular-nums"
             :class="
-              cash && cash.balance < 0 ? 'text-red-600' : 'text-slate-900'
+              cash && cash.balance < 0 ? 'text-red-700' : 'text-slate-900'
             "
           >
-            {{ formatMoney(cash?.balance) }}
-          </p>
+            {{ money(cash?.balance) }}
+          </dd>
+          <dd class="mt-1 text-sm text-slate-600">
+            {{ cashError ? 'No se pudo cargar' : 'Ingresos menos egresos' }}
+          </dd>
+        </div>
 
-          <p class="mt-2 text-xs text-slate-500">
+        <div class="px-6 py-5">
+          <dt class="text-slate-600">Deuda de los socios</dt>
+          <dd
+            class="mt-1 text-3xl font-bold tabular-nums"
+            :class="
+              fees && fees.deudaTotal > 0 ? 'text-red-700' : 'text-slate-900'
+            "
+          >
+            {{ money(fees?.deudaTotal) }}
+          </dd>
+          <dd class="mt-1 text-sm text-slate-600">
             {{
-              cashError ? 'No se pudo cargar' : 'Ingresos menos egresos del mes'
+              feesError
+                ? 'No se pudo cargar'
+                : `Vencida, de ${(fees?.sociosPendientes ?? 0) + (fees?.sociosDeudores ?? 0)} socios`
             }}
-          </p>
-        </article>
-      </div>
+          </dd>
+        </div>
+      </dl>
     </section>
 
-    <!-- Estado de socios + accesos -->
-    <div class="grid gap-5 lg:grid-cols-3">
+    <div class="grid items-start gap-6 xl:grid-cols-5">
+      <!-- Lo que hay que atender -->
       <section
-        class="rounded-xl border border-slate-200 bg-white p-5 lg:col-span-2"
+        aria-labelledby="deudas"
+        class="min-w-0 rounded-2xl border border-slate-200 bg-white xl:col-span-3"
       >
-        <div class="flex items-center gap-2">
-          <Users class="h-5 w-5 text-ccisj" />
-          <h2 class="font-semibold text-slate-900">
-            Estado de cuotas de los socios
-          </h2>
-        </div>
-
-        <p class="mt-1 text-sm text-slate-500">
-          Situación general de los socios respecto a sus cuotas.
-        </p>
-
-        <div class="mt-5 grid gap-3 sm:grid-cols-3">
-          <div class="rounded-xl bg-emerald-50 p-4">
-            <CheckCircle2 class="h-5 w-5 text-emerald-600" />
-            <p class="mt-3 text-2xl font-bold text-slate-900">
-              {{ fees?.sociosAlDia ?? '—' }}
-            </p>
-            <p class="mt-1 text-sm text-slate-600">Al día</p>
-          </div>
-
-          <div class="rounded-xl bg-amber-50 p-4">
-            <Clock3 class="h-5 w-5 text-amber-600" />
-            <p class="mt-3 text-2xl font-bold text-slate-900">
-              {{ fees?.sociosPendientes ?? '—' }}
-            </p>
-            <p class="mt-1 text-sm text-slate-600">Pendientes</p>
-          </div>
-
-          <div class="rounded-xl bg-red-50 p-4">
-            <CircleAlert class="h-5 w-5 text-red-600" />
-            <p class="mt-3 text-2xl font-bold text-slate-900">
-              {{ fees?.sociosDeudores ?? '—' }}
-            </p>
-            <p class="mt-1 text-sm text-slate-600">Deudores</p>
-          </div>
-        </div>
-
-        <p v-if="feesError" class="mt-4 text-sm text-red-600">
-          No se pudo consultar el estado de las cuotas.
-        </p>
-
-        <button
-          type="button"
-          class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-ccisj hover:underline"
-          @click="router.push('/cuotas')"
+        <div
+          class="flex flex-wrap items-baseline justify-between gap-2 px-6 pt-5"
         >
-          Ver gestión de cuotas
-          <ArrowRight class="h-4 w-4" />
-        </button>
-      </section>
+          <h2 id="deudas" class="text-xl font-bold text-slate-900">
+            Socios con cuotas vencidas
+          </h2>
 
-      <section class="rounded-xl border border-slate-200 bg-white p-5">
-        <h2 class="font-semibold text-slate-900">Accesos rápidos</h2>
+          <RouterLink
+            to="/socios"
+            class="font-semibold text-ccisj hover:underline"
+          >
+            Ver todos en Socios
+          </RouterLink>
+        </div>
 
-        <p class="mt-1 text-sm text-slate-500">Operaciones frecuentes.</p>
-
-        <div class="mt-4 space-y-2">
-          <button
-            v-for="shortcut in shortcuts"
-            :key="shortcut.to"
-            type="button"
-            class="group flex w-full items-center gap-3 rounded-lg border border-slate-100 p-3 text-left transition hover:border-emerald-200 hover:bg-emerald-50/50"
-            @click="router.push(shortcut.to)"
+        <div v-if="split" class="px-6 pt-4">
+          <div
+            role="img"
+            :aria-label="`De ${split.total} socios activos, ${split.sociosAlDia} al día, ${split.sociosPendientes} con 1 o 2 cuotas vencidas y ${split.sociosDeudores} con 3 o más`"
+            class="flex h-3 overflow-hidden rounded-full bg-slate-100"
           >
             <span
-              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ccisj-light text-ccisj"
-            >
-              <component :is="shortcut.icon" class="h-4 w-4" />
-            </span>
-
-            <span class="min-w-0 flex-1">
-              <span class="block text-sm font-semibold text-slate-800">
-                {{ shortcut.label }}
-              </span>
-              <span class="block text-xs text-slate-500">
-                {{ shortcut.description }}
-              </span>
-            </span>
-
-            <ArrowRight
-              class="h-4 w-4 shrink-0 text-slate-400 transition group-hover:translate-x-1"
+              class="bg-ccisj-brand"
+              :style="{ flexGrow: split.sociosAlDia }"
             />
-          </button>
-        </div>
-      </section>
-    </div>
+            <span
+              class="bg-amber-500"
+              :style="{ flexGrow: split.sociosPendientes }"
+            />
+            <span
+              class="bg-red-700"
+              :style="{ flexGrow: split.sociosDeudores }"
+            />
+          </div>
 
-    <!-- Pagos recientes -->
-    <section class="rounded-xl border border-slate-200 bg-white">
-      <div
-        class="flex flex-col gap-3 border-b border-slate-100 p-5 sm:flex-row sm:items-center sm:justify-between"
-      >
-        <div>
-          <h2 class="font-semibold text-slate-900">
-            Últimos pagos registrados
-          </h2>
-          <p class="mt-1 text-sm text-slate-500">
-            Movimientos recientes de cuotas de socios.
+          <p class="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-slate-600">
+            <span>
+              <strong class="text-slate-900">{{ split.sociosAlDia }}</strong>
+              al día
+            </span>
+            <span>
+              <strong class="text-slate-900">{{
+                split.sociosPendientes
+              }}</strong>
+              con 1 o 2 vencidas
+            </span>
+            <span>
+              <strong class="text-red-700">{{ split.sociosDeudores }}</strong>
+              con 3 o más
+            </span>
           </p>
         </div>
 
-        <button
-          type="button"
-          class="inline-flex items-center gap-1 text-sm font-semibold text-ccisj hover:underline"
-          @click="router.push('/cuotas')"
+        <p v-if="membersError" class="px-6 py-6 text-red-700">
+          No se pudo cargar la lista de socios.
+        </p>
+
+        <p
+          v-else-if="!loading && debtors.length === 0"
+          class="px-6 py-6 text-slate-600"
         >
-          Ver cuotas
-          <ArrowUpRight class="h-4 w-4" />
-        </button>
-      </div>
-
-      <div
-        v-if="loading && payments.length === 0"
-        class="p-8 text-center text-sm text-slate-500"
-      >
-        Cargando pagos...
-      </div>
-
-      <div v-else-if="paymentsError" class="p-8 text-center">
-        <CircleAlert class="mx-auto h-6 w-6 text-red-500" />
-        <p class="mt-2 text-sm text-slate-600">
-          No se pudieron cargar los últimos pagos.
+          Ningún socio tiene cuotas vencidas.
         </p>
-      </div>
 
-      <div v-else-if="payments.length === 0" class="p-10 text-center">
-        <CreditCard class="mx-auto h-8 w-8 text-slate-300" />
-        <p class="mt-3 text-sm font-medium text-slate-700">
-          No hay pagos recientes
-        </p>
-        <p class="mt-1 text-xs text-slate-500">
-          Los próximos pagos registrados aparecerán acá.
-        </p>
-      </div>
+        <div v-else class="relative mt-4 overflow-x-auto">
+          <table class="w-full min-w-[32rem] text-left">
+            <thead class="text-sm text-slate-600">
+              <tr class="border-y border-slate-200 bg-slate-50">
+                <th scope="col" class="px-6 py-3 font-semibold">Socio</th>
+                <th scope="col" class="px-4 py-3 font-semibold">Vencidas</th>
+                <th scope="col" class="px-4 py-3 text-right font-semibold">
+                  Debe
+                </th>
+                <th scope="col" class="px-6 py-3">
+                  <span class="sr-only">Acción</span>
+                </th>
+              </tr>
+            </thead>
 
-      <div v-else class="overflow-x-auto">
-        <table class="w-full text-left text-sm">
-          <thead class="bg-slate-50 text-xs text-slate-500">
-            <tr>
-              <th class="px-5 py-3 font-medium">Socio</th>
-              <th class="px-5 py-3 font-medium">Fecha</th>
-              <th class="px-5 py-3 text-right font-medium">Importe</th>
-            </tr>
-          </thead>
+            <tbody>
+              <tr
+                v-for="member in shownDebtors"
+                :key="member.id"
+                class="border-b border-slate-100 last:border-0"
+              >
+                <td class="px-6 py-3 font-semibold text-slate-900">
+                  {{ member.razonSocial }}
+                </td>
+                <td class="px-4 py-3">
+                  {{ member.estadoCuotas?.cuotasVencidas }}
+                  {{
+                    member.estadoCuotas?.cuotasVencidas === 1
+                      ? 'cuota'
+                      : 'cuotas'
+                  }}
+                </td>
+                <td
+                  class="px-4 py-3 text-right font-bold"
+                  :class="
+                    member.estadoCuotas?.estado === 'DEUDOR'
+                      ? 'text-red-700'
+                      : 'text-amber-800'
+                  "
+                >
+                  {{ money(member.estadoCuotas?.deudaTotal) }}
+                </td>
+                <td class="px-6 py-3 text-right">
+                  <RouterLink
+                    :to="{ name: 'socio-detalle', params: { id: member.id } }"
+                    class="font-semibold text-ccisj hover:underline"
+                  >
+                    Ver cuotas
+                  </RouterLink>
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
-          <tbody class="divide-y divide-slate-100">
-            <tr
-              v-for="payment in payments.slice(0, 5)"
-              :key="payment.id"
-              class="hover:bg-slate-50"
+          <p
+            v-if="debtors.length > shownDebtors.length"
+            class="border-t border-slate-100 px-6 py-3 text-sm text-slate-600"
+          >
+            Los {{ shownDebtors.length }} que más deben, de
+            {{ debtors.length }}.
+          </p>
+        </div>
+      </section>
+
+      <div class="min-w-0 space-y-6 xl:col-span-2">
+        <section
+          aria-labelledby="pagos"
+          class="rounded-2xl border border-slate-200 bg-white px-6 py-5"
+        >
+          <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="pagos" class="text-xl font-bold text-slate-900">
+              Últimos pagos de cuotas
+            </h2>
+            <RouterLink
+              to="/cuotas"
+              class="font-semibold text-ccisj hover:underline"
             >
-              <td class="px-5 py-4">
-                <p class="font-semibold text-slate-800">
-                  {{ payment.razonSocial }}
-                </p>
-                <p class="mt-0.5 text-xs text-slate-500">
-                  Pago #{{ payment.id }}
-                </p>
-              </td>
+              Ir a Cuotas
+            </RouterLink>
+          </div>
 
-              <td class="px-5 py-4 text-slate-600">
-                <span class="inline-flex items-center gap-2">
-                  <CalendarDays class="h-4 w-4 text-slate-400" />
+          <p v-if="paymentsError" class="mt-3 text-red-700">
+            No se pudieron cargar los pagos.
+          </p>
+
+          <p
+            v-else-if="!loading && payments.length === 0"
+            class="mt-3 text-slate-600"
+          >
+            Todavía no hay pagos registrados.
+          </p>
+
+          <ul v-else class="mt-2">
+            <li
+              v-for="payment in payments"
+              :key="payment.id"
+              class="flex items-baseline justify-between gap-4 border-t border-slate-100 py-3 first:border-0"
+            >
+              <span class="min-w-0">
+                <span class="block truncate font-semibold text-slate-900">
+                  {{ payment.razonSocial }}
+                </span>
+                <span class="text-sm text-slate-600">
                   {{ formatDate(payment.fechaPago) }}
                 </span>
-              </td>
+              </span>
+              <span class="font-bold tabular-nums text-slate-900">
+                {{ money(payment.importe) }}
+              </span>
+            </li>
+          </ul>
+        </section>
 
-              <td class="px-5 py-4 text-right font-semibold text-slate-900">
-                {{ formatMoney(payment.importe) }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <section
+          aria-labelledby="tareas"
+          class="rounded-2xl border border-slate-200 bg-white px-6 py-5"
+        >
+          <h2 id="tareas" class="text-xl font-bold text-slate-900">
+            ¿Qué querés hacer?
+          </h2>
+
+          <div class="mt-4 space-y-3">
+            <RouterLink
+              v-for="task in tasks"
+              :key="task.to"
+              :to="task.to"
+              class="flex min-h-13 items-center justify-between gap-3 rounded-xl px-5 font-semibold transition"
+              :class="
+                task.primary
+                  ? 'bg-ccisj text-white hover:bg-ccisj-dark'
+                  : 'border border-slate-300 text-slate-900 hover:border-ccisj hover:text-ccisj'
+              "
+            >
+              {{ task.label }}
+              <ArrowRight class="h-5 w-5 shrink-0" />
+            </RouterLink>
+          </div>
+        </section>
       </div>
-    </section>
+    </div>
   </div>
 </template>

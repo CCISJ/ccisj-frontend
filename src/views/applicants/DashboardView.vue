@@ -137,8 +137,8 @@ const latestNotifications = computed(() => notifications.value.slice(0, 4));
 const card = 'rounded-xl border border-slate-200 bg-white';
 const cardHeader =
   'flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-3.5';
-const cardTitle = 'text-sm font-semibold text-slate-800';
-const cardLink = 'text-xs font-medium text-ccisj hover:underline';
+const cardTitle = 'text-base font-semibold text-slate-800';
+const cardLink = 'text-sm font-medium text-ccisj hover:underline';
 </script>
 
 <template>
@@ -150,14 +150,14 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
           {{ firstName ? `Hola, ${firstName}` : 'Inicio' }}
         </h1>
 
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-base text-slate-600">
           Seguí tus postulaciones y encontrá nuevas oportunidades.
         </p>
       </div>
 
       <button
         type="button"
-        class="flex items-center gap-2 rounded-xl bg-ccisj px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+        class="flex items-center gap-2 rounded-xl bg-ccisj px-4 py-2.5 text-base font-semibold text-white transition hover:opacity-90"
         @click="router.push({ name: 'ofertas' })"
       >
         <Search class="h-4 w-4" />
@@ -169,13 +169,13 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
       v-if="!loading && hasErrors"
       class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3"
     >
-      <p class="text-sm text-amber-800">
+      <p class="text-base text-amber-800">
         No se pudo cargar parte de la información.
       </p>
 
       <button
         type="button"
-        class="flex items-center gap-1.5 rounded-lg border border-amber-200 bg-white px-3 py-1.5 text-sm font-medium text-amber-800 transition hover:bg-amber-100"
+        class="flex items-center gap-1.5 rounded-lg border border-amber-200 bg-white px-3 py-1.5 text-base font-medium text-amber-800 transition hover:bg-amber-100"
         @click="load"
       >
         <RefreshCw class="h-4 w-4" />
@@ -206,11 +206,11 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
       </div>
 
       <div class="min-w-0 flex-1">
-        <p class="text-sm font-semibold text-slate-900">
+        <p class="text-base font-semibold text-slate-900">
           {{ cvPercent < 100 ? 'Completá tu CV' : 'Mi CV' }}
         </p>
 
-        <p class="text-xs text-slate-500">
+        <p class="text-sm text-slate-600">
           {{
             cvPercent < 100
               ? `Está completo al ${cvPercent}%. Las empresas lo ven cuando te postulás.`
@@ -230,7 +230,7 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
       </div>
 
       <span
-        class="shrink-0 rounded-lg bg-ccisj px-3 py-1.5 text-xs font-semibold text-white"
+        class="shrink-0 rounded-lg bg-ccisj px-3 py-1.5 text-sm font-semibold text-white"
       >
         {{ cvPercent < 100 ? 'Completar' : 'Ver mi CV' }}
       </span>
@@ -245,7 +245,7 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
           <div class="flex min-w-0 items-center gap-4">
             <span
               v-if="!loading && !failed.applications && summary"
-              class="hidden truncate text-xs text-slate-400 sm:inline"
+              class="hidden truncate text-sm text-slate-600 sm:inline"
             >
               {{ summary }}
             </span>
@@ -259,13 +259,16 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
           </div>
         </div>
 
-        <p v-if="loading" class="px-5 py-8 text-center text-sm text-slate-400">
+        <p
+          v-if="loading"
+          class="px-5 py-8 text-center text-base text-slate-600"
+        >
           Cargando...
         </p>
 
         <p
           v-else-if="failed.applications"
-          class="px-5 py-8 text-center text-sm text-slate-400"
+          class="px-5 py-8 text-center text-base text-slate-600"
         >
           No se pudieron cargar tus postulaciones.
         </p>
@@ -274,13 +277,13 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
           v-else-if="latestApplications.length === 0"
           class="px-5 py-8 text-center"
         >
-          <p class="text-sm text-slate-400">
+          <p class="text-base text-slate-600">
             Todavía no te postulaste a ninguna oferta.
           </p>
 
           <RouterLink
             :to="{ name: 'ofertas' }"
-            class="mt-2 inline-flex text-sm font-medium text-ccisj hover:underline"
+            class="mt-2 inline-flex text-base font-medium text-ccisj hover:underline"
           >
             Ver ofertas disponibles
           </RouterLink>
@@ -301,11 +304,11 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
               }"
             >
               <div class="min-w-0 flex-1">
-                <p class="truncate text-sm font-medium text-slate-900">
+                <p class="truncate text-base font-medium text-slate-900">
                   {{ item.oferta.titulo }}
                 </p>
 
-                <p class="truncate text-xs text-slate-400">
+                <p class="truncate text-sm text-slate-600">
                   {{ item.oferta.socio.razonSocial }} · Te postulaste el
                   {{ formatDate(item.fechaPostulacion) }}
                   <template v-if="item.oferta.estado === 'CERRADA'">
@@ -335,20 +338,23 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
           </RouterLink>
         </div>
 
-        <p v-if="loading" class="px-5 py-8 text-center text-sm text-slate-400">
+        <p
+          v-if="loading"
+          class="px-5 py-8 text-center text-base text-slate-600"
+        >
           Cargando...
         </p>
 
         <p
           v-else-if="failed.notifications"
-          class="px-5 py-8 text-center text-sm text-slate-400"
+          class="px-5 py-8 text-center text-base text-slate-600"
         >
           No se pudieron cargar las novedades.
         </p>
 
         <p
           v-else-if="latestNotifications.length === 0"
-          class="px-5 py-8 text-center text-sm text-slate-400"
+          class="px-5 py-8 text-center text-base text-slate-600"
         >
           No tenés novedades.
         </p>
@@ -361,18 +367,18 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
           >
             <div class="flex items-baseline justify-between gap-2">
               <p
-                class="truncate text-sm text-slate-800"
+                class="truncate text-base text-slate-800"
                 :class="{ 'font-semibold': !item.leida }"
               >
                 {{ item.notificacion.titulo }}
               </p>
 
-              <span class="shrink-0 text-xs text-slate-400">
+              <span class="shrink-0 text-sm text-slate-600">
                 {{ formatDate(item.notificacion.fechaCreacion) }}
               </span>
             </div>
 
-            <p class="mt-0.5 line-clamp-2 text-xs text-slate-500">
+            <p class="mt-0.5 line-clamp-2 text-sm text-slate-600">
               {{ item.notificacion.mensaje }}
             </p>
           </li>
@@ -389,20 +395,23 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
           </RouterLink>
         </div>
 
-        <p v-if="loading" class="px-5 py-8 text-center text-sm text-slate-400">
+        <p
+          v-if="loading"
+          class="px-5 py-8 text-center text-base text-slate-600"
+        >
           Cargando...
         </p>
 
         <p
           v-else-if="failed.offers"
-          class="px-5 py-8 text-center text-sm text-slate-400"
+          class="px-5 py-8 text-center text-base text-slate-600"
         >
           No se pudieron cargar las ofertas.
         </p>
 
         <p
           v-else-if="latestOffers.length === 0"
-          class="px-5 py-8 text-center text-sm text-slate-400"
+          class="px-5 py-8 text-center text-base text-slate-600"
         >
           No hay ofertas abiertas en este momento.
         </p>
@@ -413,15 +422,15 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
               :to="{ name: 'oferta-detalle', params: { id: offer.id } }"
               class="flex items-center gap-3 px-5 py-3 transition hover:bg-slate-50"
             >
-              <Briefcase class="h-4 w-4 shrink-0 text-slate-400" />
+              <Briefcase class="h-4 w-4 shrink-0 text-slate-600" />
 
               <div class="min-w-0 flex-1">
-                <p class="truncate text-sm font-medium text-slate-900">
+                <p class="truncate text-base font-medium text-slate-900">
                   {{ offer.titulo }}
                 </p>
 
                 <p
-                  class="flex items-center gap-1 truncate text-xs text-slate-400"
+                  class="flex items-center gap-1 truncate text-sm text-slate-600"
                 >
                   {{ offerDetails(offer) }}
                   <template v-if="offer.ubicacion">
@@ -433,7 +442,7 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
 
               <span
                 v-if="appliedOfferIds.has(offer.id)"
-                class="shrink-0 rounded-full bg-ccisj-light px-2.5 py-1 text-xs font-medium text-ccisj"
+                class="shrink-0 rounded-full bg-ccisj-light px-2.5 py-1 text-sm font-medium text-ccisj"
               >
                 Ya te postulaste
               </span>

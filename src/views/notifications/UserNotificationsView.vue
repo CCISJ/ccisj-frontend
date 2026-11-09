@@ -49,14 +49,14 @@ onMounted(async () => {
       <div>
         <h1 class="text-2xl font-semibold text-slate-900">Notificaciones</h1>
 
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-base text-slate-600">
           Notificaciones y avisos del Centro Comercial.
         </p>
       </div>
 
       <div
         v-if="!loading && unreadCount > 0"
-        class="flex min-h-8 items-center justify-center rounded-full bg-green-50 px-3 text-sm font-medium text-ccisj"
+        class="flex min-h-8 items-center justify-center rounded-full bg-green-50 px-3 text-base font-medium text-ccisj"
       >
         {{ unreadCount }} sin leer
       </div>
@@ -65,7 +65,7 @@ onMounted(async () => {
     <section
       class="overflow-hidden rounded-xl border border-slate-200 bg-white"
     >
-      <div v-if="loading" class="p-10 text-center text-sm text-slate-500">
+      <div v-if="loading" class="p-10 text-center text-base text-slate-600">
         Cargando notificaciones...
       </div>
 
@@ -74,14 +74,14 @@ onMounted(async () => {
         class="flex flex-col items-center justify-center px-6 py-14 text-center"
       >
         <div
-          class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400"
+          class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-600"
         >
           <Bell :size="22" />
         </div>
 
         <h2 class="font-medium text-slate-800">No tenés notificaciones</h2>
 
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-base text-slate-600">
           Cuando recibas una notificación aparecerá acá.
         </p>
       </div>
@@ -103,7 +103,7 @@ onMounted(async () => {
               item.notificacion.tipo === 'EMERGENTE'
                 ? 'bg-amber-100 text-amber-700'
                 : item.leida
-                  ? 'bg-slate-100 text-slate-500'
+                  ? 'bg-slate-100 text-slate-600'
                   : 'bg-green-100 text-ccisj'
             "
           >
@@ -123,7 +123,7 @@ onMounted(async () => {
             >
               <div class="flex flex-wrap items-center gap-2">
                 <h2
-                  class="text-sm text-slate-900"
+                  class="text-base text-slate-900"
                   :class="item.leida ? 'font-medium' : 'font-semibold'"
                 >
                   {{ item.notificacion.titulo }}
@@ -131,7 +131,7 @@ onMounted(async () => {
 
                 <span
                   v-if="item.notificacion.tipo === 'EMERGENTE'"
-                  class="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700"
+                  class="rounded-full bg-amber-100 px-2 py-0.5 text-sm font-medium text-amber-700"
                 >
                   Importante
                 </span>
@@ -141,7 +141,7 @@ onMounted(async () => {
                 class="ml-auto flex min-w-32.5 shrink-0 items-center justify-end gap-2"
               >
                 <span
-                  class="whitespace-nowrap text-right text-xs text-slate-400"
+                  class="whitespace-nowrap text-right text-sm text-slate-600"
                 >
                   {{ formatDate(item.notificacion.fechaCreacion) }}
                 </span>
@@ -150,7 +150,7 @@ onMounted(async () => {
                   <MailOpen
                     v-if="!item.leida"
                     :size="16"
-                    class="text-slate-400 opacity-0 transition group-hover:text-ccisj group-hover:opacity-100"
+                    class="text-slate-600 opacity-0 transition group-hover:text-ccisj group-hover:opacity-100"
                     title="Marcar como leída"
                   />
                 </div>
@@ -158,8 +158,8 @@ onMounted(async () => {
             </div>
 
             <p
-              class="mt-2 whitespace-pre-line text-sm leading-6"
-              :class="item.leida ? 'text-slate-500' : 'text-slate-700'"
+              class="mt-2 whitespace-pre-line text-base leading-6"
+              :class="item.leida ? 'text-slate-600' : 'text-slate-700'"
             >
               {{ item.notificacion.mensaje }}
             </p>

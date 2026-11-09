@@ -138,7 +138,7 @@ watch(
       <div class="space-y-6 p-6">
         <!-- Nueva categoría -->
         <section>
-          <h3 class="mb-3 text-sm font-semibold text-slate-800">
+          <h3 class="mb-3 text-base font-semibold text-slate-800">
             Nueva categoría
           </h3>
 
@@ -146,7 +146,7 @@ watch(
             <div>
               <label
                 for="cash-category-tipo"
-                class="mb-1.5 block text-xs font-medium text-slate-500"
+                class="mb-1.5 block text-sm font-medium text-slate-600"
               >
                 Tipo
               </label>
@@ -154,7 +154,7 @@ watch(
               <select
                 id="cash-category-tipo"
                 v-model="tipo"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-ccisj"
+                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-base text-slate-700 outline-none focus:border-ccisj"
               >
                 <option value="INGRESO">Ingreso</option>
                 <option value="EGRESO">Egreso</option>
@@ -164,7 +164,7 @@ watch(
             <div>
               <label
                 for="cash-category-nombre"
-                class="mb-1.5 block text-xs font-medium text-slate-500"
+                class="mb-1.5 block text-sm font-medium text-slate-600"
               >
                 Nombre
               </label>
@@ -175,7 +175,7 @@ watch(
                 type="text"
                 maxlength="100"
                 placeholder="Ej. Alquiler de salón"
-                class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-ccisj"
+                class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-base text-slate-700 outline-none placeholder:text-slate-400 focus:border-ccisj"
                 @keyup.enter="addCategory"
               />
             </div>
@@ -184,7 +184,7 @@ watch(
           <div class="mt-3 flex justify-end">
             <button
               type="button"
-              class="inline-flex items-center gap-2 rounded-lg bg-ccisj px-4 py-2 text-sm font-semibold text-white transition disabled:opacity-50"
+              class="inline-flex items-center gap-2 rounded-lg bg-ccisj px-4 py-2 text-base font-semibold text-white transition disabled:opacity-50"
               :disabled="saving"
               @click="addCategory"
             >
@@ -196,7 +196,7 @@ watch(
 
         <div class="border-t border-slate-100" />
 
-        <div v-if="loading" class="py-8 text-center text-sm text-slate-400">
+        <div v-if="loading" class="py-8 text-center text-base text-slate-600">
           Cargando categorías...
         </div>
 
@@ -206,16 +206,16 @@ watch(
             <div class="mb-3 flex items-center gap-2">
               <div class="h-2.5 w-2.5 rounded-full bg-emerald-500" />
 
-              <h3 class="text-sm font-semibold text-slate-800">Ingresos</h3>
+              <h3 class="text-base font-semibold text-slate-800">Ingresos</h3>
 
-              <span class="text-xs text-slate-400">
+              <span class="text-sm text-slate-600">
                 {{ incomeCategories.length }}
               </span>
             </div>
 
             <div
               v-if="incomeCategories.length === 0"
-              class="rounded-lg bg-slate-50 px-4 py-5 text-center text-sm text-slate-400"
+              class="rounded-lg bg-slate-50 px-4 py-5 text-center text-base text-slate-600"
             >
               No hay categorías de ingresos.
             </div>
@@ -226,13 +226,13 @@ watch(
                 :key="category.id"
                 class="flex min-h-11 items-center justify-between rounded-lg px-3 transition hover:bg-slate-50"
               >
-                <span class="text-sm text-slate-700">
+                <span class="text-base text-slate-700">
                   {{ category.nombre }}
                 </span>
 
                 <span
                   v-if="isReserved(category)"
-                  class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-500"
+                  class="rounded-full bg-slate-100 px-2.5 py-1 text-sm font-medium text-slate-600"
                 >
                   Reservada
                 </span>
@@ -240,7 +240,7 @@ watch(
                 <button
                   v-else
                   type="button"
-                  class="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
+                  class="rounded-lg p-2 text-slate-600 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
                   title="Desactivar categoría"
                   :disabled="deletingId === category.id"
                   @click="deactivateCategory(category)"
@@ -256,16 +256,16 @@ watch(
             <div class="mb-3 flex items-center gap-2">
               <div class="h-2.5 w-2.5 rounded-full bg-red-500" />
 
-              <h3 class="text-sm font-semibold text-slate-800">Egresos</h3>
+              <h3 class="text-base font-semibold text-slate-800">Egresos</h3>
 
-              <span class="text-xs text-slate-400">
+              <span class="text-sm text-slate-600">
                 {{ expenseCategories.length }}
               </span>
             </div>
 
             <div
               v-if="expenseCategories.length === 0"
-              class="rounded-lg bg-slate-50 px-4 py-5 text-center text-sm text-slate-400"
+              class="rounded-lg bg-slate-50 px-4 py-5 text-center text-base text-slate-600"
             >
               No hay categorías de egresos.
             </div>
@@ -276,13 +276,13 @@ watch(
                 :key="category.id"
                 class="flex min-h-11 items-center justify-between rounded-lg px-3 transition hover:bg-slate-50"
               >
-                <span class="text-sm text-slate-700">
+                <span class="text-base text-slate-700">
                   {{ category.nombre }}
                 </span>
 
                 <button
                   type="button"
-                  class="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
+                  class="rounded-lg p-2 text-slate-600 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
                   title="Desactivar categoría"
                   :disabled="deletingId === category.id"
                   @click="deactivateCategory(category)"
