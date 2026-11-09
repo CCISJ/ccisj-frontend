@@ -56,13 +56,16 @@ export function getReceivedCvFileUrl(applicationId: number, cvId: number) {
  * Abre un enlace firmado en una pestaña nueva. La pestaña se abre antes del
  * pedido para que el navegador no la bloquee (ver `useReceiptViewer`).
  */
-export async function openSignedFile(getUrl: () => Promise<{ url: string }>) {
+export async function openSignedFile(
+  getUrl: () => Promise<{ url: string }>,
+  cargando = 'Cargando CV...',
+) {
   const tab = window.open('', '_blank');
 
   if (tab) {
     tab.opener = null;
-    tab.document.title = 'Cargando CV...';
-    tab.document.body.textContent = 'Cargando CV...';
+    tab.document.title = cargando;
+    tab.document.body.textContent = cargando;
   }
 
   try {

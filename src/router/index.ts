@@ -179,6 +179,33 @@ const router = createRouter({
           component: () => import('@/views/account/MyAccountView.vue'),
         },
 
+        // Gestoría: solo para la administración y los socios directivos (lo
+        // definió el cliente). La administración escribe; los directivos leen.
+        {
+          path: 'gestoria',
+          name: 'gestoria',
+          component: () => import('@/views/gestoria/GestoriaView.vue'),
+          meta: { roles: ['ADMIN', 'SOCIO'], directivoOnly: true },
+        },
+        {
+          path: 'gestoria/nueva',
+          name: 'gestion-nueva',
+          component: () => import('@/views/gestoria/GestionFormView.vue'),
+          meta: { roles: ['ADMIN'] },
+        },
+        {
+          path: 'gestoria/:id(\\d+)',
+          name: 'gestion-detalle',
+          component: () => import('@/views/gestoria/GestionDetailView.vue'),
+          meta: { roles: ['ADMIN', 'SOCIO'], directivoOnly: true },
+        },
+        {
+          path: 'gestoria/:id(\\d+)/editar',
+          name: 'gestion-editar',
+          component: () => import('@/views/gestoria/GestionFormView.vue'),
+          meta: { roles: ['ADMIN'] },
+        },
+
         {
           path: 'cuotas',
           name: 'cuotas',

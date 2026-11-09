@@ -70,6 +70,11 @@ const ACCESO: Record<string, { url: string; entran: Actor[] }> = {
   'socio-editar': { url: '/socios/7/editar', entran: ['admin'] },
   'mi-empresa': { url: '/mi-empresa', entran: SOCIOS },
 
+  gestoria: { url: '/gestoria', entran: ['directivo', 'admin'] },
+  'gestion-detalle': { url: '/gestoria/3', entran: ['directivo', 'admin'] },
+  'gestion-nueva': { url: '/gestoria/nueva', entran: ['admin'] },
+  'gestion-editar': { url: '/gestoria/3/editar', entran: ['admin'] },
+
   ofertas: {
     url: '/ofertas',
     entran: ['anonimo', 'postulante', 'admin'],
