@@ -219,7 +219,7 @@ onMounted(async () => {
           @change="onFiles"
         />
         <p id="gestion-archivos-ayuda" class="mt-1 text-sm text-slate-600">
-          PDF, fotos (JPG o PNG), Word o Excel; hasta 5 y 10 MB cada uno. Se
+          PDF, fotos (JPG o PNG), Word o Excel; hasta 5 y 8 MB cada uno. Se
           pueden agregar más después.
         </p>
       </div>

@@ -140,8 +140,8 @@ describe('archivos de una gestión', () => {
   it('avisa antes de subir lo que el backend rechazaría', () => {
     expect(problemasDeArchivos([archivo('a.pdf', 100)])).toEqual([]);
     expect(
-      problemasDeArchivos([archivo('grande.pdf', 10 * 1024 * 1024 + 1)]),
-    ).toEqual(['"grande.pdf" pesa más de 10 MB.']);
+      problemasDeArchivos([archivo('grande.pdf', 8 * 1024 * 1024 + 1)]),
+    ).toEqual(['"grande.pdf" pesa más de 8 MB.']);
     expect(
       problemasDeArchivos(
         Array.from({ length: 6 }, (_, i) => archivo(`${i}.pdf`, 1)),

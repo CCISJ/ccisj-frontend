@@ -18,7 +18,7 @@ export const GESTION_ACCEPT = [
 ].join(',');
 
 /** Lo mismo que limita el backend: avisar antes evita una subida en vano. */
-export const GESTION_MAX_FILE_MB = 10;
+export const GESTION_MAX_FILE_MB = 8;
 export const GESTION_MAX_FILES_PER_UPLOAD = 5;
 
 export function getGestiones(filters: { search?: string; categoria?: string }) {

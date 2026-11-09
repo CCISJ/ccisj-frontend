@@ -254,8 +254,7 @@ onMounted(load);
         </div>
 
         <p v-if="auth.isAdmin" class="mt-1 text-sm text-slate-600">
-          PDF, fotos (JPG o PNG), Word o Excel; hasta 5 por vez y 10 MB cada
-          uno.
+          PDF, fotos (JPG o PNG), Word o Excel; hasta 5 por vez y 8 MB cada uno.
         </p>
 
         <p
