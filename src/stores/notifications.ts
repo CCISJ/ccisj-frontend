@@ -2,7 +2,10 @@ import { computed, ref } from 'vue';
 
 import { defineStore } from 'pinia';
 
+import type { Socket } from 'socket.io-client';
+
 import * as notificationsService from '@/services/notificationsService';
+import { connectSocket, disconnectSocket } from '@/services/socket';
 
 import type {
   CreateNotificationData,
@@ -85,7 +88,45 @@ export const useNotificationsStore = defineStore('notifications', () => {
     return notification;
   }
 
+  let socket: Socket | null = null;
+
+  async function refreshReceivedNotifications() {
+    await Promise.all([fetchMine(), fetchPendingPopups()]);
+  }
+
+  function onNewNotification() {
+    void refreshReceivedNotifications().catch((error) => {
+      console.error('Error actualizando notificaciones:', error);
+    });
+  }
+
+  function onSocketConnect() {
+    // Recuperar notificaciones recibidas mientras estuvimos desconectados.
+    onNewNotification();
+  }
+
+  function startRealtime() {
+    if (socket) return;
+
+    socket = connectSocket();
+
+    socket.on('notificacion:nueva', onNewNotification);
+    socket.on('connect', onSocketConnect);
+  }
+
+  function stopRealtime() {
+    if (!socket) return;
+
+    socket.off('notificacion:nueva', onNewNotification);
+    socket.off('connect', onSocketConnect);
+
+    disconnectSocket();
+    socket = null;
+  }
+
   function clear() {
+    stopRealtime();
+
     notifications.value = [];
     sentNotifications.value = [];
     pendingPopups.value = [];
@@ -114,5 +155,8 @@ export const useNotificationsStore = defineStore('notifications', () => {
     createNotification,
     markAsRead,
     clear,
+
+    startRealtime,
+    stopRealtime,
   };
 });
