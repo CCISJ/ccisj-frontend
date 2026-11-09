@@ -1,3 +1,5 @@
+import type { MemberFeeState } from './fee.type';
+
 export type MemberType = 'DIRECTIVO' | 'COMUN';
 
 export type Member = {
@@ -23,6 +25,9 @@ export type Member = {
     email: string;
     activo: boolean;
   };
+
+  /** Solo en la lista de la administración (`GET /socios`). */
+  estadoCuotas?: MemberFeeState;
 };
 
 /**

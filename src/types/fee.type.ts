@@ -2,6 +2,20 @@ export type FeeStatus = 'PENDIENTE' | 'PARCIAL' | 'PAGADA' | 'ANULADA';
 
 export type MemberFeeStatus = 'AL_DIA' | 'PENDIENTE' | 'DEUDOR';
 
+/**
+ * El estado de cuotas de un socio, como lo calcula el backend para su ficha
+ * (`GET /cuotas/socio/:id/estado`) y para cada socio de la lista de la
+ * administración (`estadoCuotas` en `GET /socios`). Pendiente es tener 1 o
+ * 2 cuotas vencidas; deudor, 3 o más.
+ */
+export type MemberFeeState = {
+  estado: MemberFeeStatus;
+  cuotasPendientes: number;
+  deudaTotal: number;
+  cuotasVencidas: number;
+  deudaVencida: number;
+};
+
 export type AdjustmentType = 'ADICIONAL' | 'DESCUENTO';
 
 export type AdjustmentDuration = '1' | '2' | '3' | '6' | '12' | 'INDEFINIDO';
