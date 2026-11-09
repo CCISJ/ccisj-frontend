@@ -4,6 +4,8 @@ import { ApiError, apiFetch } from '@/services/api';
 
 import type { AuthUser, MeResponse, RegisterData } from '@/types/auth.type';
 
+import { useNotificationsStore } from './notifications';
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null as AuthUser | null,
@@ -44,8 +46,12 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async fetchMe() {
+      const notificationsStore = useNotificationsStore();
+
       try {
         const data = await apiFetch<MeResponse>('/auth/me');
+
+        const previousUserId = this.user?.id;
 
         this.user = {
           id: data.user.id,
@@ -55,9 +61,27 @@ export const useAuthStore = defineStore('auth', {
           memberType: data.user.memberType,
         };
 
+        // Si cambió el usuario, limpiar datos de la sesión anterior.
+        if (
+          previousUserId !== null &&
+          previousUserId !== undefined &&
+          previousUserId !== this.user.id
+        ) {
+          notificationsStore.clear();
+        }
+
+        // Los administradores envían notificaciones;
+        // los demás usuarios reciben las suyas.
+        if (!this.isAdmin) {
+          notificationsStore.startRealtime();
+        } else {
+          notificationsStore.stopRealtime();
+        }
+
         return this.user;
       } catch (error) {
         if (error instanceof ApiError && error.status === 401) {
+          notificationsStore.clear();
           this.user = null;
           return null;
         }
@@ -76,11 +100,15 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async logout() {
+      const notificationsStore = useNotificationsStore();
+
       try {
         await apiFetch('/auth/logout', {
           method: 'POST',
         });
       } finally {
+        notificationsStore.clear();
+
         this.user = null;
         this.initialized = false;
       }

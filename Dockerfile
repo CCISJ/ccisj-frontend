@@ -32,7 +32,7 @@ RUN mkdir -p /app && chown node:node /app
 WORKDIR /app
 USER node
 
-COPY --chown=node:node package.json pnpm-lock.yaml ./
+COPY --chown=node:node package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 RUN pnpm install --frozen-lockfile
 
