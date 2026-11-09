@@ -28,6 +28,8 @@ const PANTALLAS = {
       '/notificaciones',
       '/ofertas',
       '/candidatos',
+      '/gestoria',
+      '/gestoria/nueva',
       '/mi-cuenta',
     ],
   },
@@ -43,7 +45,7 @@ const PANTALLAS = {
   },
   directivo: {
     cuenta: DIRECTIVO,
-    rutas: ['/', '/socios', '/candidatos'],
+    rutas: ['/', '/socios', '/candidatos', '/gestoria'],
   },
   postulante: {
     cuenta: POSTULANTE,

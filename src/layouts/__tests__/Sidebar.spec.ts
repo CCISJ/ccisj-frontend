@@ -45,6 +45,7 @@ describe('Sidebar', () => {
       'Notificaciones',
       'Socios',
       'Buscar candidatos',
+      'Gestoría',
       'Mi empresa',
       'Mis ofertas',
       'Postulantes',
@@ -56,6 +57,7 @@ describe('Sidebar', () => {
 
     expect(items).not.toContain('Socios');
     expect(items).not.toContain('Buscar candidatos');
+    expect(items).not.toContain('Gestoría');
     expect(items).toContain('Mi empresa');
   });
 });

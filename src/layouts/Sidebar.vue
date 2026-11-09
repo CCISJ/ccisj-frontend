@@ -12,6 +12,7 @@ import {
   Building2,
   ClipboardList,
   FileUser,
+  FolderOpen,
   LayoutDashboard,
   ReceiptText,
   UserRound,
@@ -91,6 +92,7 @@ const groups = computed<NavGroup[]>(() => {
             { label: 'Socios', icon: Users, to: '/socios' },
             { label: 'Cuotas', icon: ReceiptText, to: '/cuotas' },
             { label: 'Caja', icon: Wallet, to: '/caja' },
+            { label: 'Gestoría', icon: FolderOpen, to: '/gestoria' },
           ],
         },
         {
@@ -107,20 +109,24 @@ const groups = computed<NavGroup[]>(() => {
       ];
 
     case 'SOCIO': {
-      const empresaItems: NavItem[] = [
-        { label: 'Mi empresa', icon: Building2, to: '/mi-empresa' },
-      ];
-
-      if (auth.user?.memberType === 'DIRECTIVO') {
-        empresaItems.unshift(
-          { label: 'Socios', icon: Users, to: '/socios' },
-          {
-            label: 'Buscar candidatos',
-            icon: UserRoundSearch,
-            to: '/candidatos',
-          },
-        );
-      }
+      // Lo que es solo de la directiva va junto, en su propio grupo.
+      const directiva: NavGroup[] =
+        auth.user?.memberType === 'DIRECTIVO'
+          ? [
+              {
+                title: 'Directiva',
+                items: [
+                  { label: 'Socios', icon: Users, to: '/socios' },
+                  {
+                    label: 'Buscar candidatos',
+                    icon: UserRoundSearch,
+                    to: '/candidatos',
+                  },
+                  { label: 'Gestoría', icon: FolderOpen, to: '/gestoria' },
+                ],
+              },
+            ]
+          : [];
 
       return [
         {
@@ -130,7 +136,11 @@ const groups = computed<NavGroup[]>(() => {
             { label: 'Notificaciones', icon: Bell, to: '/notificaciones' },
           ],
         },
-        { title: 'Mi empresa', items: empresaItems },
+        ...directiva,
+        {
+          title: 'Mi empresa',
+          items: [{ label: 'Mi empresa', icon: Building2, to: '/mi-empresa' }],
+        },
         {
           title: 'Empleo',
           items: [
