@@ -147,10 +147,10 @@ const progress = computed(() => (cv.value ? cvProgress(cv.value) : 0));
 const card = 'rounded-xl border border-slate-200 bg-white';
 const cardHeader =
   'flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-3.5';
-const cardTitle = 'text-sm font-semibold text-slate-800';
-const label = 'mb-1.5 block text-xs font-medium text-slate-600';
+const cardTitle = 'text-base font-semibold text-slate-800';
+const label = 'mb-1.5 block text-sm font-medium text-slate-600';
 const input =
-  'w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100';
+  'w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-base text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100';
 </script>
 
 <template>
@@ -158,18 +158,18 @@ const input =
     <div>
       <h1 class="text-2xl font-bold text-slate-900">Mi perfil</h1>
 
-      <p class="mt-1 text-sm text-slate-500">
+      <p class="mt-1 text-base text-slate-600">
         Tus datos de contacto y los rubros de los que querés recibir ofertas.
       </p>
     </div>
 
-    <p v-if="loading" class="py-10 text-center text-sm text-slate-400">
+    <p v-if="loading" class="py-10 text-center text-base text-slate-600">
       Cargando...
     </p>
 
     <div
       v-else-if="loadError"
-      class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+      class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-base text-amber-800"
     >
       {{ loadError }}
       <button type="button" class="ml-2 font-medium underline" @click="load">
@@ -242,7 +242,7 @@ const input =
 
             <div class="sm:col-span-2">
               <p :class="label">Correo electrónico</p>
-              <p class="text-sm text-slate-700">{{ cv?.usuario.email }}</p>
+              <p class="text-base text-slate-700">{{ cv?.usuario.email }}</p>
             </div>
           </div>
         </section>
@@ -252,7 +252,7 @@ const input =
           <div :class="cardHeader">
             <div>
               <h2 :class="cardTitle">Ofertas que me interesan</h2>
-              <p class="text-xs text-slate-400">
+              <p class="text-sm text-slate-600">
                 En Ofertas laborales vas a ver primero las de estos rubros.
               </p>
             </div>
@@ -271,7 +271,7 @@ const input =
           <button
             type="button"
             :disabled="saving"
-            class="flex items-center gap-2 rounded-xl bg-ccisj px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+            class="flex items-center gap-2 rounded-xl bg-ccisj px-4 py-2.5 text-base font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
             @click="save"
           >
             <LoaderCircle v-if="saving" class="h-4 w-4 animate-spin" />
@@ -286,7 +286,7 @@ const input =
         <section :class="card">
           <div :class="cardHeader">
             <h2 :class="cardTitle">Mi CV</h2>
-            <span class="text-xs font-semibold text-ccisj">
+            <span class="text-sm font-semibold text-ccisj">
               {{ progress }}% completo
             </span>
           </div>
@@ -295,13 +295,13 @@ const input =
             <div
               v-for="row in cvSummary"
               :key="row.label"
-              class="flex items-center justify-between gap-3 px-5 py-2.5 text-sm"
+              class="flex items-center justify-between gap-3 px-5 py-2.5 text-base"
             >
-              <dt class="text-slate-500">{{ row.label }}</dt>
+              <dt class="text-slate-600">{{ row.label }}</dt>
               <dd
                 :class="
                   row.value === 'Sin cargar'
-                    ? 'text-slate-400'
+                    ? 'text-slate-600'
                     : 'font-medium text-slate-800'
                 "
               >
@@ -313,7 +313,7 @@ const input =
           <div class="border-t border-slate-100 p-4">
             <RouterLink
               :to="{ name: 'mi-cv' }"
-              class="flex items-center justify-center gap-2 rounded-lg border border-ccisj px-3 py-2 text-sm font-semibold text-ccisj transition hover:bg-ccisj-light"
+              class="flex items-center justify-center gap-2 rounded-lg border border-ccisj px-3 py-2 text-base font-semibold text-ccisj transition hover:bg-ccisj-light"
             >
               <FileUser class="h-4 w-4" />
               {{ progress < 100 ? 'Completar mi CV' : 'Editar mi CV' }}
@@ -329,10 +329,10 @@ const input =
             'flex items-center gap-3 px-5 py-4 transition hover:bg-slate-50',
           ]"
         >
-          <KeyRound class="h-5 w-5 shrink-0 text-slate-400" />
+          <KeyRound class="h-5 w-5 shrink-0 text-slate-600" />
           <div class="min-w-0 flex-1">
-            <p class="text-sm font-semibold text-slate-800">Contraseña</p>
-            <p class="text-xs text-slate-500">Cambiar tu contraseña</p>
+            <p class="text-base font-semibold text-slate-800">Contraseña</p>
+            <p class="text-sm text-slate-600">Cambiar tu contraseña</p>
           </div>
           <ChevronRight class="h-4 w-4 shrink-0 text-slate-300" />
         </RouterLink>

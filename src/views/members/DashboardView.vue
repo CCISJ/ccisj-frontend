@@ -6,6 +6,7 @@ import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
 import {
+  ArrowRight,
   Briefcase,
   Building2,
   ChevronRight,
@@ -196,8 +197,8 @@ const shortcuts = computed(() => {
 const card = 'rounded-xl border border-slate-200 bg-white';
 const cardHeader =
   'flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-3.5';
-const cardTitle = 'text-sm font-semibold text-slate-800';
-const cardLink = 'text-xs font-medium text-ccisj hover:underline';
+const cardTitle = 'text-base font-semibold text-slate-800';
+const cardLink = 'text-sm font-medium text-ccisj hover:underline';
 </script>
 
 <template>
@@ -209,14 +210,14 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
           {{ company?.razonSocial ?? auth.user?.displayName ?? 'Inicio' }}
         </h1>
 
-        <p v-if="subtitle" class="mt-1 text-sm text-slate-500">
+        <p v-if="subtitle" class="mt-1 text-base text-slate-600">
           {{ subtitle }}
         </p>
       </div>
 
       <button
         type="button"
-        class="flex items-center gap-2 rounded-xl bg-ccisj px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+        class="flex items-center gap-2 rounded-xl bg-ccisj px-4 py-2.5 text-base font-semibold text-white transition hover:opacity-90"
         @click="router.push({ name: 'mis-ofertas-nueva' })"
       >
         <Plus class="h-4 w-4" />
@@ -228,13 +229,13 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
       v-if="!loading && hasErrors"
       class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3"
     >
-      <p class="text-sm text-amber-800">
+      <p class="text-base text-amber-800">
         No se pudo cargar parte de la información.
       </p>
 
       <button
         type="button"
-        class="flex items-center gap-1.5 rounded-lg border border-amber-200 bg-white px-3 py-1.5 text-sm font-medium text-amber-800 transition hover:bg-amber-100"
+        class="flex items-center gap-1.5 rounded-lg border border-amber-200 bg-white px-3 py-1.5 text-base font-medium text-amber-800 transition hover:bg-amber-100"
         @click="load"
       >
         <RefreshCw class="h-4 w-4" />
@@ -242,19 +243,42 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
       </button>
     </div>
 
+    <!-- Lo primero que hay que atender -->
+    <section
+      v-if="!loading && !failed.applications && newApplications > 0"
+      aria-labelledby="por-revisar"
+      class="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-ccisj-deep px-6 py-5 text-white"
+    >
+      <h2 id="por-revisar" class="text-xl font-bold">
+        {{
+          newApplications === 1
+            ? 'Tenés 1 postulación sin revisar'
+            : `Tenés ${newApplications} postulaciones sin revisar`
+        }}
+      </h2>
+
+      <RouterLink
+        :to="{ name: 'postulaciones-recibidas', query: { estado: 'ENVIADA' } }"
+        class="inline-flex min-h-12 items-center gap-2 rounded-xl bg-white px-5 font-bold text-ccisj-deep transition hover:bg-ccisj-light"
+      >
+        {{ newApplications === 1 ? 'Revisarla' : 'Revisarlas' }}
+        <ArrowRight class="h-5 w-5" />
+      </RouterLink>
+    </section>
+
     <!-- Cifras -->
     <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
       <RouterLink
         :to="{ name: 'mis-ofertas' }"
         :class="[card, 'p-4 transition hover:border-ccisj']"
       >
-        <p class="text-xs font-medium text-slate-500">Ofertas activas</p>
+        <p class="text-sm font-medium text-slate-600">Ofertas activas</p>
 
         <p class="mt-1 text-2xl font-bold tabular-nums text-slate-900">
           {{ loading || failed.offers ? '—' : activeOffers.length }}
         </p>
 
-        <p class="mt-0.5 text-xs text-slate-400">
+        <p class="mt-0.5 text-sm text-slate-600">
           <template v-if="!loading && !failed.offers">
             de {{ offers.length }}
             {{ offers.length === 1 ? 'publicada' : 'publicadas' }}
@@ -266,7 +290,7 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
         :to="{ name: 'postulaciones-recibidas', query: { estado: 'ENVIADA' } }"
         :class="[card, 'p-4 transition hover:border-ccisj']"
       >
-        <p class="text-xs font-medium text-slate-500">Postulaciones nuevas</p>
+        <p class="text-sm font-medium text-slate-600">Postulaciones nuevas</p>
 
         <p
           class="mt-1 text-2xl font-bold tabular-nums"
@@ -275,14 +299,14 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
           {{ loading || failed.applications ? '—' : newApplications }}
         </p>
 
-        <p class="mt-0.5 text-xs text-slate-400">Sin revisar</p>
+        <p class="mt-0.5 text-sm text-slate-600">Sin revisar</p>
       </RouterLink>
 
       <RouterLink
         :to="{ name: 'postulaciones-recibidas' }"
         :class="[card, 'p-4 transition hover:border-ccisj']"
       >
-        <p class="text-xs font-medium text-slate-500">
+        <p class="text-sm font-medium text-slate-600">
           Postulaciones recibidas
         </p>
 
@@ -290,7 +314,7 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
           {{ loading || failed.applications ? '—' : applications.length }}
         </p>
 
-        <p class="mt-0.5 text-xs text-slate-400">
+        <p class="mt-0.5 text-sm text-slate-600">
           <template v-if="!loading && !failed.applications">
             {{ applicationsLast30Days }} en los últimos 30 días
           </template>
@@ -301,16 +325,16 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
         :to="{ name: 'mis-ofertas' }"
         :class="[card, 'p-4 transition hover:border-ccisj']"
       >
-        <p class="text-xs font-medium text-slate-500">Cierran esta semana</p>
+        <p class="text-sm font-medium text-slate-600">Cierran esta semana</p>
 
         <p
           class="mt-1 text-2xl font-bold tabular-nums"
-          :class="closingSoon > 0 ? 'text-amber-600' : 'text-slate-900'"
+          :class="closingSoon > 0 ? 'text-amber-700' : 'text-slate-900'"
         >
           {{ loading || failed.offers ? '—' : closingSoon }}
         </p>
 
-        <p class="mt-0.5 text-xs text-slate-400">En los próximos 7 días</p>
+        <p class="mt-0.5 text-sm text-slate-600">En los próximos 7 días</p>
       </RouterLink>
     </div>
 
@@ -328,20 +352,23 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
           </RouterLink>
         </div>
 
-        <p v-if="loading" class="px-5 py-8 text-center text-sm text-slate-400">
+        <p
+          v-if="loading"
+          class="px-5 py-8 text-center text-base text-slate-600"
+        >
           Cargando...
         </p>
 
         <p
           v-else-if="failed.applications"
-          class="px-5 py-8 text-center text-sm text-slate-400"
+          class="px-5 py-8 text-center text-base text-slate-600"
         >
           No se pudieron cargar las postulaciones.
         </p>
 
         <p
           v-else-if="latestApplications.length === 0"
-          class="px-5 py-8 text-center text-sm text-slate-400"
+          class="px-5 py-8 text-center text-base text-slate-600"
         >
           Todavía no recibiste postulaciones.
         </p>
@@ -357,7 +384,7 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
             >
               <div class="min-w-0 flex-1">
                 <p
-                  class="truncate text-sm text-slate-900"
+                  class="truncate text-base text-slate-900"
                   :class="
                     item.estado === 'ENVIADA' ? 'font-semibold' : 'font-medium'
                   "
@@ -365,7 +392,7 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
                   {{ item.postulante.nombre }} {{ item.postulante.apellido }}
                 </p>
 
-                <p class="truncate text-xs text-slate-400">
+                <p class="truncate text-sm text-slate-600">
                   {{ item.oferta.titulo }} ·
                   {{ formatDate(item.fechaPostulacion) }}
                 </p>
@@ -389,20 +416,23 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
           </RouterLink>
         </div>
 
-        <p v-if="loading" class="px-5 py-8 text-center text-sm text-slate-400">
+        <p
+          v-if="loading"
+          class="px-5 py-8 text-center text-base text-slate-600"
+        >
           Cargando...
         </p>
 
         <p
           v-else-if="failed.notifications"
-          class="px-5 py-8 text-center text-sm text-slate-400"
+          class="px-5 py-8 text-center text-base text-slate-600"
         >
           No se pudieron cargar las novedades.
         </p>
 
         <p
           v-else-if="latestNotifications.length === 0"
-          class="px-5 py-8 text-center text-sm text-slate-400"
+          class="px-5 py-8 text-center text-base text-slate-600"
         >
           No tenés novedades.
         </p>
@@ -415,18 +445,18 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
           >
             <div class="flex items-baseline justify-between gap-2">
               <p
-                class="truncate text-sm text-slate-800"
+                class="truncate text-base text-slate-800"
                 :class="{ 'font-semibold': !item.leida }"
               >
                 {{ item.notificacion.titulo }}
               </p>
 
-              <span class="shrink-0 text-xs text-slate-400">
+              <span class="shrink-0 text-sm text-slate-600">
                 {{ formatDate(item.notificacion.fechaCreacion) }}
               </span>
             </div>
 
-            <p class="mt-0.5 line-clamp-2 text-xs text-slate-500">
+            <p class="mt-0.5 line-clamp-2 text-sm text-slate-600">
               {{ item.notificacion.mensaje }}
             </p>
           </li>
@@ -443,13 +473,16 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
           </RouterLink>
         </div>
 
-        <p v-if="loading" class="px-5 py-8 text-center text-sm text-slate-400">
+        <p
+          v-if="loading"
+          class="px-5 py-8 text-center text-base text-slate-600"
+        >
           Cargando...
         </p>
 
         <p
           v-else-if="failed.offers"
-          class="px-5 py-8 text-center text-sm text-slate-400"
+          class="px-5 py-8 text-center text-base text-slate-600"
         >
           No se pudieron cargar las ofertas.
         </p>
@@ -458,11 +491,11 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
           v-else-if="upcomingOffers.length === 0"
           class="px-5 py-8 text-center"
         >
-          <p class="text-sm text-slate-400">No tenés ofertas activas.</p>
+          <p class="text-base text-slate-600">No tenés ofertas activas.</p>
 
           <RouterLink
             :to="{ name: 'mis-ofertas-nueva' }"
-            class="mt-2 inline-flex text-sm font-medium text-ccisj hover:underline"
+            class="mt-2 inline-flex text-base font-medium text-ccisj hover:underline"
           >
             Publicar una oferta
           </RouterLink>
@@ -474,19 +507,19 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
               :to="{ name: 'mis-ofertas-editar', params: { id: offer.id } }"
               class="flex items-center gap-3 px-5 py-3 transition hover:bg-slate-50"
             >
-              <Briefcase class="h-4 w-4 shrink-0 text-slate-400" />
+              <Briefcase class="h-4 w-4 shrink-0 text-slate-600" />
 
               <div class="min-w-0 flex-1">
-                <p class="truncate text-sm font-medium text-slate-900">
+                <p class="truncate text-base font-medium text-slate-900">
                   {{ offer.titulo }}
                 </p>
 
                 <p
-                  class="text-xs"
+                  class="text-sm"
                   :class="
                     (daysUntilClosing(offer) ?? 99) <= 1
-                      ? 'font-medium text-amber-600'
-                      : 'text-slate-400'
+                      ? 'font-medium text-amber-700'
+                      : 'text-slate-600'
                   "
                 >
                   {{ closingLabel(offer) }}
@@ -494,7 +527,7 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
               </div>
 
               <span
-                class="shrink-0 text-xs tabular-nums text-slate-500"
+                class="shrink-0 text-sm tabular-nums text-slate-600"
                 :title="`${offer._count.postulaciones} postulaciones`"
               >
                 {{ offer._count.postulaciones }}
@@ -528,11 +561,11 @@ const cardLink = 'text-xs font-medium text-ccisj hover:underline';
               </span>
 
               <span class="min-w-0 flex-1">
-                <span class="block text-sm font-medium text-slate-800">
+                <span class="block text-base font-medium text-slate-800">
                   {{ shortcut.label }}
                 </span>
 
-                <span class="block text-xs text-slate-400">
+                <span class="block text-sm text-slate-600">
                   {{ shortcut.description }}
                 </span>
               </span>

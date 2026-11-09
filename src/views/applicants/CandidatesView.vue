@@ -201,7 +201,7 @@ onUnmounted(() => {
   <div class="mx-auto max-w-6xl space-y-6">
     <div>
       <h1 class="text-2xl font-bold text-slate-900">Buscar candidatos</h1>
-      <p class="mt-1 text-sm text-slate-500">
+      <p class="mt-1 text-base text-slate-600">
         Consultá los perfiles laborales de los postulantes registrados.
       </p>
     </div>
@@ -217,7 +217,7 @@ onUnmounted(() => {
 
       <div class="grid gap-4 md:grid-cols-2">
         <label class="block">
-          <span class="mb-1 block text-sm font-medium text-slate-700">
+          <span class="mb-1 block text-base font-medium text-slate-700">
             Nombre o apellido
           </span>
           <input
@@ -232,22 +232,23 @@ onUnmounted(() => {
         <div ref="categoryDropdown" class="relative">
           <span
             id="category-label"
-            class="mb-1 block text-sm font-medium text-slate-700"
+            class="mb-1 block text-base font-medium text-slate-700"
           >
             Categoría laboral
           </span>
 
           <button
             type="button"
-            aria-labelledby="category-label"
+            aria-labelledby="category-label category-value"
             :aria-expanded="categoryDropdownOpen"
             :disabled="categoriesLoading || categoriesError"
             class="flex w-full items-center justify-between gap-2 rounded-xl border border-slate-300 bg-white px-3 py-2 text-left outline-none focus:border-emerald-600 disabled:opacity-50"
             @click="toggleCategoryDropdown"
           >
             <span
+              id="category-value"
               class="truncate"
-              :class="selectedCategory ? 'text-slate-900' : 'text-slate-500'"
+              :class="selectedCategory ? 'text-slate-900' : 'text-slate-600'"
             >
               {{
                 categoriesLoading
@@ -257,7 +258,7 @@ onUnmounted(() => {
             </span>
 
             <ChevronDown
-              class="h-4 w-4 shrink-0 text-slate-500 transition-transform"
+              class="h-4 w-4 shrink-0 text-slate-600 transition-transform"
               :class="{ 'rotate-180': categoryDropdownOpen }"
             />
           </button>
@@ -272,14 +273,14 @@ onUnmounted(() => {
                 type="search"
                 placeholder="Buscar categoría..."
                 aria-label="Buscar categoría"
-                class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-emerald-600"
+                class="w-full rounded-lg border border-slate-200 px-3 py-2 text-base outline-none focus:border-emerald-600"
               />
             </div>
 
             <div class="max-h-60 overflow-y-auto p-1">
               <button
                 type="button"
-                class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-slate-100"
+                class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-base hover:bg-slate-100"
                 :class="
                   !categoriaId
                     ? 'bg-emerald-50 text-emerald-700'
@@ -295,7 +296,7 @@ onUnmounted(() => {
                 v-for="category in filteredCategories"
                 :key="category.id"
                 type="button"
-                class="flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm hover:bg-slate-100"
+                class="flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-base hover:bg-slate-100"
                 :class="
                   categoriaId === String(category.id)
                     ? 'bg-emerald-50 text-emerald-700'
@@ -312,7 +313,7 @@ onUnmounted(() => {
 
               <p
                 v-if="filteredCategories.length === 0"
-                class="px-3 py-4 text-center text-sm text-slate-500"
+                class="px-3 py-4 text-center text-base text-slate-600"
               >
                 No se encontraron categorías.
               </p>
@@ -321,7 +322,7 @@ onUnmounted(() => {
 
           <div
             v-if="categoriesError"
-            class="mt-1 flex items-center gap-2 text-xs text-red-600"
+            class="mt-1 flex items-center gap-2 text-sm text-red-700"
           >
             No se pudieron cargar las categorías.
             <button
@@ -336,7 +337,7 @@ onUnmounted(() => {
       </div>
 
       <div class="flex flex-wrap gap-5">
-        <label class="flex items-center gap-2 text-sm text-slate-700">
+        <label class="flex items-center gap-2 text-base text-slate-700">
           <input
             v-model="conEstudios"
             type="checkbox"
@@ -345,7 +346,7 @@ onUnmounted(() => {
           Con estudios
         </label>
 
-        <label class="flex items-center gap-2 text-sm text-slate-700">
+        <label class="flex items-center gap-2 text-base text-slate-700">
           <input
             v-model="conExperiencia"
             type="checkbox"
@@ -359,14 +360,14 @@ onUnmounted(() => {
         <button
           type="submit"
           :disabled="loading"
-          class="rounded-xl bg-emerald-700 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-800 disabled:opacity-50"
+          class="rounded-xl bg-emerald-700 px-5 py-2 text-base font-semibold text-white hover:bg-emerald-800 disabled:opacity-50"
         >
           Buscar
         </button>
 
         <button
           type="button"
-          class="rounded-xl border border-slate-300 px-5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          class="rounded-xl border border-slate-300 px-5 py-2 text-base font-medium text-slate-700 hover:bg-slate-50"
           @click="clearFilters"
         >
           Limpiar filtros
@@ -380,20 +381,20 @@ onUnmounted(() => {
 
         <span
           v-if="result && !loading && !error"
-          class="text-sm text-slate-500"
+          class="text-base text-slate-600"
         >
           {{ result.total }} candidatos
         </span>
       </div>
 
-      <p v-if="loading" role="status" class="text-sm text-slate-500">
+      <p v-if="loading" role="status" class="text-base text-slate-600">
         Cargando candidatos...
       </p>
 
       <div
         v-if="error"
         role="alert"
-        class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+        class="rounded-xl border border-red-200 bg-red-50 p-4 text-base text-red-700"
       >
         {{ error }}
         <button
@@ -409,9 +410,9 @@ onUnmounted(() => {
         v-if="!loading && !error && result && candidates.length === 0"
         class="rounded-2xl border border-slate-200 bg-white p-10 text-center"
       >
-        <UserRoundSearch class="mx-auto mb-3 h-10 w-10 text-slate-400" />
+        <UserRoundSearch class="mx-auto mb-3 h-10 w-10 text-slate-600" />
         <p class="font-medium text-slate-700">No se encontraron candidatos</p>
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-base text-slate-600">
           Probá con otros filtros de búsqueda.
         </p>
       </div>
@@ -433,23 +434,26 @@ onUnmounted(() => {
 
             <p
               v-if="candidate.experiencias[0]"
-              class="mt-1 text-sm text-slate-600"
+              class="mt-1 text-base text-slate-600"
             >
               {{ candidate.experiencias[0].cargo }}
               · {{ candidate.experiencias[0].empresa }}
             </p>
 
-            <p v-if="candidate.estudios[0]" class="mt-1 text-sm text-slate-500">
+            <p
+              v-if="candidate.estudios[0]"
+              class="mt-1 text-base text-slate-600"
+            >
               {{ candidate.estudios[0].titulo }}
             </p>
           </div>
 
-          <span class="shrink-0 text-sm font-semibold text-emerald-700">
+          <span class="shrink-0 text-base font-semibold text-emerald-700">
             Ver perfil
           </span>
         </div>
 
-        <div class="mt-4 flex flex-wrap gap-2 text-xs text-slate-600">
+        <div class="mt-4 flex flex-wrap gap-2 text-sm text-slate-600">
           <span class="rounded-lg bg-slate-100 px-2 py-1">
             {{ candidate._count.estudios }} estudios
           </span>
@@ -479,20 +483,20 @@ onUnmounted(() => {
         <button
           type="button"
           :disabled="page <= 1"
-          class="rounded-lg border border-slate-300 px-4 py-2 text-sm disabled:opacity-40"
+          class="rounded-lg border border-slate-300 px-4 py-2 text-base disabled:opacity-40"
           @click="changePage(page - 1)"
         >
           Anterior
         </button>
 
-        <span class="text-sm text-slate-600">
+        <span class="text-base text-slate-600">
           Página {{ page }} de {{ result.totalPages }}
         </span>
 
         <button
           type="button"
           :disabled="page >= result.totalPages"
-          class="rounded-lg border border-slate-300 px-4 py-2 text-sm disabled:opacity-40"
+          class="rounded-lg border border-slate-300 px-4 py-2 text-base disabled:opacity-40"
           @click="changePage(page + 1)"
         >
           Siguiente

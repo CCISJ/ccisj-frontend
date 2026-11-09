@@ -82,7 +82,7 @@ watch(
       <div>
         <h2 class="text-lg font-semibold text-slate-900">Registrar pago</h2>
 
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-base text-slate-600">
           Registrar un pago de cuotas para {{ socioName }}.
         </p>
       </div>
@@ -91,7 +91,7 @@ watch(
         <div>
           <label
             for="payment-amount"
-            class="mb-1.5 block text-sm font-medium text-slate-700"
+            class="mb-1.5 block text-base font-medium text-slate-700"
           >
             Importe
           </label>
@@ -102,7 +102,7 @@ watch(
             type="number"
             min="0.01"
             step="0.01"
-            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-ccisj focus:ring-1 focus:ring-ccisj"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-base outline-none transition focus:border-ccisj focus:ring-1 focus:ring-ccisj"
             placeholder="0"
           />
         </div>
@@ -110,7 +110,7 @@ watch(
         <div>
           <label
             for="payment-date"
-            class="mb-1.5 block text-sm font-medium text-slate-700"
+            class="mb-1.5 block text-base font-medium text-slate-700"
           >
             Fecha de pago
           </label>
@@ -119,14 +119,14 @@ watch(
             id="payment-date"
             v-model="fechaPago"
             type="date"
-            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-ccisj focus:ring-1 focus:ring-ccisj"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-base outline-none transition focus:border-ccisj focus:ring-1 focus:ring-ccisj"
           />
         </div>
 
         <div>
           <label
             for="payment-method"
-            class="mb-1.5 block text-sm font-medium text-slate-700"
+            class="mb-1.5 block text-base font-medium text-slate-700"
           >
             Medio de pago
           </label>
@@ -134,7 +134,7 @@ watch(
           <select
             id="payment-method"
             v-model="medioPago"
-            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-ccisj focus:ring-1 focus:ring-ccisj"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-base outline-none transition focus:border-ccisj focus:ring-1 focus:ring-ccisj"
           >
             <option value="EFECTIVO">Efectivo</option>
             <option value="TRANSFERENCIA">Transferencia</option>
@@ -152,10 +152,10 @@ watch(
         <div>
           <label
             for="payment-observations"
-            class="mb-1.5 block text-sm font-medium text-slate-700"
+            class="mb-1.5 block text-base font-medium text-slate-700"
           >
             Observaciones
-            <span class="font-normal text-slate-400">(opcional)</span>
+            <span class="font-normal text-slate-600">(opcional)</span>
           </label>
 
           <textarea
@@ -163,7 +163,7 @@ watch(
             v-model="observaciones"
             maxlength="500"
             rows="3"
-            class="w-full resize-none rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-ccisj focus:ring-1 focus:ring-ccisj"
+            class="w-full resize-none rounded-lg border border-slate-300 px-3 py-2 text-base outline-none transition focus:border-ccisj focus:ring-1 focus:ring-ccisj"
             placeholder="Observaciones sobre el pago"
           />
         </div>
@@ -172,7 +172,7 @@ watch(
       <div class="mt-6 flex justify-end gap-2">
         <button
           type="button"
-          class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+          class="rounded-lg border border-slate-300 px-4 py-2 text-base font-medium text-slate-600 transition hover:bg-slate-50"
           @click="close"
         >
           Cancelar
@@ -180,7 +180,7 @@ watch(
 
         <button
           type="button"
-          class="rounded-lg bg-ccisj px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          class="rounded-lg bg-ccisj px-4 py-2 text-base font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           :disabled="!valid"
           @click="confirm"
         >

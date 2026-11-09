@@ -205,14 +205,14 @@ async function confirmDelete() {
       <div>
         <h1 class="text-2xl font-bold text-slate-900">Socios</h1>
 
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-base text-slate-600">
           Empresas socias del Centro Comercial e Industrial de San José
         </p>
       </div>
 
       <button
         v-if="isAdmin"
-        class="flex items-center gap-2 rounded-xl bg-ccisj px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+        class="flex items-center gap-2 rounded-xl bg-ccisj px-4 py-2.5 text-base font-semibold text-white transition hover:opacity-90"
         @click="handleAddMember"
       >
         <Plus class="h-4 w-4" />
@@ -226,7 +226,7 @@ async function confirmDelete() {
     >
       <div class="relative flex-1">
         <Search
-          class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+          class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600"
         />
 
         <input
@@ -239,7 +239,7 @@ async function confirmDelete() {
               ? 'Buscar por empresa, RUT, titular, giro o contacto...'
               : 'Buscar por empresa, titular, giro o contacto...'
           "
-          class="h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 outline-none transition focus:border-ccisj focus:ring-2 focus:ring-emerald-100"
+          class="h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-base text-slate-700 outline-none transition focus:border-ccisj focus:ring-2 focus:ring-emerald-100"
         />
       </div>
 
@@ -247,7 +247,7 @@ async function confirmDelete() {
         id="members-type-filter"
         v-model="typeFilter"
         aria-label="Filtrar por tipo de socio"
-        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 outline-none transition focus:border-ccisj"
+        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-base text-slate-600 outline-none transition focus:border-ccisj"
       >
         <option value="TODOS">Todos los tipos</option>
 
@@ -261,13 +261,13 @@ async function confirmDelete() {
         id="members-status-filter"
         v-model="statusFilter"
         aria-label="Filtrar por estado"
-        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 outline-none transition focus:border-ccisj"
+        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-base text-slate-600 outline-none transition focus:border-ccisj"
       >
         <option value="TODOS">Todos los estados</option>
 
-        <option value="ACTIVO">Activo</option>
+        <option value="ACTIVO">Activos</option>
 
-        <option value="INACTIVO">Inactivo</option>
+        <option value="INACTIVO">Dados de baja</option>
       </select>
 
       <select
@@ -275,7 +275,7 @@ async function confirmDelete() {
         id="members-fee-filter"
         v-model="feeFilter"
         aria-label="Filtrar por estado de cuotas"
-        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 outline-none transition focus:border-ccisj"
+        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-base text-slate-600 outline-none transition focus:border-ccisj"
       >
         <option value="TODOS">Todas las cuotas</option>
 
@@ -289,7 +289,7 @@ async function confirmDelete() {
       <button
         v-if="hasFilters"
         type="button"
-        class="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+        class="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-lg px-3 text-base font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-700"
         @click="clearFilters"
       >
         <X class="h-4 w-4" />
@@ -300,7 +300,7 @@ async function confirmDelete() {
     <!-- Loading -->
     <div
       v-if="loading"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500"
+      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
     >
       Cargando socios...
     </div>
@@ -310,9 +310,9 @@ async function confirmDelete() {
       v-else-if="socios.length === 0"
       class="rounded-xl border border-slate-200 bg-white p-12 text-center"
     >
-      <p class="text-sm font-medium text-slate-600">Todavía no hay socios</p>
+      <p class="text-base font-medium text-slate-600">Todavía no hay socios</p>
 
-      <p class="mt-1 text-sm text-slate-400">
+      <p class="mt-1 text-base text-slate-600">
         Los socios que registres van a aparecer en esta lista.
       </p>
     </div>
@@ -322,15 +322,11 @@ async function confirmDelete() {
       v-else
       class="overflow-hidden rounded-xl border border-slate-200 bg-white"
     >
-      <div class="overflow-x-auto">
+      <div class="relative overflow-x-auto">
         <table class="w-full min-w-180 text-left">
           <thead class="bg-slate-50">
-            <tr
-              class="text-xs font-semibold uppercase tracking-wide text-slate-500"
-            >
+            <tr class="text-sm font-semibold text-slate-600">
               <th class="px-5 py-3">Empresa</th>
-
-              <th v-if="isAdmin" class="px-5 py-3">RUT</th>
 
               <th class="px-5 py-3">Tipo</th>
 
@@ -354,40 +350,29 @@ async function confirmDelete() {
               <!-- Empresa -->
               <td class="px-5 py-3.5">
                 <div class="flex items-center gap-3">
-                  <div
-                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ccisj-light text-xs font-bold text-ccisj"
-                  >
-                    {{ socio.razonSocial.slice(0, 2).toUpperCase() }}
-                  </div>
-
                   <div class="min-w-0">
                     <p class="truncate font-semibold text-slate-900">
                       {{ socio.razonSocial }}
                     </p>
 
-                    <p class="truncate text-xs text-slate-400">
+                    <p class="truncate text-sm text-slate-600">
                       {{ socio.giroComercial || 'Sin giro comercial' }}
+                      <template v-if="socio.rut"
+                        >· RUT {{ socio.rut }}</template
+                      >
                     </p>
                   </div>
                 </div>
               </td>
 
-              <!-- RUT -->
-              <td
-                v-if="isAdmin"
-                class="whitespace-nowrap px-5 py-3.5 font-mono text-xs text-slate-500"
-              >
-                {{ socio.rut }}
-              </td>
-
               <!-- Tipo -->
               <td class="px-5 py-3.5">
+                <!-- Lo normal no se pinta: se destaca solo el directivo -->
                 <span
-                  class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
                   :class="
                     socio.tipo === 'DIRECTIVO'
-                      ? 'bg-amber-50 text-amber-700'
-                      : 'bg-slate-100 text-slate-600'
+                      ? 'font-bold text-slate-900'
+                      : 'text-slate-600'
                   "
                 >
                   {{ socio.tipo === 'DIRECTIVO' ? 'Directivo' : 'Común' }}
@@ -395,12 +380,12 @@ async function confirmDelete() {
               </td>
 
               <!-- Contacto -->
-              <td class="px-5 py-3.5 text-sm">
+              <td class="px-5 py-3.5 text-base">
                 <p class="truncate text-slate-800">
                   {{ socio.telefono || socio.celular || 'Sin teléfono' }}
                 </p>
 
-                <p class="truncate text-xs text-slate-400">
+                <p class="truncate text-sm text-slate-600">
                   {{ socio.email || 'Sin email' }}
                 </p>
               </td>
@@ -408,7 +393,7 @@ async function confirmDelete() {
               <!-- Cuotas -->
               <td
                 v-if="isAdmin"
-                class="whitespace-nowrap px-5 py-3.5 text-sm"
+                class="whitespace-nowrap px-5 py-3.5 text-base"
                 data-test="cuotas"
               >
                 <template v-if="socio.estadoCuotas">
@@ -431,7 +416,7 @@ async function confirmDelete() {
                       Debe {{ formatMoney(socio.estadoCuotas.deudaTotal) }}
                     </p>
 
-                    <p class="text-xs text-slate-500">
+                    <p class="text-sm text-slate-600">
                       {{ socio.estadoCuotas.cuotasVencidas }}
                       {{
                         socio.estadoCuotas.cuotasVencidas === 1
@@ -446,14 +431,13 @@ async function confirmDelete() {
               <!-- Estado -->
               <td v-if="isAdmin" class="px-5 py-3.5">
                 <span
-                  class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
                   :class="
                     socio.activo
-                      ? 'bg-emerald-50 text-emerald-700'
-                      : 'bg-red-50 text-red-600'
+                      ? 'text-slate-600'
+                      : 'inline-flex rounded-full bg-red-50 px-2.5 py-1 text-sm font-semibold text-red-700'
                   "
                 >
-                  {{ socio.activo ? 'Activo' : 'Inactivo' }}
+                  {{ socio.activo ? 'Activo' : 'Dado de baja' }}
                 </span>
               </td>
 
@@ -463,7 +447,7 @@ async function confirmDelete() {
                   <!-- Editar -->
                   <button
                     type="button"
-                    class="rounded-lg p-2 text-slate-400 transition hover:bg-ccisj-light hover:text-ccisj"
+                    class="rounded-lg p-2 text-slate-600 transition hover:bg-ccisj-light hover:text-ccisj"
                     title="Editar socio"
                     @click="editMember(socio.id)"
                   >
@@ -474,7 +458,7 @@ async function confirmDelete() {
                   <button
                     v-if="socio.activo"
                     type="button"
-                    class="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                    class="rounded-lg p-2 text-slate-600 transition hover:bg-red-50 hover:text-red-600"
                     title="Desactivar socio"
                     @click="handleDelete(socio)"
                   >
@@ -486,14 +470,14 @@ async function confirmDelete() {
 
             <!-- Sin resultados para los filtros actuales -->
             <tr v-if="filteredSocios.length === 0">
-              <td :colspan="isAdmin ? 7 : 3" class="px-5 py-12 text-center">
-                <p class="text-sm text-slate-500">
+              <td :colspan="isAdmin ? 6 : 3" class="px-5 py-12 text-center">
+                <p class="text-base text-slate-600">
                   Ningún socio coincide con esos filtros.
                 </p>
 
                 <button
                   type="button"
-                  class="mt-2 text-sm font-medium text-ccisj hover:underline"
+                  class="mt-2 text-base font-medium text-ccisj hover:underline"
                   @click="clearFilters"
                 >
                   Limpiar filtros
@@ -507,7 +491,7 @@ async function confirmDelete() {
       <!-- Footer -->
       <div
         v-if="filteredSocios.length > 0"
-        class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-5 py-3 text-xs text-slate-500"
+        class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-5 py-3 text-sm text-slate-600"
       >
         <span>
           Mostrando {{ rangeStart }}-{{ rangeEnd }} de

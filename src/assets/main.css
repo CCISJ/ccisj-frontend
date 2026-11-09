@@ -1,11 +1,50 @@
 @import 'tailwindcss';
 
+/*
+ * Sistema visual (rediseño del 09/11/2026, ver el canvas de Claude Design).
+ *
+ * - Letra Atkinson Hyperlegible Next, hecha para distinguir caracteres
+ *   parecidos (1, l, I; 0, O): importa en RUT, teléfonos e importes. Se sirve
+ *   desde el propio sitio (`main.ts`), porque la CSP de producción no deja
+ *   cargar fuentes de otro dominio.
+ * - El cliente pidió todo más grande: la base pasa de 16 a 17 px y, como
+ *   Tailwind mide en rem, crecen juntos la letra, los botones y los campos.
+ * - `ccisj` es el verde de los botones y enlaces (#007A37): con texto blanco
+ *   encima da 5,5:1. El verde del logo (#009B45) daba 3,6:1, por debajo del
+ *   mínimo de 4,5:1, y queda como `ccisj-brand` para piezas grandes.
+ */
 @theme {
-  --color-ccisj: #009b45;
-  --color-ccisj-dark: #007a37;
-  --color-ccisj-light: #eaf7ef;
+  --font-sans:
+    'Atkinson Hyperlegible Next Variable', 'Segoe UI', system-ui, sans-serif;
+
+  --color-ccisj: #007a37;
+  --color-ccisj-dark: #005c29;
+  --color-ccisj-light: #e8f4ec;
+  --color-ccisj-brand: #009b45;
+  --color-ccisj-deep: #0d3b24;
+  --color-ccisj-mist: #a9c4b4;
+  --color-ccisj-canvas: #f3f5f2;
+}
+
+html {
+  font-size: 106.25%;
+}
+
+body {
+  @apply bg-ccisj-canvas font-sans text-slate-700 antialiased;
+}
+
+/* Las cifras no bailan en las columnas de importes. */
+table {
+  font-variant-numeric: tabular-nums;
 }
 
 button {
   cursor: pointer;
+}
+
+/* El foco siempre visible al navegar con teclado. */
+:focus-visible {
+  outline: 3px solid var(--color-ccisj);
+  outline-offset: 2px;
 }

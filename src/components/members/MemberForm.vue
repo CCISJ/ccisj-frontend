@@ -22,15 +22,14 @@ const emit = defineEmits<{
 }>();
 
 const inputClass =
-  'w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-ccisj focus:ring-2 focus:ring-emerald-100';
+  'w-full rounded-xl border border-slate-200 px-3 py-2.5 text-base outline-none transition focus:border-ccisj focus:ring-2 focus:ring-emerald-100';
 
-const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
+const labelClass = 'mb-2 block text-base font-medium text-slate-700';
 
 const fieldsetClass =
   'rounded-2xl border border-slate-200 bg-white p-6 shadow-sm';
 
-const legendClass =
-  'px-1 text-xs font-semibold uppercase tracking-wide text-slate-400';
+const legendClass = 'px-1 text-sm font-semibold   text-slate-600';
 
 // El atributo `pattern` se compila con el flag `v`: dentro de la clase los
 // paréntesis y el guion van escapados o el navegador ignora el patrón.
@@ -133,7 +132,7 @@ const id = (field: string) => `socio-${props.mode}-${field}`;
             :class="inputClass"
           />
 
-          <p class="mt-1 text-xs text-slate-400">De 7 a 12 números.</p>
+          <p class="mt-1 text-sm text-slate-600">De 7 a 12 números.</p>
         </div>
       </div>
     </fieldset>
@@ -214,7 +213,7 @@ const id = (field: string) => `socio-${props.mode}-${field}`;
             :class="inputClass"
           />
 
-          <p class="mt-1 text-xs text-slate-400">
+          <p class="mt-1 text-sm text-slate-600">
             <template v-if="mode === 'create'">
               Este email será utilizado también para crear la cuenta del socio.
             </template>
@@ -245,7 +244,7 @@ const id = (field: string) => `socio-${props.mode}-${field}`;
             <option value="DIRECTIVO">Directivo</option>
           </select>
 
-          <p class="mt-1 text-xs text-slate-400">
+          <p class="mt-1 text-sm text-slate-600">
             Los directivos ven el directorio de socios.
           </p>
         </div>
@@ -277,7 +276,7 @@ const id = (field: string) => `socio-${props.mode}-${field}`;
             :class="[inputClass, 'resize-none']"
           />
 
-          <p class="mt-1 text-xs text-slate-400">
+          <p class="mt-1 text-sm text-slate-600">
             Notas internas: el socio no las ve.
           </p>
         </div>
@@ -287,7 +286,7 @@ const id = (field: string) => `socio-${props.mode}-${field}`;
     <div class="flex justify-end gap-3">
       <button
         type="button"
-        class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+        class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-base font-semibold text-slate-600 transition hover:bg-slate-50"
         :disabled="loading"
         @click="emit('cancel')"
       >
@@ -297,7 +296,7 @@ const id = (field: string) => `socio-${props.mode}-${field}`;
       <button
         type="submit"
         :disabled="loading || disabled"
-        class="flex items-center gap-2 rounded-xl bg-ccisj px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+        class="flex items-center gap-2 rounded-xl bg-ccisj px-5 py-2.5 text-base font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
       >
         <Save class="h-4 w-4" />
 

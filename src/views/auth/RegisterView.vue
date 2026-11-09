@@ -73,7 +73,7 @@ const showPassword = ref(false);
 const loading = ref(false);
 
 const inputClass =
-  'w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70';
+  'w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-base text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70';
 
 // Las mismas reglas que valida el backend; acá solo para avisar antes de enviar.
 const passwordChecks = computed(() => [
@@ -145,7 +145,7 @@ async function handleRegister() {
   <div class="flex min-h-screen bg-slate-50">
     <!-- Panel izquierdo -->
     <section
-      class="hidden w-1/2 flex-col justify-between bg-ccisj p-12 text-white lg:flex"
+      class="hidden w-1/2 flex-col justify-between bg-ccisj-deep p-12 text-white lg:flex"
     >
       <div>
         <img
@@ -164,7 +164,7 @@ async function handleRegister() {
         </p>
       </div>
 
-      <p class="text-xs text-white">
+      <p class="text-sm text-white">
         © 2026 Centro Comercial e Industrial de San José
       </p>
     </section>
@@ -186,7 +186,7 @@ async function handleRegister() {
             Crear cuenta
           </h2>
 
-          <p class="mt-2 text-sm text-slate-500">
+          <p class="mt-2 text-base text-slate-600">
             Registrate como postulante para buscar trabajo.
           </p>
         </div>
@@ -197,14 +197,14 @@ async function handleRegister() {
             <div>
               <label
                 for="nombre"
-                class="mb-2 block text-sm font-medium text-slate-700"
+                class="mb-2 block text-base font-medium text-slate-700"
               >
                 Nombre
               </label>
 
               <div class="relative">
                 <UserRound
-                  class="absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-slate-400"
+                  class="absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-slate-600"
                 />
 
                 <input
@@ -224,14 +224,14 @@ async function handleRegister() {
             <div>
               <label
                 for="apellido"
-                class="mb-2 block text-sm font-medium text-slate-700"
+                class="mb-2 block text-base font-medium text-slate-700"
               >
                 Apellido
               </label>
 
               <div class="relative">
                 <UserRound
-                  class="absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-slate-400"
+                  class="absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-slate-600"
                 />
 
                 <input
@@ -253,14 +253,14 @@ async function handleRegister() {
           <div>
             <label
               for="email"
-              class="mb-2 block text-sm font-medium text-slate-700"
+              class="mb-2 block text-base font-medium text-slate-700"
             >
               Correo electrónico
             </label>
 
             <div class="relative">
               <Mail
-                class="absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-slate-400"
+                class="absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-slate-600"
               />
 
               <input
@@ -282,14 +282,14 @@ async function handleRegister() {
           <div>
             <label
               for="telefono"
-              class="mb-2 block text-sm font-medium text-slate-700"
+              class="mb-2 block text-base font-medium text-slate-700"
             >
               Teléfono
             </label>
 
             <div class="relative">
               <Phone
-                class="absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-slate-400"
+                class="absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-slate-600"
               />
 
               <input
@@ -310,14 +310,14 @@ async function handleRegister() {
           <div>
             <label
               for="password"
-              class="mb-2 block text-sm font-medium text-slate-700"
+              class="mb-2 block text-base font-medium text-slate-700"
             >
               Contraseña
             </label>
 
             <div class="relative">
               <Lock
-                class="absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-slate-400"
+                class="absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-slate-600"
               />
 
               <input
@@ -339,7 +339,7 @@ async function handleRegister() {
                 :aria-label="
                   showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
                 "
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 transition hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
                 @click="showPassword = !showPassword"
               >
                 <EyeOff v-if="showPassword" class="h-4.5 w-4.5" />
@@ -347,30 +347,30 @@ async function handleRegister() {
               </button>
             </div>
 
-            <ul id="password-rules" class="mt-2 space-y-1 text-xs">
+            <ul id="password-rules" class="mt-2 space-y-1 text-sm">
               <li
                 v-for="check in passwordChecks"
                 :key="check.label"
-                :class="check.ok ? 'text-ccisj' : 'text-slate-400'"
+                :class="check.ok ? 'text-ccisj' : 'text-slate-600'"
               >
                 {{ check.ok ? '✓' : '•' }} {{ check.label }}
               </li>
             </ul>
-            <p class="mt-1 text-xs text-slate-400">{{ PASSWORD_HINT }}</p>
+            <p class="mt-1 text-sm text-slate-600">{{ PASSWORD_HINT }}</p>
           </div>
 
           <!-- Confirmar contraseña -->
           <div>
             <label
               for="confirmPassword"
-              class="mb-2 block text-sm font-medium text-slate-700"
+              class="mb-2 block text-base font-medium text-slate-700"
             >
               Repetir contraseña
             </label>
 
             <div class="relative">
               <Lock
-                class="absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-slate-400"
+                class="absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-slate-600"
               />
 
               <input
@@ -389,11 +389,11 @@ async function handleRegister() {
 
           <!-- Categorías -->
           <div v-if="categories.length > 0">
-            <p class="mb-1 text-sm font-medium text-slate-700">
+            <p class="mb-1 text-base font-medium text-slate-700">
               ¿De qué rubros querés recibir ofertas?
             </p>
 
-            <p class="mb-3 text-xs text-slate-400">
+            <p class="mb-3 text-sm text-slate-600">
               Tocá para marcar o desmarcar. Lo podés cambiar después en Mi
               perfil.
             </p>
@@ -409,7 +409,7 @@ async function handleRegister() {
           <p
             v-if="error"
             role="alert"
-            class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600"
+            class="rounded-xl bg-red-50 px-4 py-3 text-base text-red-700"
           >
             {{ error }}
           </p>
@@ -425,7 +425,7 @@ async function handleRegister() {
           </button>
         </form>
 
-        <p class="mt-8 text-center text-sm text-slate-500">
+        <p class="mt-8 text-center text-base text-slate-600">
           ¿Ya tenés cuenta?
           <RouterLink
             to="/login"

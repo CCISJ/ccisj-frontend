@@ -91,7 +91,7 @@ watch(
           Agregar ajuste de cuota
         </h2>
 
-        <p class="mt-0.5 text-sm text-slate-500">
+        <p class="mt-0.5 text-base text-slate-600">
           {{ socioName }}
         </p>
       </div>
@@ -102,7 +102,7 @@ watch(
       <div>
         <p
           id="fee-adjustment-tipo"
-          class="mb-2 block text-sm font-semibold text-slate-700"
+          class="mb-2 block text-base font-semibold text-slate-700"
         >
           Tipo de ajuste
         </p>
@@ -114,7 +114,7 @@ watch(
         >
           <button
             type="button"
-            class="flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-semibold transition"
+            class="flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-base font-semibold transition"
             :class="
               type === 'ADICIONAL'
                 ? 'border-ccisj bg-ccisj-light text-ccisj'
@@ -128,7 +128,7 @@ watch(
 
           <button
             type="button"
-            class="flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-semibold transition"
+            class="flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-base font-semibold transition"
             :class="
               type === 'DESCUENTO'
                 ? 'border-ccisj bg-ccisj-light text-ccisj'
@@ -146,14 +146,14 @@ watch(
       <div class="mt-5">
         <label
           for="adjustment-amount"
-          class="mb-2 block text-sm font-semibold text-slate-700"
+          class="mb-2 block text-base font-semibold text-slate-700"
         >
           Importe
         </label>
 
         <div class="relative">
           <span
-            class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-400"
+            class="absolute left-3 top-1/2 -translate-y-1/2 text-base font-medium text-slate-600"
           >
             $
           </span>
@@ -165,7 +165,7 @@ watch(
             min="1"
             step="1"
             placeholder="0"
-            class="w-full rounded-lg border border-slate-200 py-2.5 pl-8 pr-3 text-sm outline-none transition focus:border-ccisj"
+            class="w-full rounded-lg border border-slate-200 py-2.5 pl-8 pr-3 text-base outline-none transition focus:border-ccisj"
           />
         </div>
       </div>
@@ -174,7 +174,7 @@ watch(
       <div class="mt-5">
         <label
           for="adjustment-start-month"
-          class="mb-2 block text-sm font-semibold text-slate-700"
+          class="mb-2 block text-base font-semibold text-slate-700"
         >
           Mes de inicio
         </label>
@@ -184,10 +184,10 @@ watch(
           v-model="startMonth"
           type="month"
           :min="minStartMonth"
-          class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-ccisj"
+          class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-base text-slate-700 outline-none transition focus:border-ccisj"
         />
 
-        <p class="mt-1.5 text-xs text-slate-400">
+        <p class="mt-1.5 text-sm text-slate-600">
           El ajuste comenzará a aplicarse desde este mes.
         </p>
       </div>
@@ -196,7 +196,7 @@ watch(
       <div class="mt-5">
         <label
           for="adjustment-duration"
-          class="mb-2 block text-sm font-semibold text-slate-700"
+          class="mb-2 block text-base font-semibold text-slate-700"
         >
           Duración
         </label>
@@ -204,7 +204,7 @@ watch(
         <select
           id="adjustment-duration"
           v-model="duration"
-          class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-ccisj"
+          class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-base text-slate-700 outline-none transition focus:border-ccisj"
         >
           <option value="1">1 mes</option>
           <option value="2">2 meses</option>
@@ -214,7 +214,7 @@ watch(
           <option value="INDEFINIDO">Indefinido</option>
         </select>
 
-        <p class="mt-1.5 text-xs text-slate-400">
+        <p class="mt-1.5 text-sm text-slate-600">
           El ajuste se aplicará a las próximas cuotas durante este período.
         </p>
       </div>
@@ -223,10 +223,10 @@ watch(
       <div class="mt-5">
         <label
           for="adjustment-reason"
-          class="mb-2 block text-sm font-semibold text-slate-700"
+          class="mb-2 block text-base font-semibold text-slate-700"
         >
           Motivo
-          <span class="font-normal text-slate-400">(opcional)</span>
+          <span class="font-normal text-slate-600">(opcional)</span>
         </label>
 
         <textarea
@@ -235,22 +235,20 @@ watch(
           rows="3"
           maxlength="255"
           placeholder="Ej: beneficio especial, servicio adicional..."
-          class="w-full resize-none rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-ccisj"
+          class="w-full resize-none rounded-lg border border-slate-200 px-3 py-2.5 text-base outline-none transition focus:border-ccisj"
         />
 
-        <p class="mt-1 text-right text-xs text-slate-400">
+        <p class="mt-1 text-right text-sm text-slate-600">
           {{ reason.length }}/255
         </p>
       </div>
 
       <!-- Resumen -->
       <div v-if="amount && amount > 0" class="mt-5 rounded-xl bg-slate-50 p-4">
-        <p class="text-xs font-medium uppercase tracking-wide text-slate-400">
-          Ajuste
-        </p>
+        <p class="text-sm font-medium text-slate-600">Ajuste</p>
 
         <div class="mt-1 flex items-center justify-between">
-          <span class="text-sm text-slate-600">
+          <span class="text-base text-slate-600">
             {{
               type === 'ADICIONAL'
                 ? 'Se agregará a la cuota'
@@ -261,7 +259,7 @@ watch(
           <span
             class="text-lg font-bold"
             :class="
-              type === 'ADICIONAL' ? 'text-slate-900' : 'text-emerald-600'
+              type === 'ADICIONAL' ? 'text-slate-900' : 'text-emerald-700'
             "
           >
             {{ type === 'ADICIONAL' ? '+' : '-' }}
@@ -269,7 +267,7 @@ watch(
           </span>
         </div>
 
-        <p class="mt-1 text-xs text-slate-400">
+        <p class="mt-1 text-sm text-slate-600">
           {{
             duration === 'INDEFINIDO'
               ? 'Sin fecha de finalización'
@@ -283,7 +281,7 @@ watch(
       <div class="flex justify-end gap-2">
         <button
           type="button"
-          class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+          class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-base font-semibold text-slate-600 transition hover:bg-slate-50"
           @click="close"
         >
           Cancelar
@@ -292,7 +290,7 @@ watch(
         <button
           type="button"
           :disabled="!valid"
-          class="rounded-lg bg-ccisj px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          class="rounded-lg bg-ccisj px-4 py-2 text-base font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
           @click="confirm"
         >
           Agregar ajuste

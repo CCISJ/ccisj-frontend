@@ -186,7 +186,7 @@ onMounted(async () => {
     <div>
       <h1 class="text-2xl font-semibold text-slate-900">Notificaciones</h1>
 
-      <p class="mt-1 text-sm text-slate-500">
+      <p class="mt-1 text-base text-slate-600">
         Enviá comunicaciones y avisos a los usuarios del sistema.
       </p>
     </div>
@@ -203,7 +203,7 @@ onMounted(async () => {
           <div>
             <h2 class="font-semibold text-slate-900">Nueva notificación</h2>
 
-            <p class="text-sm text-slate-500">Crear una comunicación.</p>
+            <p class="text-base text-slate-600">Crear una comunicación.</p>
           </div>
         </div>
 
@@ -211,7 +211,7 @@ onMounted(async () => {
           <div>
             <label
               for="titulo"
-              class="mb-1.5 block text-sm font-medium text-slate-700"
+              class="mb-1.5 block text-base font-medium text-slate-700"
             >
               Título
             </label>
@@ -222,14 +222,14 @@ onMounted(async () => {
               type="text"
               maxlength="150"
               placeholder="Título de la notificación"
-              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-ccisj"
+              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-base outline-none transition focus:border-ccisj"
             />
           </div>
 
           <div>
             <label
               for="mensaje"
-              class="mb-1.5 block text-sm font-medium text-slate-700"
+              class="mb-1.5 block text-base font-medium text-slate-700"
             >
               Mensaje
             </label>
@@ -240,14 +240,14 @@ onMounted(async () => {
               rows="5"
               maxlength="5000"
               placeholder="Escribí el mensaje..."
-              class="w-full resize-none rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-ccisj"
+              class="w-full resize-none rounded-lg border border-slate-300 px-3 py-2 text-base outline-none transition focus:border-ccisj"
             />
           </div>
 
           <div>
             <label
               for="destinatarios"
-              class="mb-1.5 block text-sm font-medium text-slate-700"
+              class="mb-1.5 block text-base font-medium text-slate-700"
             >
               Destinatarios
             </label>
@@ -255,7 +255,7 @@ onMounted(async () => {
             <select
               id="destinatarios"
               v-model="destinatarioTipo"
-              class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-ccisj"
+              class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-base outline-none focus:border-ccisj"
             >
               <option value="TODOS">Todos</option>
 
@@ -277,20 +277,20 @@ onMounted(async () => {
                   type="text"
                   aria-label="Buscar destinatarios"
                   placeholder="Buscar por nombre o email..."
-                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-ccisj"
+                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-base outline-none transition focus:border-ccisj"
                 />
               </div>
 
               <div
                 v-if="loadingRecipients"
-                class="p-4 text-center text-sm text-slate-500"
+                class="p-4 text-center text-base text-slate-600"
               >
                 Cargando usuarios...
               </div>
 
               <div
                 v-else-if="filteredRecipients.length === 0"
-                class="p-4 text-center text-sm text-slate-500"
+                class="p-4 text-center text-base text-slate-600"
               >
                 No se encontraron usuarios.
               </div>
@@ -312,17 +312,17 @@ onMounted(async () => {
                   />
 
                   <div class="min-w-0 flex-1">
-                    <p class="truncate text-sm font-medium text-slate-700">
+                    <p class="truncate text-base font-medium text-slate-700">
                       {{ recipientName(user) }}
                     </p>
 
-                    <p class="truncate text-xs text-slate-400">
+                    <p class="truncate text-sm text-slate-600">
                       {{ user.email }}
                     </p>
                   </div>
 
                   <span
-                    class="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500"
+                    class="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-sm text-slate-600"
                   >
                     {{ user.tipo === 'SOCIO' ? 'Socio' : 'Postulante' }}
                   </span>
@@ -330,7 +330,7 @@ onMounted(async () => {
               </div>
 
               <div
-                class="border-t border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-500"
+                class="border-t border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600"
               >
                 {{ selectedUserIds.length }}
                 {{
@@ -345,7 +345,7 @@ onMounted(async () => {
           <div>
             <label
               for="tipo"
-              class="mb-1.5 block text-sm font-medium text-slate-700"
+              class="mb-1.5 block text-base font-medium text-slate-700"
             >
               Tipo
             </label>
@@ -353,14 +353,14 @@ onMounted(async () => {
             <select
               id="tipo"
               v-model="tipo"
-              class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-ccisj"
+              class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-base outline-none focus:border-ccisj"
             >
               <option value="NORMAL">Normal</option>
 
               <option value="EMERGENTE">Emergente</option>
             </select>
 
-            <p v-if="tipo === 'EMERGENTE'" class="mt-2 text-xs text-amber-600">
+            <p v-if="tipo === 'EMERGENTE'" class="mt-2 text-sm text-amber-700">
               Las notificaciones emergentes se mostrarán al usuario al ingresar
               al sistema.
             </p>
@@ -369,7 +369,7 @@ onMounted(async () => {
           <button
             type="submit"
             :disabled="sending"
-            class="flex w-full items-center justify-center gap-2 rounded-lg bg-ccisj px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+            class="flex w-full items-center justify-center gap-2 rounded-lg bg-ccisj px-4 py-2.5 text-base font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Send :size="17" />
 
@@ -388,7 +388,7 @@ onMounted(async () => {
             <div>
               <h2 class="font-semibold text-slate-900">Historial</h2>
 
-              <p class="text-sm text-slate-500">
+              <p class="text-base text-slate-600">
                 <template v-if="hasActiveFilters">
                   Mostrando {{ filteredNotifications.length }} de
                   {{ notifications.length }} notificaciones enviadas
@@ -415,14 +415,14 @@ onMounted(async () => {
               type="text"
               aria-label="Buscar notificaciones enviadas"
               placeholder="Buscar por título o mensaje..."
-              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-ccisj"
+              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-base outline-none transition focus:border-ccisj"
             />
 
             <select
               id="notification-type-filter"
               v-model="filterType"
               aria-label="Filtrar por tipo"
-              class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-ccisj"
+              class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-base outline-none focus:border-ccisj"
             >
               <option value="TODOS">Todos los tipos</option>
               <option value="NORMAL">Normal</option>
@@ -433,7 +433,7 @@ onMounted(async () => {
               id="notification-recipient-filter"
               v-model="filterRecipient"
               aria-label="Filtrar por destinatario"
-              class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-ccisj"
+              class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-base outline-none focus:border-ccisj"
             >
               <option value="TODOS">Todos los destinatarios</option>
               <option value="SOCIOS">Socios</option>
@@ -444,14 +444,14 @@ onMounted(async () => {
 
         <div
           v-if="loading"
-          class="flex flex-1 items-center justify-center p-8 text-center text-sm text-slate-500"
+          class="flex flex-1 items-center justify-center p-8 text-center text-base text-slate-600"
         >
           Cargando notificaciones...
         </div>
 
         <div
           v-else-if="filteredNotifications.length === 0"
-          class="flex flex-1 items-center justify-center p-8 text-center text-sm text-slate-500"
+          class="flex flex-1 items-center justify-center p-8 text-center text-base text-slate-600"
         >
           No se encontraron notificaciones.
         </div>
@@ -473,7 +473,7 @@ onMounted(async () => {
                   </h3>
 
                   <span
-                    class="rounded-full px-2 py-0.5 text-xs font-medium"
+                    class="rounded-full px-2 py-0.5 text-sm font-medium"
                     :class="
                       notification.tipo === 'EMERGENTE'
                         ? 'bg-amber-100 text-amber-700'
@@ -486,12 +486,12 @@ onMounted(async () => {
                   </span>
                 </div>
 
-                <p class="mt-2 whitespace-pre-line text-sm text-slate-600">
+                <p class="mt-2 whitespace-pre-line text-base text-slate-600">
                   {{ notification.mensaje }}
                 </p>
 
                 <div
-                  class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-400"
+                  class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-600"
                 >
                   <span>
                     {{ recipientLabel(notification) }}

@@ -64,9 +64,9 @@ function formatSize(bytes: number) {
 
 <template>
   <div>
-    <label :for="id" class="mb-1.5 block text-sm font-medium text-slate-700">
+    <label :for="id" class="mb-1.5 block text-base font-medium text-slate-700">
       Comprobante
-      <span class="font-normal text-slate-400">
+      <span class="font-normal text-slate-600">
         {{ required ? '(obligatorio)' : '(opcional)' }}
       </span>
     </label>
@@ -75,17 +75,17 @@ function formatSize(bytes: number) {
       v-if="file"
       class="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5"
     >
-      <span class="flex min-w-0 items-center gap-2 text-sm text-slate-700">
-        <FileText class="h-4 w-4 shrink-0 text-slate-400" />
+      <span class="flex min-w-0 items-center gap-2 text-base text-slate-700">
+        <FileText class="h-4 w-4 shrink-0 text-slate-600" />
         <span class="truncate">{{ file.name }}</span>
-        <span class="shrink-0 text-xs text-slate-400">
+        <span class="shrink-0 text-sm text-slate-600">
           {{ formatSize(file.size) }}
         </span>
       </span>
 
       <button
         type="button"
-        class="rounded p-1 text-slate-400 transition hover:bg-slate-200 hover:text-slate-600"
+        class="rounded p-1 text-slate-600 transition hover:bg-slate-200 hover:text-slate-600"
         aria-label="Quitar comprobante"
         @click="clear"
       >
@@ -100,13 +100,13 @@ function formatSize(bytes: number) {
       type="file"
       accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
       :required="required"
-      class="block w-full text-sm text-slate-600 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-ccisj-light file:px-3 file:py-2 file:text-sm file:font-medium file:text-ccisj hover:file:opacity-90"
+      class="block w-full text-base text-slate-600 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-ccisj-light file:px-3 file:py-2 file:text-base file:font-medium file:text-ccisj hover:file:opacity-90"
       @change="onChange"
     />
 
-    <p v-if="error" class="mt-1.5 text-xs text-red-600">{{ error }}</p>
+    <p v-if="error" class="mt-1.5 text-sm text-red-700">{{ error }}</p>
 
-    <p v-else class="mt-1.5 text-xs text-slate-400">
+    <p v-else class="mt-1.5 text-sm text-slate-600">
       PDF, JPG o PNG, hasta 5 MB.
     </p>
   </div>

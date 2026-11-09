@@ -37,9 +37,9 @@ function toggle(id: number) {
 }
 
 const chip =
-  'inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60';
+  'inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-base font-medium transition disabled:cursor-not-allowed disabled:opacity-60';
 const on = 'border-ccisj bg-ccisj-light text-ccisj';
-const off = 'border-slate-200 bg-white text-slate-500 hover:border-slate-300';
+const off = 'border-slate-200 bg-white text-slate-600 hover:border-slate-300';
 </script>
 
 <template>

@@ -91,13 +91,13 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
   <div class="mx-auto max-w-5xl space-y-6">
     <RouterLink
       :to="{ name: 'candidatos' }"
-      class="inline-flex items-center gap-2 text-sm font-medium text-emerald-700 hover:underline"
+      class="inline-flex items-center gap-2 text-base font-medium text-emerald-700 hover:underline"
     >
       <ArrowLeft class="h-4 w-4" />
       Volver a candidatos
     </RouterLink>
 
-    <p v-if="loading" role="status" class="text-slate-500">
+    <p v-if="loading" role="status" class="text-slate-600">
       Cargando perfil...
     </p>
 
@@ -130,7 +130,7 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
           <span
             v-for="item in candidate.categorias"
             :key="item.categoria.id"
-            class="rounded-full bg-emerald-50 px-3 py-1 text-sm text-emerald-700"
+            class="rounded-full bg-emerald-50 px-3 py-1 text-base text-emerald-700"
           >
             {{ item.categoria.nombre }}
           </span>
@@ -149,7 +149,10 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
           Experiencia laboral
         </h2>
 
-        <p v-if="!candidate.experiencias.length" class="text-sm text-slate-500">
+        <p
+          v-if="!candidate.experiencias.length"
+          class="text-base text-slate-600"
+        >
           No tiene experiencias registradas.
         </p>
 
@@ -161,8 +164,8 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
           <h3 class="font-semibold text-slate-800">
             {{ experience.cargo }}
           </h3>
-          <p class="text-sm text-slate-600">{{ experience.empresa }}</p>
-          <p class="mt-1 text-xs text-slate-500">
+          <p class="text-base text-slate-600">{{ experience.empresa }}</p>
+          <p class="mt-1 text-sm text-slate-600">
             {{
               formatPeriod(
                 experience.fechaInicio,
@@ -173,7 +176,7 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
           </p>
           <p
             v-if="experience.tareas"
-            class="mt-2 whitespace-pre-line text-sm text-slate-600"
+            class="mt-2 whitespace-pre-line text-base text-slate-600"
           >
             {{ experience.tareas }}
           </p>
@@ -183,7 +186,7 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
       <section class="rounded-2xl border border-slate-200 bg-white p-6">
         <h2 class="mb-4 text-lg font-bold text-slate-900">Formación</h2>
 
-        <p v-if="!candidate.estudios.length" class="text-sm text-slate-500">
+        <p v-if="!candidate.estudios.length" class="text-base text-slate-600">
           No tiene estudios registrados.
         </p>
 
@@ -193,8 +196,8 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
           class="border-b border-slate-100 py-4 first:pt-0 last:border-0 last:pb-0"
         >
           <h3 class="font-semibold text-slate-800">{{ study.titulo }}</h3>
-          <p class="text-sm text-slate-600">{{ study.institucion }}</p>
-          <p class="mt-1 text-xs text-slate-500">
+          <p class="text-base text-slate-600">{{ study.institucion }}</p>
+          <p class="mt-1 text-sm text-slate-600">
             {{
               study.tipo === 'CURRICULAR'
                 ? 'Estudio curricular'
@@ -202,12 +205,12 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
             }}
           </p>
 
-          <p class="mt-1 text-xs text-slate-500">
+          <p class="mt-1 text-sm text-slate-600">
             {{ formatPeriod(study.fechaInicio, study.fechaFin, study.enCurso) }}
           </p>
           <p
             v-if="study.descripcion"
-            class="mt-2 whitespace-pre-line text-sm text-slate-600"
+            class="mt-2 whitespace-pre-line text-base text-slate-600"
           >
             {{ study.descripcion }}
           </p>
@@ -217,7 +220,10 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
       <section class="rounded-2xl border border-slate-200 bg-white p-6">
         <h2 class="mb-4 text-lg font-bold text-slate-900">Referencias</h2>
 
-        <p v-if="!candidate.referencias.length" class="text-sm text-slate-500">
+        <p
+          v-if="!candidate.referencias.length"
+          class="text-base text-slate-600"
+        >
           No tiene referencias registradas.
         </p>
 
@@ -227,14 +233,14 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
           class="border-b border-slate-100 py-4 first:pt-0 last:border-0 last:pb-0"
         >
           <h3 class="font-semibold text-slate-800">{{ reference.nombre }}</h3>
-          <p class="text-sm text-slate-600">
+          <p class="text-base text-slate-600">
             {{ reference.tipo }}
             <span v-if="reference.relacion"> · {{ reference.relacion }}</span>
           </p>
-          <p v-if="reference.telefono" class="mt-1 text-sm text-slate-600">
+          <p v-if="reference.telefono" class="mt-1 text-base text-slate-600">
             Teléfono: {{ reference.telefono }}
           </p>
-          <p v-if="reference.email" class="text-sm text-slate-600">
+          <p v-if="reference.email" class="text-base text-slate-600">
             Email: {{ reference.email }}
           </p>
         </div>
@@ -243,11 +249,11 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
       <section class="rounded-2xl border border-slate-200 bg-white p-6">
         <h2 class="mb-4 text-lg font-bold text-slate-900">CV en PDF</h2>
 
-        <p v-if="!candidate.cvs.length" class="text-sm text-slate-500">
+        <p v-if="!candidate.cvs.length" class="text-base text-slate-600">
           No tiene archivos PDF cargados.
         </p>
 
-        <p v-if="pdfError" role="alert" class="mb-3 text-sm text-red-600">
+        <p v-if="pdfError" role="alert" class="mb-3 text-base text-red-700">
           {{ pdfError }}
         </p>
 
@@ -260,7 +266,7 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
             <p class="font-medium text-slate-800">
               {{ cv.nombreArchivo || `CV #${cv.id}` }}
             </p>
-            <p v-if="cv.descripcion" class="text-sm text-slate-500">
+            <p v-if="cv.descripcion" class="text-base text-slate-600">
               {{ cv.descripcion }}
             </p>
           </div>
@@ -268,7 +274,7 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
           <button
             type="button"
             :disabled="openingCv !== null"
-            class="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800 disabled:opacity-50"
+            class="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 text-base font-semibold text-white hover:bg-emerald-800 disabled:opacity-50"
             @click="openCv(cv.id)"
           >
             <ExternalLink class="h-4 w-4" />

@@ -136,8 +136,7 @@ function onKeydown(event: KeyboardEvent) {
 onMounted(() => document.addEventListener('keydown', onKeydown));
 onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown));
 
-const sectionTitle =
-  'mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400';
+const sectionTitle = 'mb-2 text-sm font-semibold   text-slate-600';
 </script>
 
 <template>
@@ -163,7 +162,7 @@ const sectionTitle =
               {{ fullName }}
             </p>
 
-            <p class="mt-0.5 text-sm text-slate-500">
+            <p class="mt-0.5 text-base text-slate-600">
               Se postuló a
               <span class="font-medium text-slate-700">
                 «{{ application.oferta.titulo }}»
@@ -173,7 +172,7 @@ const sectionTitle =
 
             <p
               v-if="application.oferta.estado === 'CERRADA'"
-              class="mt-1 text-xs text-slate-400"
+              class="mt-1 text-sm text-slate-600"
             >
               La oferta está cerrada.
             </p>
@@ -181,7 +180,7 @@ const sectionTitle =
 
           <button
             type="button"
-            class="-mr-2 -mt-1 rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+            class="-mr-2 -mt-1 rounded-lg p-2 text-slate-600 transition hover:bg-slate-100 hover:text-slate-600"
             aria-label="Cerrar"
             :disabled="busy"
             @click="emit('close')"
@@ -194,16 +193,12 @@ const sectionTitle =
           <!-- Estado -->
           <section>
             <div class="mb-2 flex items-center justify-between gap-2">
-              <h3
-                class="text-xs font-semibold uppercase tracking-wide text-slate-400"
-              >
-                Estado
-              </h3>
+              <h3 class="text-sm font-semibold text-slate-600">Estado</h3>
 
               <ApplicationStatusBadge :status="application.estado" />
             </div>
 
-            <p v-if="isFinal" class="text-sm text-slate-500">
+            <p v-if="isFinal" class="text-base text-slate-600">
               La postulación está finalizada y ya no se puede cambiar.
             </p>
 
@@ -213,7 +208,7 @@ const sectionTitle =
                   v-for="estado in MEMBER_APPLICATION_STATES"
                   :key="estado"
                   type="button"
-                  class="flex items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed"
+                  class="flex items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-base font-medium transition disabled:cursor-not-allowed"
                   :class="
                     application.estado === estado
                       ? STATUS_ACTIVE_CLASSES[estado]
@@ -228,7 +223,7 @@ const sectionTitle =
                 </button>
               </div>
 
-              <p class="mt-2 text-xs text-slate-400">
+              <p class="mt-2 text-sm text-slate-600">
                 Cada cambio le llega a {{ application.postulante.nombre }} como
                 notificación.
               </p>
@@ -239,9 +234,9 @@ const sectionTitle =
           <section>
             <h3 :class="sectionTitle">Contacto</h3>
 
-            <ul class="space-y-2 text-sm">
+            <ul class="space-y-2 text-base">
               <li class="flex items-center gap-2">
-                <Mail class="h-4 w-4 shrink-0 text-slate-400" />
+                <Mail class="h-4 w-4 shrink-0 text-slate-600" />
 
                 <a
                   :href="`mailto:${application.postulante.usuario.email}`"
@@ -252,7 +247,7 @@ const sectionTitle =
               </li>
 
               <li class="flex items-center gap-2">
-                <Phone class="h-4 w-4 shrink-0 text-slate-400" />
+                <Phone class="h-4 w-4 shrink-0 text-slate-600" />
 
                 <a
                   v-if="phoneHref"
@@ -262,7 +257,7 @@ const sectionTitle =
                   {{ application.postulante.telefono }}
                 </a>
 
-                <span v-else class="text-slate-400">Sin teléfono</span>
+                <span v-else class="text-slate-600">Sin teléfono</span>
               </li>
             </ul>
           </section>
@@ -272,7 +267,7 @@ const sectionTitle =
             <h3 :class="sectionTitle">Mensaje del postulante</h3>
 
             <p
-              class="whitespace-pre-line break-words rounded-lg bg-slate-50 px-3 py-2.5 text-sm text-slate-700"
+              class="whitespace-pre-line break-words rounded-lg bg-slate-50 px-3 py-2.5 text-base text-slate-700"
             >
               {{ application.observaciones }}
             </p>
@@ -282,19 +277,19 @@ const sectionTitle =
           <section>
             <h3 :class="sectionTitle">Currículum</h3>
 
-            <dl class="space-y-1 text-sm text-slate-700">
+            <dl class="space-y-1 text-base text-slate-700">
               <div v-if="cv.fechaNacimiento">
-                <dt class="inline text-slate-400">Nacimiento:</dt>
+                <dt class="inline text-slate-600">Nacimiento:</dt>
                 {{ formatDate(cv.fechaNacimiento) }}
               </div>
               <div v-if="cv.direccion">
-                <dt class="inline text-slate-400">Dirección:</dt>
+                <dt class="inline text-slate-600">Dirección:</dt>
                 {{ cv.direccion }}
               </div>
             </dl>
 
             <div v-for="block in cvBlocks" :key="block.title" class="mt-4">
-              <p class="mb-1.5 text-xs font-semibold text-slate-500">
+              <p class="mb-1.5 text-sm font-semibold text-slate-600">
                 {{ block.title }}
               </p>
 
@@ -302,15 +297,15 @@ const sectionTitle =
                 <li
                   v-for="(line, index) in block.lines"
                   :key="index"
-                  class="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                  class="rounded-lg border border-slate-200 px-3 py-2 text-base"
                 >
                   <p class="font-medium text-slate-800">{{ line.main }}</p>
-                  <p v-if="line.sub" class="text-xs text-slate-500">
+                  <p v-if="line.sub" class="text-sm text-slate-600">
                     {{ line.sub }}
                   </p>
                   <p
                     v-if="line.detail"
-                    class="mt-1 whitespace-pre-line break-words text-xs text-slate-600"
+                    class="mt-1 whitespace-pre-line break-words text-sm text-slate-600"
                   >
                     {{ line.detail }}
                   </p>
@@ -319,17 +314,19 @@ const sectionTitle =
             </div>
 
             <div v-if="cv.otros" class="mt-4">
-              <p class="mb-1.5 text-xs font-semibold text-slate-500">Otros</p>
-              <p class="whitespace-pre-line break-words text-sm text-slate-700">
+              <p class="mb-1.5 text-sm font-semibold text-slate-600">Otros</p>
+              <p
+                class="whitespace-pre-line break-words text-base text-slate-700"
+              >
                 {{ cv.otros }}
               </p>
             </div>
 
-            <p class="mb-1.5 mt-4 text-xs font-semibold text-slate-500">
+            <p class="mb-1.5 mt-4 text-sm font-semibold text-slate-600">
               CV en PDF enviado
             </p>
 
-            <p v-if="!application.cv" class="text-sm text-slate-400">
+            <p v-if="!application.cv" class="text-base text-slate-600">
               No adjuntó un PDF en esta postulación.
             </p>
 
@@ -339,20 +336,20 @@ const sectionTitle =
                 :key="file.id"
                 class="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2"
               >
-                <FileText class="h-4 w-4 shrink-0 text-slate-400" />
+                <FileText class="h-4 w-4 shrink-0 text-slate-600" />
 
                 <div class="min-w-0 flex-1">
-                  <p class="truncate text-sm text-slate-700">
+                  <p class="truncate text-base text-slate-700">
                     {{ file.nombreArchivo ?? file.descripcion ?? 'CV' }}
                   </p>
-                  <p class="text-xs text-slate-400">
+                  <p class="text-sm text-slate-600">
                     {{ formatDate(file.fechaActualizacion) }}
                   </p>
                 </div>
 
                 <button
                   type="button"
-                  class="inline-flex items-center gap-1 text-sm font-medium text-ccisj hover:underline"
+                  class="inline-flex items-center gap-1 text-base font-medium text-ccisj hover:underline"
                   @click="openCvFile(file.id)"
                 >
                   Ver

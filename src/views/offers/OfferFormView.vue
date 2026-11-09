@@ -348,9 +348,9 @@ onBeforeUnmount(() =>
 );
 
 const inputClass =
-  'w-full rounded-xl border px-3 py-2.5 text-sm outline-none transition focus:ring-2';
+  'w-full rounded-xl border px-3 py-2.5 text-base outline-none transition focus:ring-2';
 
-const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
+const labelClass = 'mb-2 block text-base font-medium text-slate-700';
 </script>
 
 <template>
@@ -358,7 +358,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
     <div>
       <button
         type="button"
-        class="mb-3 flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-ccisj"
+        class="mb-3 flex items-center gap-2 text-base font-medium text-slate-600 transition hover:text-ccisj"
         @click="goBack"
       >
         <ArrowLeft class="h-4 w-4" />
@@ -369,7 +369,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
         {{ isEdit ? 'Editar oferta' : 'Publicar oferta' }}
       </h1>
 
-      <p class="mt-1 text-sm text-slate-500">
+      <p class="mt-1 text-base text-slate-600">
         {{
           isEdit
             ? 'Los cambios se ven apenas los guardás.'
@@ -381,7 +381,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
     <!-- Loading -->
     <div
       v-if="loading"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500"
+      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
     >
       Cargando...
     </div>
@@ -391,12 +391,12 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
       v-else-if="loadError"
       class="rounded-xl border border-red-200 bg-red-50 p-6 text-center"
     >
-      <p class="text-sm text-red-600">{{ loadError }}</p>
+      <p class="text-base text-red-700">{{ loadError }}</p>
 
       <div class="mt-3 flex justify-center gap-2">
         <button
           type="button"
-          class="flex items-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+          class="flex items-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-2 text-base font-medium text-red-700 transition hover:bg-red-50"
           @click="load"
         >
           <RefreshCw class="h-4 w-4" />
@@ -405,7 +405,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
 
         <button
           type="button"
-          class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+          class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-base font-medium text-slate-600 transition hover:bg-slate-50"
           @click="goBack"
         >
           Volver a mis ofertas
@@ -417,7 +417,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
       <!-- Aviso al reabrir una oferta vencida -->
       <div
         v-if="reopening && offer && initial?.estado === 'CERRADA'"
-        class="flex gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800"
+        class="flex gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-base text-amber-800"
       >
         <Info class="mt-0.5 h-4 w-4 shrink-0" />
 
@@ -431,16 +431,16 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
       <!-- Resumen de la oferta en edición -->
       <div
         v-if="offer"
-        class="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-slate-200 bg-white px-5 py-4 text-sm"
+        class="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-slate-200 bg-white px-5 py-4 text-base"
       >
-        <span class="text-slate-500">
+        <span class="text-slate-600">
           Publicada el
           <span class="font-medium text-slate-700">{{
             formatDate(uruguayDay(offer.fechaPublicacion))
           }}</span>
         </span>
 
-        <span class="text-slate-500">
+        <span class="text-slate-600">
           <span class="font-semibold text-slate-800">{{
             offer._count.postulaciones
           }}</span>
@@ -452,9 +452,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
 
       <!-- El puesto -->
       <fieldset class="rounded-xl border border-slate-200 bg-white p-5">
-        <legend
-          class="px-1 text-xs font-semibold uppercase tracking-wide text-slate-400"
-        >
+        <legend class="px-1 text-sm font-semibold text-slate-600">
           El puesto
         </legend>
 
@@ -476,9 +474,9 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
 
             <p
               id="oferta-titulo-ayuda"
-              class="mt-1 text-xs"
+              class="mt-1 text-sm"
               :class="
-                visibleError('titulo') ? 'text-red-600' : 'text-slate-400'
+                visibleError('titulo') ? 'text-red-700' : 'text-slate-600'
               "
             >
               {{
@@ -501,7 +499,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
                 :key="category.id"
                 type="button"
                 :aria-pressed="form.categoriaIds.includes(category.id)"
-                class="rounded-full border px-3 py-1.5 text-sm transition"
+                class="rounded-full border px-3 py-1.5 text-base transition"
                 :class="
                   form.categoriaIds.includes(category.id)
                     ? 'border-ccisj bg-ccisj-light font-medium text-ccisj'
@@ -515,20 +513,20 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
                 @click="toggleCategory(category.id)"
               >
                 {{ category.nombre }}
-                <span v-if="!category.activa" class="text-xs text-slate-400">
+                <span v-if="!category.activa" class="text-sm text-slate-600">
                   (dada de baja)
                 </span>
               </button>
             </div>
 
-            <p v-else class="text-sm text-slate-500">
+            <p v-else class="text-base text-slate-600">
               No hay categorías disponibles. Pedile a la administración que las
               cargue.
             </p>
 
             <p
               v-if="visibleError('categoriaIds')"
-              class="mt-1 text-xs text-red-600"
+              class="mt-1 text-sm text-red-700"
             >
               {{ visibleError('categoriaIds') }}
             </p>
@@ -557,7 +555,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
 
             <p
               v-if="visibleError('modalidad')"
-              class="mt-1 text-xs text-red-600"
+              class="mt-1 text-sm text-red-700"
             >
               {{ visibleError('modalidad') }}
             </p>
@@ -566,7 +564,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
           <div>
             <label for="oferta-ubicacion" :class="labelClass">
               Ubicación
-              <span class="font-normal text-slate-400">(opcional)</span>
+              <span class="font-normal text-slate-600">(opcional)</span>
             </label>
 
             <input
@@ -582,7 +580,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
 
             <p
               v-if="visibleError('ubicacion')"
-              class="mt-1 text-xs text-red-600"
+              class="mt-1 text-sm text-red-700"
             >
               {{ visibleError('ubicacion') }}
             </p>
@@ -606,7 +604,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
 
             <p
               v-if="visibleError('cantidadVacantes')"
-              class="mt-1 text-xs text-red-600"
+              class="mt-1 text-sm text-red-700"
             >
               {{ visibleError('cantidadVacantes') }}
             </p>
@@ -615,7 +613,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
           <div>
             <label for="oferta-cierre" :class="labelClass">
               Fecha de cierre
-              <span class="font-normal text-slate-400">(opcional)</span>
+              <span class="font-normal text-slate-600">(opcional)</span>
             </label>
 
             <div class="flex gap-2">
@@ -633,7 +631,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
               <button
                 v-if="form.fechaCierre"
                 type="button"
-                class="shrink-0 rounded-xl border border-slate-200 px-3 text-sm font-medium text-slate-500 transition hover:bg-slate-50"
+                class="shrink-0 rounded-xl border border-slate-200 px-3 text-base font-medium text-slate-600 transition hover:bg-slate-50"
                 @click="
                   form.fechaCierre = '';
                   touched.fechaCierre = true;
@@ -645,9 +643,9 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
 
             <p
               id="oferta-cierre-ayuda"
-              class="mt-1 text-xs"
+              class="mt-1 text-sm"
               :class="
-                visibleError('fechaCierre') ? 'text-red-600' : 'text-slate-400'
+                visibleError('fechaCierre') ? 'text-red-700' : 'text-slate-600'
               "
             >
               {{
@@ -678,19 +676,19 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
 
             <p
               id="oferta-descripcion-ayuda"
-              class="mt-1 flex justify-between gap-3 text-xs"
+              class="mt-1 flex justify-between gap-3 text-sm"
             >
               <span
                 :class="
                   visibleError('descripcion')
-                    ? 'text-red-600'
-                    : 'text-slate-400'
+                    ? 'text-red-700'
+                    : 'text-slate-600'
                 "
               >
                 {{ visibleError('descripcion') }}
               </span>
 
-              <span class="shrink-0 tabular-nums text-slate-400">
+              <span class="shrink-0 tabular-nums text-slate-600">
                 {{ form.descripcion.trim().length }} / {{ DESCRIPTION_MAX }}
               </span>
             </p>
@@ -703,9 +701,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
         v-if="isEdit"
         class="rounded-xl border border-slate-200 bg-white p-5"
       >
-        <legend
-          class="px-1 text-xs font-semibold uppercase tracking-wide text-slate-400"
-        >
+        <legend class="px-1 text-sm font-semibold text-slate-600">
           Estado
         </legend>
 
@@ -740,10 +736,10 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
             />
 
             <span>
-              <span class="block text-sm font-medium text-slate-800">
+              <span class="block text-base font-medium text-slate-800">
                 {{ option.label }}
               </span>
-              <span class="block text-xs text-slate-500">{{
+              <span class="block text-sm text-slate-600">{{
                 option.hint
               }}</span>
             </span>
@@ -752,7 +748,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
       </fieldset>
 
       <div class="flex flex-wrap items-center justify-end gap-3">
-        <p v-if="isEdit && isDirty" class="mr-auto text-xs text-slate-500">
+        <p v-if="isEdit && isDirty" class="mr-auto text-sm text-slate-600">
           Tenés cambios sin guardar.
         </p>
 
@@ -760,7 +756,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
           v-if="isEdit"
           type="button"
           :disabled="!isDirty || saving"
-          class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+          class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-base font-semibold text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
           @click="discardChanges"
         >
           Descartar cambios
@@ -769,7 +765,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
         <button
           v-else
           type="button"
-          class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+          class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-base font-semibold text-slate-600 transition hover:bg-slate-50"
           @click="goBack"
         >
           Cancelar
@@ -778,7 +774,7 @@ const labelClass = 'mb-2 block text-sm font-medium text-slate-700';
         <button
           type="submit"
           :disabled="saving || (isEdit && !isDirty) || (submitted && hasErrors)"
-          class="flex items-center gap-2 rounded-xl bg-ccisj px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          class="flex items-center gap-2 rounded-xl bg-ccisj px-5 py-2.5 text-base font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
         >
           <Save class="h-4 w-4" />
 

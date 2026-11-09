@@ -157,7 +157,7 @@ const closingLabel = computed(() => {
   <div class="mx-auto max-w-3xl space-y-5">
     <RouterLink
       :to="{ name: 'ofertas' }"
-      class="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-slate-700"
+      class="inline-flex items-center gap-1.5 text-base font-medium text-slate-600 transition hover:text-slate-700"
     >
       <ArrowLeft class="h-4 w-4" />
       Volver a ofertas laborales
@@ -166,7 +166,7 @@ const closingLabel = computed(() => {
     <!-- Cargando -->
     <div
       v-if="loading"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500"
+      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
     >
       Cargando oferta...
     </div>
@@ -176,11 +176,11 @@ const closingLabel = computed(() => {
       v-else-if="error || !offer"
       class="rounded-xl border border-slate-200 bg-white p-12 text-center"
     >
-      <p class="text-sm font-medium text-slate-600">{{ error }}</p>
+      <p class="text-base font-medium text-slate-600">{{ error }}</p>
 
       <RouterLink
         :to="{ name: 'ofertas' }"
-        class="mt-3 inline-block text-sm font-medium text-ccisj hover:underline"
+        class="mt-3 inline-block text-base font-medium text-ccisj hover:underline"
       >
         Ver las ofertas abiertas
       </RouterLink>
@@ -195,30 +195,32 @@ const closingLabel = computed(() => {
         <h1 class="text-2xl font-bold text-slate-900">{{ offer.titulo }}</h1>
 
         <p class="mt-2 flex items-center gap-1.5 text-slate-600">
-          <Building2 class="h-4 w-4 shrink-0 text-slate-400" />
+          <Building2 class="h-4 w-4 shrink-0 text-slate-600" />
           <span class="font-medium">{{ offer.socio.razonSocial }}</span>
-          <span class="text-slate-400">· {{ offer.socio.giroComercial }}</span>
+          <span class="text-slate-600">· {{ offer.socio.giroComercial }}</span>
         </p>
 
-        <div class="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-600">
+        <div
+          class="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-base text-slate-600"
+        >
           <span class="flex items-center gap-1.5">
-            <MapPin class="h-4 w-4 text-slate-400" />
+            <MapPin class="h-4 w-4 text-slate-600" />
             {{ offer.ubicacion || offer.socio.ciudad }}
           </span>
 
           <span v-if="offer.modalidad" class="flex items-center gap-1.5">
-            <Laptop class="h-4 w-4 text-slate-400" />
+            <Laptop class="h-4 w-4 text-slate-600" />
             {{ OFFER_MODALITY_LABELS[offer.modalidad] }}
           </span>
 
           <span class="flex items-center gap-1.5">
-            <Users class="h-4 w-4 text-slate-400" />
+            <Users class="h-4 w-4 text-slate-600" />
             {{ offer.cantidadVacantes }}
             {{ offer.cantidadVacantes === 1 ? 'vacante' : 'vacantes' }}
           </span>
 
           <span class="flex items-center gap-1.5">
-            <CalendarClock class="h-4 w-4 text-slate-400" />
+            <CalendarClock class="h-4 w-4 text-slate-600" />
             Publicada el {{ formatDate(uruguayDay(offer.fechaPublicacion)) }}
           </span>
 
@@ -228,7 +230,7 @@ const closingLabel = computed(() => {
           >
             <CalendarX
               class="h-4 w-4"
-              :class="closesToday ? 'text-amber-600' : 'text-slate-400'"
+              :class="closesToday ? 'text-amber-700' : 'text-slate-600'"
             />
             {{ closingLabel }}
           </span>
@@ -238,7 +240,7 @@ const closingLabel = computed(() => {
           <span
             v-for="{ categoria } in offer.categorias"
             :key="categoria.id"
-            class="rounded-full bg-ccisj-light px-2.5 py-0.5 text-xs font-medium text-ccisj-dark"
+            class="rounded-full bg-ccisj-light px-2.5 py-0.5 text-sm font-medium text-ccisj-dark"
           >
             {{ categoria.nombre }}
           </span>
@@ -247,14 +249,12 @@ const closingLabel = computed(() => {
 
       <!-- Descripción -->
       <section class="p-6">
-        <h2
-          class="text-xs font-semibold uppercase tracking-wide text-slate-500"
-        >
+        <h2 class="text-sm font-semibold text-slate-600">
           Descripción del puesto
         </h2>
 
         <p
-          class="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-700"
+          class="mt-3 whitespace-pre-line text-base leading-relaxed text-slate-700"
         >
           {{ offer.descripcion }}
         </p>
@@ -269,21 +269,21 @@ const closingLabel = computed(() => {
         class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4"
       >
         <template v-if="!auth.isAuthenticated">
-          <p class="text-sm text-slate-500">
+          <p class="text-base text-slate-600">
             Para postularte necesitás una cuenta. Es gratis y lleva un minuto.
           </p>
 
           <div class="flex items-center gap-2">
             <RouterLink
               :to="{ name: 'login', query: { volver: route.fullPath } }"
-              class="rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-200 hover:text-slate-800"
+              class="rounded-xl px-3 py-2.5 text-base font-medium text-slate-600 transition hover:bg-slate-200 hover:text-slate-800"
             >
               Ya tengo cuenta
             </RouterLink>
 
             <RouterLink
               :to="{ name: 'registro', query: { volver: route.fullPath } }"
-              class="flex items-center gap-2 rounded-xl bg-ccisj px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-ccisj-dark"
+              class="flex items-center gap-2 rounded-xl bg-ccisj px-5 py-2.5 text-base font-semibold text-white transition hover:bg-ccisj-dark"
             >
               <UserPlus class="h-4 w-4" />
               Crear cuenta para postularme
@@ -292,7 +292,7 @@ const closingLabel = computed(() => {
         </template>
 
         <!-- Socios y administración no se postulan -->
-        <p v-else-if="!isApplicant" class="text-sm text-slate-500">
+        <p v-else-if="!isApplicant" class="text-base text-slate-600">
           Solo las cuentas de postulante pueden postularse a las ofertas.
         </p>
 
@@ -301,14 +301,14 @@ const closingLabel = computed(() => {
           v-else-if="alreadyApplied"
           class="flex w-full flex-wrap items-center justify-between gap-3"
         >
-          <p class="flex items-center gap-2 text-sm font-medium text-ccisj">
+          <p class="flex items-center gap-2 text-base font-medium text-ccisj">
             <CheckCircle2 class="h-4 w-4" />
             Ya te postulaste a esta oferta.
           </p>
 
           <RouterLink
             :to="{ name: 'mis-postulaciones' }"
-            class="text-sm font-medium text-ccisj hover:underline"
+            class="text-base font-medium text-ccisj hover:underline"
           >
             Ver mis postulaciones
           </RouterLink>
@@ -319,13 +319,13 @@ const closingLabel = computed(() => {
           v-else-if="cv && !canApply"
           class="flex w-full flex-wrap items-center justify-between gap-3"
         >
-          <p class="text-sm text-slate-600">
+          <p class="text-base text-slate-600">
             Para postularte, completá tu CV o subí uno en PDF.
           </p>
 
           <RouterLink
             :to="{ name: 'mi-cv' }"
-            class="rounded-xl bg-ccisj px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-ccisj-dark"
+            class="rounded-xl bg-ccisj px-5 py-2.5 text-base font-semibold text-white transition hover:bg-ccisj-dark"
           >
             Completar mi CV
           </RouterLink>
@@ -334,7 +334,7 @@ const closingLabel = computed(() => {
         <!-- Formulario de postulación -->
         <form v-else-if="cv" class="w-full space-y-4" @submit.prevent="apply">
           <fieldset v-if="cv.cvs.length > 0">
-            <legend class="mb-2 text-sm font-medium text-slate-700">
+            <legend class="mb-2 text-base font-medium text-slate-700">
               ¿Qué CV querés enviar?
             </legend>
 
@@ -342,7 +342,7 @@ const closingLabel = computed(() => {
               <label
                 v-for="file in cv.cvs"
                 :key="file.id"
-                class="flex cursor-pointer items-center gap-3 rounded-lg border bg-white px-3 py-2.5 text-sm transition"
+                class="flex cursor-pointer items-center gap-3 rounded-lg border bg-white px-3 py-2.5 text-base transition"
                 :class="
                   selectedCv === file.id
                     ? 'border-ccisj bg-ccisj-light'
@@ -356,7 +356,7 @@ const closingLabel = computed(() => {
                   :value="file.id"
                   class="accent-ccisj"
                 />
-                <FileText class="h-4 w-4 shrink-0 text-slate-400" />
+                <FileText class="h-4 w-4 shrink-0 text-slate-600" />
                 <span class="truncate text-slate-700">
                   {{ file.nombreArchivo ?? 'CV' }}
                 </span>
@@ -364,7 +364,7 @@ const closingLabel = computed(() => {
 
               <label
                 v-if="hasFormCv"
-                class="flex cursor-pointer items-center gap-3 rounded-lg border bg-white px-3 py-2.5 text-sm transition"
+                class="flex cursor-pointer items-center gap-3 rounded-lg border bg-white px-3 py-2.5 text-base transition"
                 :class="
                   selectedCv === 'NINGUNO'
                     ? 'border-ccisj bg-ccisj-light'
@@ -385,7 +385,7 @@ const closingLabel = computed(() => {
             </div>
           </fieldset>
 
-          <p v-else class="text-sm text-slate-500">
+          <p v-else class="text-base text-slate-600">
             Se enviará el CV que completaste en el portal ({{ cvProgress(cv) }}%
             completo).
           </p>
@@ -393,10 +393,10 @@ const closingLabel = computed(() => {
           <div>
             <label
               for="mensaje"
-              class="mb-1.5 block text-sm font-medium text-slate-700"
+              class="mb-1.5 block text-base font-medium text-slate-700"
             >
               Mensaje para la empresa
-              <span class="font-normal text-slate-400">(opcional)</span>
+              <span class="font-normal text-slate-600">(opcional)</span>
             </label>
 
             <textarea
@@ -405,7 +405,7 @@ const closingLabel = computed(() => {
               rows="3"
               maxlength="2000"
               placeholder="Contá brevemente por qué te interesa el puesto"
-              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100"
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-base text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100"
             />
           </div>
 
@@ -413,7 +413,7 @@ const closingLabel = computed(() => {
             <button
               type="submit"
               :disabled="applying || selectedCv === ''"
-              class="flex items-center gap-2 rounded-xl bg-ccisj px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-ccisj-dark disabled:cursor-not-allowed disabled:opacity-50"
+              class="flex items-center gap-2 rounded-xl bg-ccisj px-5 py-2.5 text-base font-semibold text-white transition hover:bg-ccisj-dark disabled:cursor-not-allowed disabled:opacity-50"
             >
               <LoaderCircle v-if="applying" class="h-4 w-4 animate-spin" />
               <Send v-else class="h-4 w-4" />
@@ -422,7 +422,7 @@ const closingLabel = computed(() => {
           </div>
         </form>
 
-        <p v-else class="text-sm text-slate-500">Cargando...</p>
+        <p v-else class="text-base text-slate-600">Cargando...</p>
       </footer>
     </article>
   </div>

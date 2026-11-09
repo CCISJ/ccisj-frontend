@@ -122,9 +122,10 @@ export function importe(texto: string | null) {
 }
 
 export async function cerrarSesion(page: Page, nombre: string) {
-  // El menú del usuario es el botón del encabezado con su nombre.
-  await page.getByRole('banner').getByRole('button', { name: nombre }).click();
-  await page.getByRole('button', { name: 'Cerrar sesión' }).click();
+  // El usuario y "Cerrar sesión" están al pie del menú lateral.
+  const menu = page.getByRole('complementary');
+  await expect(menu).toContainText(nombre);
+  await menu.getByRole('button', { name: 'Cerrar sesión' }).click();
   await expect(page).toHaveURL(/\/login/);
 }
 
@@ -151,3 +152,15 @@ export async function abrirArchivo(
 
   return page.request.get(enlace);
 }
+
+export const DIRECTIVO = {
+  email: 'directivo@ccisj.uy',
+  password: '1234',
+  nombre: 'Empresa Directiva SA',
+};
+
+export const POSTULANTE = {
+  email: 'postulante@ccisj.uy',
+  password: '1234',
+  nombre: 'Juan Pérez',
+};

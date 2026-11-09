@@ -268,7 +268,7 @@ async function confirmAction() {
 }
 
 const iconButton =
-  'rounded-lg p-2 text-slate-400 transition disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-slate-400';
+  'rounded-lg p-2 text-slate-600 transition disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-slate-400';
 </script>
 
 <template>
@@ -278,14 +278,14 @@ const iconButton =
       <div>
         <h1 class="text-2xl font-bold text-slate-900">Mis ofertas</h1>
 
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-base text-slate-600">
           Publicá y administrá las ofertas laborales de tu empresa.
         </p>
       </div>
 
       <button
         type="button"
-        class="flex items-center gap-2 rounded-xl bg-ccisj px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+        class="flex items-center gap-2 rounded-xl bg-ccisj px-4 py-2.5 text-base font-semibold text-white transition hover:opacity-90"
         @click="newOffer"
       >
         <Plus class="h-4 w-4" />
@@ -299,7 +299,7 @@ const iconButton =
     >
       <div class="relative flex-1">
         <Search
-          class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+          class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600"
         />
 
         <input
@@ -307,14 +307,14 @@ const iconButton =
           type="search"
           placeholder="Buscar por título, categoría o ubicación..."
           aria-label="Buscar ofertas"
-          class="h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 outline-none transition focus:border-ccisj focus:ring-2 focus:ring-emerald-100"
+          class="h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-base text-slate-700 outline-none transition focus:border-ccisj focus:ring-2 focus:ring-emerald-100"
         />
       </div>
 
       <select
         v-model="statusFilter"
         aria-label="Filtrar por estado"
-        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 outline-none transition focus:border-ccisj"
+        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-base text-slate-600 outline-none transition focus:border-ccisj"
       >
         <option value="TODOS">Todos los estados</option>
         <option value="ACTIVA">Activas ({{ counts.activas }})</option>
@@ -324,7 +324,7 @@ const iconButton =
       <button
         v-if="hasFilters"
         type="button"
-        class="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+        class="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-lg px-3 text-base font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-700"
         @click="clearFilters"
       >
         <X class="h-4 w-4" />
@@ -335,7 +335,7 @@ const iconButton =
     <!-- Loading -->
     <div
       v-if="loading && offers.length === 0"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500"
+      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
     >
       Cargando ofertas...
     </div>
@@ -345,17 +345,17 @@ const iconButton =
       v-else-if="offers.length === 0"
       class="rounded-xl border border-slate-200 bg-white p-12 text-center"
     >
-      <p class="text-sm font-medium text-slate-600">
+      <p class="text-base font-medium text-slate-600">
         Todavía no publicaste ofertas
       </p>
 
-      <p class="mt-1 text-sm text-slate-400">
+      <p class="mt-1 text-base text-slate-600">
         Cuando publiques una, los postulantes van a poder verla y postularse.
       </p>
 
       <button
         type="button"
-        class="mx-auto mt-4 flex items-center gap-2 rounded-lg bg-ccisj px-3.5 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+        class="mx-auto mt-4 flex items-center gap-2 rounded-lg bg-ccisj px-3.5 py-2 text-base font-semibold text-white transition hover:opacity-90"
         @click="newOffer"
       >
         <Plus class="h-4 w-4" />
@@ -368,12 +368,10 @@ const iconButton =
       v-else
       class="overflow-hidden rounded-xl border border-slate-200 bg-white"
     >
-      <div class="overflow-x-auto">
+      <div class="relative overflow-x-auto">
         <table class="w-full min-w-200 text-left">
           <thead class="bg-slate-50">
-            <tr
-              class="text-xs font-semibold uppercase tracking-wide text-slate-500"
-            >
+            <tr class="text-sm font-semibold text-slate-600">
               <th class="px-5 py-3">Oferta</th>
               <th class="px-5 py-3">Publicada</th>
               <th class="px-5 py-3">Cierra</th>
@@ -396,7 +394,7 @@ const iconButton =
                   {{ offer.titulo }}
                 </p>
 
-                <p class="mt-0.5 truncate text-xs text-slate-400">
+                <p class="mt-0.5 truncate text-sm text-slate-600">
                   {{
                     [
                       offer.modalidad && OFFER_MODALITY_LABELS[offer.modalidad],
@@ -420,15 +418,17 @@ const iconButton =
               </td>
 
               <!-- Publicada -->
-              <td class="whitespace-nowrap px-5 py-3.5 text-sm text-slate-600">
+              <td
+                class="whitespace-nowrap px-5 py-3.5 text-base text-slate-600"
+              >
                 {{ formatDate(uruguayDay(offer.fechaPublicacion)) }}
               </td>
 
               <!-- Cierra -->
-              <td class="whitespace-nowrap px-5 py-3.5 text-sm">
+              <td class="whitespace-nowrap px-5 py-3.5 text-base">
                 <span
                   :class="
-                    offer.fechaCierre ? 'text-slate-600' : 'text-slate-400'
+                    offer.fechaCierre ? 'text-slate-600' : 'text-slate-600'
                   "
                 >
                   {{ closingLabel(offer) }}
@@ -436,7 +436,7 @@ const iconButton =
 
                 <p
                   v-if="closesToday(offer)"
-                  class="text-xs font-medium text-amber-600"
+                  class="text-sm font-medium text-amber-700"
                 >
                   Cierra hoy
                 </p>
@@ -444,7 +444,7 @@ const iconButton =
 
               <!-- Postulaciones -->
               <td
-                class="px-5 py-3.5 text-center text-sm font-semibold tabular-nums text-slate-800"
+                class="px-5 py-3.5 text-center text-base font-semibold tabular-nums text-slate-800"
                 @click.stop
               >
                 <RouterLink
@@ -459,17 +459,17 @@ const iconButton =
                   {{ offer._count.postulaciones }}
                 </RouterLink>
 
-                <span v-else class="text-slate-400">0</span>
+                <span v-else class="text-slate-600">0</span>
               </td>
 
               <!-- Estado -->
               <td class="px-5 py-3.5">
                 <span
-                  class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
+                  class="inline-flex rounded-full px-2.5 py-1 text-sm font-medium"
                   :class="
                     offer.estado === 'ACTIVA'
                       ? 'bg-emerald-50 text-emerald-700'
-                      : 'bg-slate-100 text-slate-500'
+                      : 'bg-slate-100 text-slate-600'
                   "
                 >
                   {{ offer.estado === 'ACTIVA' ? 'Activa' : 'Cerrada' }}
@@ -545,13 +545,13 @@ const iconButton =
             <!-- Sin resultados para los filtros actuales -->
             <tr v-if="filteredOffers.length === 0">
               <td colspan="6" class="px-5 py-12 text-center">
-                <p class="text-sm text-slate-500">
+                <p class="text-base text-slate-600">
                   Ninguna oferta coincide con esos filtros.
                 </p>
 
                 <button
                   type="button"
-                  class="mt-2 text-sm font-medium text-ccisj hover:underline"
+                  class="mt-2 text-base font-medium text-ccisj hover:underline"
                   @click="clearFilters"
                 >
                   Limpiar filtros
@@ -565,7 +565,7 @@ const iconButton =
       <!-- Footer -->
       <div
         v-if="filteredOffers.length > 0"
-        class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-5 py-3 text-xs text-slate-500"
+        class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-5 py-3 text-sm text-slate-600"
       >
         <span>
           Mostrando {{ rangeStart }}-{{ rangeEnd }} de

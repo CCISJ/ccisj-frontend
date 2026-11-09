@@ -252,14 +252,14 @@ onMounted(loadData);
       <div>
         <h1 class="text-2xl font-bold text-slate-900">Cuotas y pagos</h1>
 
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-base text-slate-600">
           Gestión general de cuotas y seguimiento de pagos de socios.
         </p>
       </div>
 
       <button
         type="button"
-        class="flex items-center gap-2 rounded-lg bg-ccisj px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+        class="flex items-center gap-2 rounded-lg bg-ccisj px-4 py-2 text-base font-semibold text-white transition hover:opacity-90"
         @click="showGenerateModal = true"
       >
         <Plus class="h-4 w-4" />
@@ -270,7 +270,7 @@ onMounted(loadData);
     <!-- Loading -->
     <div
       v-if="loading"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500"
+      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
     >
       Cargando información de cuotas...
     </div>
@@ -288,7 +288,7 @@ onMounted(loadData);
           </div>
 
           <div>
-            <p class="text-sm font-medium text-slate-500">
+            <p class="text-base font-medium text-slate-600">
               Valor general de la cuota
             </p>
 
@@ -297,7 +297,7 @@ onMounted(loadData);
                 {{ formatMoney(configuration.importeBase) }}
               </p>
 
-              <span class="text-xs text-slate-400">
+              <span class="text-sm text-slate-600">
                 vigente desde {{ formatDate(configuration.vigenciaDesde) }}
               </span>
             </div>
@@ -306,7 +306,7 @@ onMounted(loadData);
 
         <button
           type="button"
-          class="flex items-center gap-2 rounded-lg border border-slate-200 px-3.5 py-2 text-sm font-semibold text-slate-600 transition hover:border-ccisj hover:bg-ccisj-light hover:text-ccisj"
+          class="flex items-center gap-2 rounded-lg border border-slate-200 px-3.5 py-2 text-base font-semibold text-slate-600 transition hover:border-ccisj hover:bg-ccisj-light hover:text-ccisj"
           @click="openConfigurationModal()"
         >
           <Pencil class="h-4 w-4" />
@@ -319,7 +319,7 @@ onMounted(loadData);
         <div class="rounded-xl border border-slate-200 bg-white p-5">
           <div class="flex items-start justify-between">
             <div>
-              <p class="text-sm text-slate-500">Cobrado este mes</p>
+              <p class="text-base text-slate-600">Cobrado este mes</p>
 
               <p class="mt-2 text-2xl font-bold text-slate-900">
                 {{ formatMoney(summary.cobradoMes) }}
@@ -337,7 +337,7 @@ onMounted(loadData);
         <div class="rounded-xl border border-slate-200 bg-white p-5">
           <div class="flex items-start justify-between">
             <div>
-              <p class="text-sm text-slate-500">Pendiente</p>
+              <p class="text-base text-slate-600">Pendiente</p>
 
               <p class="mt-2 text-2xl font-bold text-slate-900">
                 {{ formatMoney(summary.pendiente) }}
@@ -355,7 +355,7 @@ onMounted(loadData);
         <div class="rounded-xl border border-slate-200 bg-white p-5">
           <div class="flex items-start justify-between">
             <div>
-              <p class="text-sm text-slate-500">Deuda total</p>
+              <p class="text-base text-slate-600">Deuda total</p>
 
               <p class="mt-2 text-2xl font-bold text-slate-900">
                 {{ formatMoney(summary.deudaTotal) }}
@@ -363,7 +363,7 @@ onMounted(loadData);
             </div>
 
             <div
-              class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50 text-red-600"
+              class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50 text-red-700"
             >
               <TriangleAlert class="h-5 w-5" />
             </div>
@@ -374,18 +374,14 @@ onMounted(loadData);
       <!-- Estado de socios -->
       <section class="rounded-xl border border-slate-200 bg-white p-5">
         <div class="mb-5 flex items-center gap-2">
-          <Users class="h-5 w-5 text-slate-400" />
+          <Users class="h-5 w-5 text-slate-600" />
 
           <h2 class="font-semibold text-slate-900">Estado de socios</h2>
         </div>
 
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div class="rounded-lg bg-slate-50 p-4">
-            <p
-              class="text-xs font-medium uppercase tracking-wide text-slate-400"
-            >
-              Total
-            </p>
+            <p class="text-sm font-medium text-slate-600">Total</p>
 
             <p class="mt-1 text-xl font-bold text-slate-800">
               {{ totalSocios }}
@@ -395,28 +391,22 @@ onMounted(loadData);
           <div class="rounded-lg bg-emerald-50 p-4">
             <div class="flex items-center justify-between">
               <div>
-                <p
-                  class="text-xs font-medium uppercase tracking-wide text-emerald-600"
-                >
-                  Al día
-                </p>
+                <p class="text-sm font-medium text-emerald-700">Al día</p>
 
                 <p class="mt-1 text-xl font-bold text-emerald-700">
                   {{ summary.sociosAlDia }}
                 </p>
               </div>
 
-              <CircleCheck class="h-5 w-5 text-emerald-600" />
+              <CircleCheck class="h-5 w-5 text-emerald-700" />
             </div>
           </div>
 
           <div class="rounded-lg bg-amber-50 p-4">
             <div class="flex items-center justify-between">
               <div>
-                <p
-                  class="text-xs font-medium uppercase tracking-wide text-amber-600"
-                >
-                  Pendientes
+                <p class="text-sm font-medium text-amber-800">
+                  1 o 2 cuotas vencidas
                 </p>
 
                 <p class="mt-1 text-xl font-bold text-amber-700">
@@ -424,25 +414,21 @@ onMounted(loadData);
                 </p>
               </div>
 
-              <Clock3 class="h-5 w-5 text-amber-600" />
+              <Clock3 class="h-5 w-5 text-amber-700" />
             </div>
           </div>
 
           <div class="rounded-lg bg-red-50 p-4">
             <div class="flex items-center justify-between">
               <div>
-                <p
-                  class="text-xs font-medium uppercase tracking-wide text-red-500"
-                >
-                  Deudores
-                </p>
+                <p class="text-sm font-medium text-red-700">3 o más vencidas</p>
 
-                <p class="mt-1 text-xl font-bold text-red-600">
+                <p class="mt-1 text-xl font-bold text-red-700">
                   {{ summary.sociosDeudores }}
                 </p>
               </div>
 
-              <TriangleAlert class="h-5 w-5 text-red-500" />
+              <TriangleAlert class="h-5 w-5 text-red-700" />
             </div>
           </div>
         </div>
@@ -456,24 +442,22 @@ onMounted(loadData);
           <div class="border-b border-slate-100 px-5 py-4">
             <h2 class="font-semibold text-slate-900">Últimos pagos</h2>
 
-            <p class="mt-0.5 text-xs text-slate-400">
+            <p class="mt-0.5 text-sm text-slate-600">
               Pagos registrados recientemente
             </p>
           </div>
 
           <div
             v-if="recentPayments.length === 0"
-            class="p-8 text-center text-sm text-slate-400"
+            class="p-8 text-center text-base text-slate-600"
           >
             No hay pagos registrados.
           </div>
 
-          <div v-else class="overflow-x-auto">
+          <div v-else class="relative overflow-x-auto">
             <table class="w-full text-left">
               <thead class="bg-slate-50">
-                <tr
-                  class="text-xs font-semibold uppercase tracking-wide text-slate-500"
-                >
+                <tr class="text-sm font-semibold text-slate-600">
                   <th class="px-5 py-3">Socio</th>
 
                   <th class="px-5 py-3">Importe</th>
@@ -489,19 +473,19 @@ onMounted(loadData);
                   class="border-t border-slate-100"
                 >
                   <td class="px-5 py-3.5">
-                    <p class="text-sm font-medium text-slate-800">
+                    <p class="text-base font-medium text-slate-800">
                       {{ payment.razonSocial }}
                     </p>
                   </td>
 
                   <td
-                    class="whitespace-nowrap px-5 py-3.5 text-sm font-semibold text-slate-700"
+                    class="whitespace-nowrap px-5 py-3.5 text-base font-semibold text-slate-700"
                   >
                     {{ formatMoney(payment.importe) }}
                   </td>
 
                   <td
-                    class="whitespace-nowrap px-5 py-3.5 text-xs text-slate-500"
+                    class="whitespace-nowrap px-5 py-3.5 text-sm text-slate-600"
                   >
                     {{ formatDate(payment.fechaPago) }}
                   </td>
@@ -520,24 +504,22 @@ onMounted(loadData);
               Historial del valor de cuota
             </h2>
 
-            <p class="mt-0.5 text-xs text-slate-400">
+            <p class="mt-0.5 text-sm text-slate-600">
               Cambios realizados al importe general
             </p>
           </div>
 
           <div
             v-if="configurationHistory.length === 0"
-            class="p-8 text-center text-sm text-slate-400"
+            class="p-8 text-center text-base text-slate-600"
           >
             No hay cambios registrados.
           </div>
 
-          <div v-else class="overflow-x-auto">
+          <div v-else class="relative overflow-x-auto">
             <table class="w-full text-left">
               <thead class="bg-slate-50">
-                <tr
-                  class="text-xs font-semibold uppercase tracking-wide text-slate-500"
-                >
+                <tr class="text-sm font-semibold text-slate-600">
                   <th class="px-5 py-3">Importe</th>
 
                   <th class="px-5 py-3">Vigente desde</th>
@@ -554,30 +536,32 @@ onMounted(loadData);
                   :key="item.id"
                   class="border-t border-slate-100"
                 >
-                  <td class="px-5 py-3.5 text-sm font-semibold text-slate-800">
+                  <td
+                    class="px-5 py-3.5 text-base font-semibold text-slate-800"
+                  >
                     {{ formatMoney(item.importeBase) }}
                   </td>
 
-                  <td class="px-5 py-3.5 text-sm text-slate-500">
+                  <td class="px-5 py-3.5 text-base text-slate-600">
                     {{ formatDate(item.vigenciaDesde) }}
                   </td>
 
                   <td class="px-5 py-3.5">
                     <span
                       v-if="getConfigurationStatus(item) === 'FUTURO'"
-                      class="inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700"
+                      class="inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-sm font-medium text-blue-700"
                     >
                       Futuro
                     </span>
 
                     <span
                       v-else-if="getConfigurationStatus(item) === 'ACTUAL'"
-                      class="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700"
+                      class="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-sm font-medium text-emerald-700"
                     >
                       Actual
                     </span>
 
-                    <span v-else class="text-xs text-slate-400">
+                    <span v-else class="text-sm text-slate-600">
                       Anterior
                     </span>
                   </td>
@@ -586,14 +570,14 @@ onMounted(loadData);
                     <button
                       v-if="getConfigurationStatus(item) === 'FUTURO'"
                       type="button"
-                      class="inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-ccisj-light hover:text-ccisj"
+                      class="inline-flex items-center justify-center rounded-lg p-2 text-slate-600 transition hover:bg-ccisj-light hover:text-ccisj"
                       title="Editar valor"
                       @click="openEditConfiguration(item)"
                     >
                       <Pencil class="h-4 w-4" />
                     </button>
 
-                    <span v-else class="text-xs text-slate-300"> — </span>
+                    <span v-else class="text-sm text-slate-300"> — </span>
                   </td>
                 </tr>
               </tbody>
@@ -611,7 +595,7 @@ onMounted(loadData);
           Modificar valor de cuota
         </h2>
 
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-base text-slate-600">
           El nuevo importe se aplicará a partir de la fecha indicada.
         </p>
 
@@ -619,7 +603,7 @@ onMounted(loadData);
           <div>
             <label
               for="fees-nuevo-importe"
-              class="mb-1.5 block text-sm font-medium text-slate-700"
+              class="mb-1.5 block text-base font-medium text-slate-700"
             >
               Nuevo importe
             </label>
@@ -629,17 +613,17 @@ onMounted(loadData);
               v-model.number="newFeeAmount"
               type="number"
               min="1"
-              class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-ccisj"
+              class="w-full rounded-lg border border-slate-200 px-3 py-2 text-base outline-none focus:border-ccisj"
             />
           </div>
 
           <div>
-            <p class="mb-1.5 text-sm font-medium text-slate-700">
+            <p class="mb-1.5 text-base font-medium text-slate-700">
               Vigente desde
             </p>
 
             <div
-              class="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-700"
+              class="rounded-lg bg-slate-50 px-3 py-2 text-base text-slate-700"
             >
               {{ formatDate(nextEffectiveDate) }}
             </div>
@@ -649,7 +633,7 @@ onMounted(loadData);
         <div class="mt-6 flex justify-end gap-3">
           <button
             type="button"
-            class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+            class="rounded-lg border border-slate-200 px-4 py-2 text-base font-medium text-slate-600 hover:bg-slate-50"
             :disabled="savingConfiguration"
             @click="closeConfigurationModal"
           >
@@ -658,7 +642,7 @@ onMounted(loadData);
 
           <button
             type="button"
-            class="rounded-lg bg-ccisj px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            class="rounded-lg bg-ccisj px-4 py-2 text-base font-semibold text-white disabled:opacity-50"
             :disabled="savingConfiguration"
             @click="saveConfiguration"
           >
@@ -677,7 +661,7 @@ onMounted(loadData);
           Editar valor de cuota
         </h2>
 
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-base text-slate-600">
           Vigencia:
           {{ formatDate(editingConfiguration.vigenciaDesde) }}
         </p>
@@ -685,7 +669,7 @@ onMounted(loadData);
         <div class="mt-5">
           <label
             for="fees-importe"
-            class="mb-1.5 block text-sm font-medium text-slate-700"
+            class="mb-1.5 block text-base font-medium text-slate-700"
           >
             Importe
           </label>
@@ -695,14 +679,14 @@ onMounted(loadData);
             v-model.number="editFeeAmount"
             type="number"
             min="1"
-            class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-ccisj"
+            class="w-full rounded-lg border border-slate-200 px-3 py-2 text-base outline-none focus:border-ccisj"
           />
         </div>
 
         <div class="mt-6 flex justify-end gap-3">
           <button
             type="button"
-            class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+            class="rounded-lg border border-slate-200 px-4 py-2 text-base font-medium text-slate-600 hover:bg-slate-50"
             :disabled="savingEdit"
             @click="closeEditConfiguration"
           >
@@ -711,7 +695,7 @@ onMounted(loadData);
 
           <button
             type="button"
-            class="rounded-lg bg-ccisj px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            class="rounded-lg bg-ccisj px-4 py-2 text-base font-semibold text-white disabled:opacity-50"
             :disabled="savingEdit"
             @click="saveConfigurationEdit"
           >
@@ -730,7 +714,7 @@ onMounted(loadData);
           Generar cuotas mensuales
         </h2>
 
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-base text-slate-600">
           Se generarán las cuotas de todos los socios activos para el mes
           seleccionado. Las cuotas existentes no se duplicarán.
         </p>
@@ -738,7 +722,7 @@ onMounted(loadData);
         <div class="mt-5">
           <label
             for="generate-month"
-            class="mb-1.5 block text-sm font-medium text-slate-700"
+            class="mb-1.5 block text-base font-medium text-slate-700"
           >
             Mes a generar
           </label>
@@ -747,7 +731,7 @@ onMounted(loadData);
             id="generate-month"
             v-model="selectedMonth"
             type="month"
-            class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-ccisj"
+            class="w-full rounded-lg border border-slate-200 px-3 py-2 text-base outline-none focus:border-ccisj"
           />
         </div>
 
@@ -755,7 +739,7 @@ onMounted(loadData);
           <button
             type="button"
             :disabled="generatingFees"
-            class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+            class="rounded-lg border border-slate-200 px-4 py-2 text-base font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50"
             @click="showGenerateModal = false"
           >
             Cancelar
@@ -764,7 +748,7 @@ onMounted(loadData);
           <button
             type="button"
             :disabled="generatingFees || !selectedMonth"
-            class="rounded-lg bg-ccisj px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            class="rounded-lg bg-ccisj px-4 py-2 text-base font-semibold text-white disabled:opacity-50"
             @click="handleGenerateFees"
           >
             {{ generatingFees ? 'Generando...' : 'Confirmar generación' }}

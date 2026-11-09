@@ -83,7 +83,7 @@ async function handleLogin() {
   <div class="flex min-h-screen bg-slate-50">
     <!-- Panel izquierdo -->
     <section
-      class="hidden w-1/2 flex-col justify-between bg-ccisj p-12 text-white lg:flex"
+      class="hidden w-1/2 flex-col justify-between bg-ccisj-deep p-12 text-white lg:flex"
     >
       <div>
         <img
@@ -103,7 +103,7 @@ async function handleLogin() {
         </p>
       </div>
 
-      <p class="text-xs text-white">
+      <p class="text-sm text-white">
         © 2026 Centro Comercial e Industrial de San José
       </p>
     </section>
@@ -125,14 +125,14 @@ async function handleLogin() {
             Iniciar sesión
           </h2>
 
-          <p class="mt-2 text-sm text-slate-500">
+          <p class="mt-2 text-base text-slate-600">
             Ingresá tus datos para acceder al sistema.
           </p>
 
           <p
             v-if="sessionExpired && !error"
             role="status"
-            class="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+            class="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-base text-amber-800"
           >
             Tu sesión se cerró. Volvé a iniciar sesión para continuar.
           </p>
@@ -140,7 +140,7 @@ async function handleLogin() {
           <div
             v-if="connectionError"
             role="alert"
-            class="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+            class="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-base text-amber-800"
           >
             <p>
               No pudimos verificar tu sesión. Puede haber un problema de
@@ -156,7 +156,7 @@ async function handleLogin() {
               {{ retrying ? 'Reintentando...' : 'Reintentar conexión' }}
             </button>
 
-            <p v-if="retryError" class="mt-2 text-sm text-red-600">
+            <p v-if="retryError" class="mt-2 text-base text-red-700">
               {{ retryError }}
             </p>
           </div>
@@ -167,14 +167,14 @@ async function handleLogin() {
           <div>
             <label
               for="email"
-              class="mb-2 block text-sm font-medium text-slate-700"
+              class="mb-2 block text-base font-medium text-slate-700"
             >
               Correo electrónico
             </label>
 
             <div class="relative">
               <Mail
-                class="absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-slate-400"
+                class="absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-slate-600"
               />
 
               <input
@@ -185,7 +185,7 @@ async function handleLogin() {
                 autocomplete="email"
                 autocapitalize="none"
                 :disabled="loading"
-                class="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70"
+                class="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-base text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70"
                 @input="error = ''"
               />
             </div>
@@ -194,13 +194,16 @@ async function handleLogin() {
           <!-- Password -->
           <div>
             <div class="mb-2 flex items-center justify-between">
-              <label for="password" class="text-sm font-medium text-slate-700">
+              <label
+                for="password"
+                class="text-base font-medium text-slate-700"
+              >
                 Contraseña
               </label>
 
               <button
                 type="button"
-                class="text-xs font-medium text-ccisj hover:underline"
+                class="text-sm font-medium text-ccisj hover:underline"
                 :aria-expanded="showForgotHelp"
                 aria-controls="forgot-help"
                 @click="showForgotHelp = !showForgotHelp"
@@ -214,7 +217,7 @@ async function handleLogin() {
             <p
               v-if="showForgotHelp"
               id="forgot-help"
-              class="mb-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600"
+              class="mb-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-600"
             >
               Comunicate con la administración del Centro Comercial: te van a
               asignar una contraseña nueva.
@@ -222,7 +225,7 @@ async function handleLogin() {
 
             <div class="relative">
               <Lock
-                class="absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-slate-400"
+                class="absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-slate-600"
               />
 
               <input
@@ -232,14 +235,18 @@ async function handleLogin() {
                 placeholder="••••••••"
                 autocomplete="current-password"
                 :disabled="loading"
-                class="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-11 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70"
+                class="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-11 text-base text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70"
                 @input="error = ''"
               />
 
               <button
+                :aria-label="
+                  showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
+                "
+                :aria-pressed="showPassword"
                 type="button"
                 :disabled="loading"
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 transition hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
                 @click="showPassword = !showPassword"
               >
                 <EyeOff v-if="showPassword" class="h-4.5 w-4.5" />
@@ -251,7 +258,7 @@ async function handleLogin() {
           <!-- Error -->
           <p
             v-if="error"
-            class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600"
+            class="rounded-xl bg-red-50 px-4 py-3 text-base text-red-700"
           >
             {{ error }}
           </p>
@@ -270,7 +277,7 @@ async function handleLogin() {
 
         <!-- Solo los postulantes se registran solos: las cuentas de socio las
              crea la administración. -->
-        <p class="mt-8 text-center text-sm text-slate-500">
+        <p class="mt-8 text-center text-base text-slate-600">
           ¿Buscás trabajo?
           <RouterLink
             to="/registro"
@@ -282,7 +289,7 @@ async function handleLogin() {
 
         <!-- Las ofertas se ven sin cuenta (definido por el cliente): desde el
              login hay que poder llegar a la bolsa de trabajo. -->
-        <p class="mt-2 text-center text-sm text-slate-500">
+        <p class="mt-2 text-center text-base text-slate-600">
           <RouterLink
             to="/ofertas"
             class="font-medium text-slate-600 hover:text-ccisj hover:underline"

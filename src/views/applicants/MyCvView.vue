@@ -265,16 +265,16 @@ async function removeFile(file: CvFile) {
 const card = 'rounded-xl border border-slate-200 bg-white';
 const cardHeader =
   'flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-3.5';
-const cardTitle = 'text-sm font-semibold text-slate-800';
-const label = 'mb-1.5 block text-xs font-medium text-slate-600';
+const cardTitle = 'text-base font-semibold text-slate-800';
+const label = 'mb-1.5 block text-sm font-medium text-slate-600';
 const input =
-  'w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100';
+  'w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-base text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100';
 const item = 'relative rounded-lg border border-slate-200 p-4';
 const addButton =
-  'flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-ccisj transition hover:bg-slate-50';
+  'flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-ccisj transition hover:bg-slate-50';
 const removeButton =
-  'absolute right-3 top-3 rounded-md p-1 text-slate-400 transition hover:bg-red-50 hover:text-red-600';
-const empty = 'text-sm text-slate-400';
+  'absolute right-3 top-3 rounded-md p-1 text-slate-600 transition hover:bg-red-50 hover:text-red-600';
+const empty = 'text-base text-slate-600';
 </script>
 
 <template>
@@ -284,7 +284,7 @@ const empty = 'text-sm text-slate-400';
       <div class="min-w-0">
         <h1 class="text-2xl font-bold text-slate-900">Mi CV</h1>
 
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-base text-slate-600">
           Completá tus datos o subí tu CV en PDF. Las empresas lo ven cuando te
           postulás a sus ofertas.
         </p>
@@ -294,7 +294,7 @@ const empty = 'text-sm text-slate-400';
         v-if="!loading && !loadError"
         type="button"
         :disabled="saving"
-        class="flex items-center gap-2 rounded-xl bg-ccisj px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+        class="flex items-center gap-2 rounded-xl bg-ccisj px-4 py-2.5 text-base font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
         @click="save"
       >
         <LoaderCircle v-if="saving" class="h-4 w-4 animate-spin" />
@@ -303,13 +303,13 @@ const empty = 'text-sm text-slate-400';
       </button>
     </div>
 
-    <p v-if="loading" class="py-10 text-center text-sm text-slate-400">
+    <p v-if="loading" class="py-10 text-center text-base text-slate-600">
       Cargando...
     </p>
 
     <div
       v-else-if="loadError"
-      class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+      class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-base text-amber-800"
     >
       {{ loadError }}
       <button type="button" class="ml-2 font-medium underline" @click="load">
@@ -320,7 +320,7 @@ const empty = 'text-sm text-slate-400';
     <template v-else>
       <!-- Progreso -->
       <div :class="[card, 'px-5 py-4']">
-        <div class="flex items-center justify-between text-sm">
+        <div class="flex items-center justify-between text-base">
           <span class="font-medium text-slate-700">CV completo al</span>
           <span class="font-semibold text-ccisj">{{ progress }}%</span>
         </div>
@@ -395,7 +395,7 @@ const empty = 'text-sm text-slate-400';
             />
           </div>
 
-          <p class="text-xs text-slate-400 sm:col-span-2">
+          <p class="text-sm text-slate-600 sm:col-span-2">
             Correo electrónico: {{ email }}
           </p>
         </div>
@@ -423,7 +423,7 @@ const empty = 'text-sm text-slate-400';
         <div :class="cardHeader">
           <div>
             <h2 :class="cardTitle">{{ group.title }}</h2>
-            <p class="text-xs text-slate-400">{{ group.hint }}</p>
+            <p class="text-sm text-slate-600">{{ group.hint }}</p>
           </div>
 
           <button
@@ -508,7 +508,7 @@ const empty = 'text-sm text-slate-400';
               </div>
 
               <label
-                class="inline-flex w-fit cursor-pointer items-center gap-2 self-center text-sm text-slate-600"
+                class="inline-flex w-fit cursor-pointer items-center gap-2 self-center text-base text-slate-600"
               >
                 <input v-model="study.enCurso" type="checkbox" />
                 En curso
@@ -613,7 +613,7 @@ const empty = 'text-sm text-slate-400';
               </div>
 
               <label
-                class="inline-flex w-fit cursor-pointer items-center gap-2 self-center text-sm text-slate-600"
+                class="inline-flex w-fit cursor-pointer items-center gap-2 self-center text-base text-slate-600"
               >
                 <input v-model="job.actual" type="checkbox" />
                 Trabajo actual
@@ -746,7 +746,7 @@ const empty = 'text-sm text-slate-400';
         <div :class="cardHeader">
           <div>
             <h2 :class="cardTitle">Otros</h2>
-            <p class="text-xs text-slate-400">
+            <p class="text-sm text-slate-600">
               Libreta de conducir, disponibilidad horaria, intereses, lo que
               quieras agregar.
             </p>
@@ -769,7 +769,7 @@ const empty = 'text-sm text-slate-400';
         <button
           type="button"
           :disabled="saving"
-          class="flex items-center gap-2 rounded-xl bg-ccisj px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          class="flex items-center gap-2 rounded-xl bg-ccisj px-4 py-2.5 text-base font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           @click="save"
         >
           <LoaderCircle v-if="saving" class="h-4 w-4 animate-spin" />
@@ -783,7 +783,7 @@ const empty = 'text-sm text-slate-400';
         <div :class="cardHeader">
           <div>
             <h2 :class="cardTitle">Mis CV en PDF</h2>
-            <p class="text-xs text-slate-400">
+            <p class="text-sm text-slate-600">
               Opcional. Podés tener varios (por ejemplo, uno por rubro) y elegir
               cuál mandar en cada postulación. Hasta
               {{ CV_MAX_FILE_MB }} MB cada uno.
@@ -793,7 +793,7 @@ const empty = 'text-sm text-slate-400';
           <button
             type="button"
             :disabled="uploading"
-            class="flex items-center gap-1.5 rounded-lg bg-ccisj px-3 py-1.5 text-xs font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
+            class="flex items-center gap-1.5 rounded-lg bg-ccisj px-3 py-1.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
             @click="fileInput?.click()"
           >
             <LoaderCircle v-if="uploading" class="h-3.5 w-3.5 animate-spin" />
@@ -827,20 +827,20 @@ const empty = 'text-sm text-slate-400';
             :key="file.id"
             class="flex items-center gap-3 px-5 py-3"
           >
-            <FileText class="h-4 w-4 shrink-0 text-slate-400" />
+            <FileText class="h-4 w-4 shrink-0 text-slate-600" />
 
             <div class="min-w-0 flex-1">
-              <p class="truncate text-sm font-medium text-slate-800">
+              <p class="truncate text-base font-medium text-slate-800">
                 {{ file.nombreArchivo ?? 'CV' }}
               </p>
-              <p class="text-xs text-slate-400">
+              <p class="text-sm text-slate-600">
                 Subido el {{ formatDate(file.fechaActualizacion) }}
               </p>
             </div>
 
             <button
               type="button"
-              class="flex items-center gap-1 text-xs font-medium text-ccisj hover:underline"
+              class="flex items-center gap-1 text-sm font-medium text-ccisj hover:underline"
               @click="openFile(file)"
             >
               Ver <ExternalLink class="h-3.5 w-3.5" />
@@ -848,7 +848,7 @@ const empty = 'text-sm text-slate-400';
 
             <button
               type="button"
-              class="rounded-md p-1 text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+              class="rounded-md p-1 text-slate-600 transition hover:bg-red-50 hover:text-red-600"
               aria-label="Eliminar"
               @click="removeFile(file)"
             >

@@ -177,7 +177,7 @@ watch(
       <div>
         <label
           for="member-payment-socio"
-          class="mb-1.5 block text-sm font-medium text-slate-700"
+          class="mb-1.5 block text-base font-medium text-slate-700"
         >
           Socio
         </label>
@@ -185,7 +185,7 @@ watch(
         <select
           id="member-payment-socio"
           v-model="selectedMemberId"
-          class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-ccisj"
+          class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-base text-slate-700 outline-none focus:border-ccisj"
           :disabled="loadingMembers"
           required
         >
@@ -206,25 +206,25 @@ watch(
       >
         <div
           v-if="loadingSummary"
-          class="py-3 text-center text-sm text-slate-400"
+          class="py-3 text-center text-base text-slate-600"
         >
           Cargando estado de cuenta...
         </div>
 
         <template v-else-if="feeSummary">
           <div class="mb-3">
-            <p class="text-sm font-semibold text-slate-800">
+            <p class="text-base font-semibold text-slate-800">
               {{ selectedMember?.razonSocial }}
             </p>
 
-            <p class="mt-0.5 text-xs text-slate-400">
+            <p class="mt-0.5 text-sm text-slate-600">
               Estado actual de la cuenta
             </p>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div class="rounded-lg bg-white p-3">
-              <p class="text-xs text-slate-500">Cuotas pendientes</p>
+              <p class="text-sm text-slate-600">Cuotas pendientes</p>
 
               <p class="mt-1 text-lg font-bold text-slate-900">
                 {{ feeSummary.cuotasPendientes }}
@@ -232,7 +232,7 @@ watch(
             </div>
 
             <div class="rounded-lg bg-white p-3">
-              <p class="text-xs text-slate-500">Deuda total</p>
+              <p class="text-sm text-slate-600">Deuda total</p>
 
               <p class="mt-1 text-lg font-bold text-slate-900">
                 ${{ feeSummary.deudaTotal.toLocaleString('es-UY') }}
@@ -247,14 +247,14 @@ watch(
         <div>
           <label
             for="member-payment-importe"
-            class="mb-1.5 block text-sm font-medium text-slate-700"
+            class="mb-1.5 block text-base font-medium text-slate-700"
           >
             Importe
           </label>
 
           <div class="relative">
             <span
-              class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400"
+              class="absolute left-3 top-1/2 -translate-y-1/2 text-base text-slate-600"
             >
               $
             </span>
@@ -265,7 +265,7 @@ watch(
               type="number"
               min="0.01"
               step="0.01"
-              class="w-full rounded-lg border border-slate-200 py-2.5 pl-7 pr-3 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-ccisj"
+              class="w-full rounded-lg border border-slate-200 py-2.5 pl-7 pr-3 text-base text-slate-700 outline-none placeholder:text-slate-400 focus:border-ccisj"
               placeholder="0"
               required
             />
@@ -275,7 +275,7 @@ watch(
         <div>
           <label
             for="member-payment-fecha"
-            class="mb-1.5 block text-sm font-medium text-slate-700"
+            class="mb-1.5 block text-base font-medium text-slate-700"
           >
             Fecha
           </label>
@@ -284,7 +284,7 @@ watch(
             id="member-payment-fecha"
             v-model="fechaPago"
             type="date"
-            class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-ccisj"
+            class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-base text-slate-700 outline-none focus:border-ccisj"
             required
           />
         </div>
@@ -294,7 +294,7 @@ watch(
       <div>
         <label
           for="member-payment-medio-de-pago"
-          class="mb-1.5 block text-sm font-medium text-slate-700"
+          class="mb-1.5 block text-base font-medium text-slate-700"
         >
           Medio de pago
         </label>
@@ -302,7 +302,7 @@ watch(
         <select
           id="member-payment-medio-de-pago"
           v-model="medioPago"
-          class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-ccisj"
+          class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-base text-slate-700 outline-none focus:border-ccisj"
         >
           <option value="EFECTIVO">Efectivo</option>
 
@@ -321,10 +321,10 @@ watch(
       <div>
         <label
           for="member-payment-observaciones"
-          class="mb-1.5 block text-sm font-medium text-slate-700"
+          class="mb-1.5 block text-base font-medium text-slate-700"
         >
           Observaciones
-          <span class="font-normal text-slate-400">(opcional)</span>
+          <span class="font-normal text-slate-600">(opcional)</span>
         </label>
 
         <textarea
@@ -332,7 +332,7 @@ watch(
           v-model="observaciones"
           rows="3"
           maxlength="500"
-          class="w-full resize-none rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-ccisj"
+          class="w-full resize-none rounded-lg border border-slate-200 px-3 py-2.5 text-base text-slate-700 outline-none placeholder:text-slate-400 focus:border-ccisj"
           placeholder="Información adicional sobre el pago"
         />
       </div>
@@ -341,7 +341,7 @@ watch(
       <div class="flex justify-end gap-3 border-t border-slate-100 pt-5">
         <button
           type="button"
-          class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-50"
+          class="rounded-lg border border-slate-200 px-4 py-2 text-base font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-50"
           :disabled="submitting"
           @click="close"
         >
@@ -350,7 +350,7 @@ watch(
 
         <button
           type="submit"
-          class="rounded-lg bg-ccisj px-4 py-2 text-sm font-semibold text-white transition disabled:opacity-50"
+          class="rounded-lg bg-ccisj px-4 py-2 text-base font-semibold text-white transition disabled:opacity-50"
           :disabled="
             submitting || !selectedMemberId || loadingSummary || !feeSummary
           "

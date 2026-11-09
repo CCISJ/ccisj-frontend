@@ -283,7 +283,7 @@ function goBack() {
   <div class="space-y-5">
     <button
       type="button"
-      class="flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-ccisj"
+      class="flex items-center gap-2 text-base font-medium text-slate-600 transition hover:text-ccisj"
       @click="goBack"
     >
       <ArrowLeft class="h-4 w-4" />
@@ -293,7 +293,7 @@ function goBack() {
     <!-- Loading -->
     <div
       v-if="loading"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500"
+      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
     >
       Cargando socio...
     </div>
@@ -304,7 +304,7 @@ function goBack() {
         class="flex flex-wrap items-center gap-4 rounded-xl border border-slate-200 bg-white p-5"
       >
         <div
-          class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ccisj-light text-sm font-bold text-ccisj"
+          class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ccisj-light text-base font-bold text-ccisj"
         >
           {{ socio.razonSocial.slice(0, 2).toUpperCase() }}
         </div>
@@ -314,14 +314,14 @@ function goBack() {
             {{ socio.razonSocial }}
           </h1>
 
-          <p class="mt-0.5 truncate text-sm text-slate-500">
+          <p class="mt-0.5 truncate text-base text-slate-600">
             {{ socio.giroComercial || 'Sin giro comercial' }}
           </p>
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
           <span
-            class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
+            class="inline-flex rounded-full px-2.5 py-1 text-sm font-medium"
             :class="
               socio.tipo === 'DIRECTIVO'
                 ? 'bg-amber-50 text-amber-700'
@@ -333,11 +333,11 @@ function goBack() {
 
           <span
             v-if="fullMember"
-            class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
+            class="inline-flex rounded-full px-2.5 py-1 text-sm font-medium"
             :class="
               fullMember.usuario.activo
                 ? 'bg-emerald-50 text-emerald-700'
-                : 'bg-red-50 text-red-600'
+                : 'bg-red-50 text-red-700'
             "
           >
             {{ fullMember.usuario.activo ? 'Activo' : 'Inactivo' }}
@@ -346,7 +346,7 @@ function goBack() {
           <button
             v-if="fullMember"
             type="button"
-            class="flex items-center gap-1.5 rounded-lg bg-ccisj px-3 py-1.5 text-sm font-medium text-white shadow-sm transition hover:opacity-90"
+            class="flex items-center gap-1.5 rounded-lg bg-ccisj px-3 py-1.5 text-base font-medium text-white shadow-sm transition hover:opacity-90"
             @click="paymentModalOpen = true"
           >
             <Plus class="h-4 w-4" />
@@ -356,7 +356,7 @@ function goBack() {
           <button
             v-if="fullMember"
             type="button"
-            class="flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 shadow-sm transition hover:border-ccisj hover:text-ccisj"
+            class="flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-base font-medium text-slate-600 shadow-sm transition hover:border-ccisj hover:text-ccisj"
             @click="adjustmentModalOpen = true"
           >
             <Plus class="h-4 w-4" />
@@ -366,7 +366,7 @@ function goBack() {
           <button
             v-if="fullMember"
             type="button"
-            class="flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 shadow-sm transition hover:border-ccisj hover:text-ccisj"
+            class="flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-base font-medium text-slate-600 shadow-sm transition hover:border-ccisj hover:text-ccisj"
             @click="
               router.push({ name: 'socio-editar', params: { id: socio.id } })
             "
@@ -406,9 +406,7 @@ function goBack() {
         :key="section.title"
         class="rounded-xl border border-slate-200 bg-white p-5"
       >
-        <h2
-          class="mb-4 text-xs font-semibold uppercase tracking-wide text-slate-400"
-        >
+        <h2 class="mb-4 text-sm font-semibold text-slate-600">
           {{ section.title }}
         </h2>
 
@@ -416,9 +414,9 @@ function goBack() {
           class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3"
         >
           <div v-for="field in section.fields" :key="field.label">
-            <dt class="text-xs text-slate-400">{{ field.label }}</dt>
+            <dt class="text-sm text-slate-600">{{ field.label }}</dt>
 
-            <dd class="mt-0.5 wrap-break-word text-sm text-slate-800">
+            <dd class="mt-0.5 wrap-break-word text-base text-slate-800">
               {{ field.value || '—' }}
             </dd>
           </div>
@@ -438,13 +436,9 @@ function goBack() {
         v-if="fullMember?.observaciones"
         class="rounded-xl border border-slate-200 bg-white p-5"
       >
-        <h2
-          class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400"
-        >
-          Observaciones
-        </h2>
+        <h2 class="mb-2 text-sm font-semibold text-slate-600">Observaciones</h2>
 
-        <p class="whitespace-pre-line text-sm text-slate-700">
+        <p class="whitespace-pre-line text-base text-slate-700">
           {{ fullMember.observaciones }}
         </p>
       </div>

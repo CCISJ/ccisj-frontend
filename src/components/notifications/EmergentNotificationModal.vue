@@ -30,9 +30,7 @@ const emit = defineEmits<{
         </div>
 
         <div class="min-w-0 flex-1">
-          <p
-            class="mb-1 text-xs font-semibold uppercase tracking-wide text-amber-700"
-          >
+          <p class="mb-1 text-sm font-semibold text-amber-700">
             Notificación importante
           </p>
 
@@ -44,7 +42,7 @@ const emit = defineEmits<{
     </template>
 
     <div class="p-6">
-      <p class="whitespace-pre-line text-sm leading-6 text-slate-600">
+      <p class="whitespace-pre-line text-base leading-6 text-slate-600">
         {{ message }}
       </p>
     </div>
@@ -53,7 +51,7 @@ const emit = defineEmits<{
       <div class="flex justify-end">
         <button
           type="button"
-          class="rounded-lg bg-ccisj px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90"
+          class="rounded-lg bg-ccisj px-5 py-2.5 text-base font-medium text-white transition hover:opacity-90"
           @click="emit('close')"
         >
           Entendido

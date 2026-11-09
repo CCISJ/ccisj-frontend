@@ -27,7 +27,7 @@ const emit = defineEmits<{
 <template>
   <BaseModal :open="open" :title="title" max-width="md" @close="emit('cancel')">
     <div class="px-6 py-5">
-      <p class="text-sm leading-6 text-slate-500">
+      <p class="text-base leading-6 text-slate-600">
         {{ message }}
       </p>
     </div>
@@ -36,7 +36,7 @@ const emit = defineEmits<{
       <div class="flex justify-end gap-3">
         <button
           type="button"
-          class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+          class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-base font-medium text-slate-600 transition hover:bg-slate-50"
           :disabled="loading"
           @click="emit('cancel')"
         >
@@ -45,7 +45,7 @@ const emit = defineEmits<{
 
         <button
           type="button"
-          class="rounded-lg px-4 py-2 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60"
+          class="rounded-lg px-4 py-2 text-base font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60"
           :class="
             danger ? 'bg-red-600 hover:bg-red-700' : 'bg-ccisj hover:opacity-90'
           "
