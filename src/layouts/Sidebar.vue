@@ -106,10 +106,6 @@ const groups = computed<NavGroup[]>(() => {
       ];
 
       if (auth.user?.memberType === 'DIRECTIVO') {
-        empresaItems.unshift({ label: 'Socios', icon: Users, to: '/socios' });
-      }
-
-      if (auth.user?.memberType === 'DIRECTIVO') {
         empresaItems.unshift(
           { label: 'Socios', icon: Users, to: '/socios' },
           {
