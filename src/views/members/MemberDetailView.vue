@@ -21,6 +21,7 @@ import MemberFeeAdjustments from '@/components/members/MemberFeeAdjustments.vue'
 import MemberFeeHistory from '@/components/members/MemberFeeHistory.vue';
 import MemberFeeSummary from '@/components/members/MemberFeeSummary.vue';
 import MemberPaymentHistory from '@/components/members/MemberPaymentHistory.vue';
+import AccountAccess from '@/components/users/AccountAccess.vue';
 
 import { feesService } from '@/services/feesService';
 import { getMember, isFullMember } from '@/services/membersService';
@@ -423,6 +424,14 @@ function goBack() {
           </div>
         </dl>
       </div>
+
+      <!-- Cuenta de acceso: solo la administración recibe la ficha completa -->
+      <AccountAccess
+        v-if="fullMember"
+        :usuario-id="fullMember.usuario.id"
+        :email="fullMember.usuario.email"
+        :nombre="fullMember.razonSocial"
+      />
 
       <!-- Observaciones: solo si hay algo que mostrar -->
       <div

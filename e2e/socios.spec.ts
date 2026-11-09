@@ -1,6 +1,13 @@
 import { expect, test } from '@playwright/test';
 
-import { ADMIN, cerrarSesion, iniciarSesion, unico } from './apoyo';
+import {
+  ADMIN,
+  altaDeSocio,
+  cerrarSesion,
+  iniciarSesion,
+  otroNavegador,
+  unico,
+} from './apoyo';
 
 test('la administración da de alta un socio y el socio entra con su contraseña inicial', async ({
   page,
@@ -43,4 +50,41 @@ test('la administración da de alta un socio y el socio entra con su contraseña
   await iniciarSesion(page, { email: socio.email, password });
   await page.goto('/mi-empresa');
   await expect(page.getByText(socio.razonSocial).first()).toBeVisible();
+});
+
+test('la administración le da una contraseña nueva a un socio que se olvidó la suya', async ({
+  page,
+  browser,
+}) => {
+  await iniciarSesion(page, ADMIN);
+  const socio = await altaDeSocio(page.request, `Almacén E2E ${unico()}`);
+
+  // El socio tiene una sesión abierta con la contraseña de antes.
+  const delSocio = await otroNavegador(browser);
+  await iniciarSesion(delSocio, socio);
+
+  await page.goto(`/socios/${socio.socioId}`);
+  const cuenta = page.getByRole('region', { name: 'Cuenta de acceso' });
+  await expect(cuenta).toContainText(socio.email);
+  await cuenta
+    .getByRole('button', { name: 'Generar contraseña nueva' })
+    .click();
+
+  // El del modal, que confirma: el primero es el de la ficha.
+  await page
+    .getByRole('button', { name: 'Generar contraseña nueva' })
+    .last()
+    .click();
+  const nueva = page.locator('[data-test="password"]');
+  await expect(nueva).toHaveText(/^\s*[A-Za-z2-9]{12}\s*$/);
+  const password = (await nueva.textContent())?.trim() ?? '';
+  await page.getByRole('button', { name: 'Listo, ya la anoté' }).click();
+
+  // La sesión que tenía abierta se cerró: al moverse, lo manda a entrar.
+  await delSocio.goto('/mi-empresa');
+  await expect(delSocio).toHaveURL(/\/login/);
+
+  await iniciarSesion(delSocio, { email: socio.email, password });
+  await delSocio.goto('/mi-empresa');
+  await expect(delSocio.getByText(socio.razonSocial).first()).toBeVisible();
 });
