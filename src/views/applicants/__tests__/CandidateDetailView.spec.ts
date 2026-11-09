@@ -16,7 +16,7 @@ vi.mock('@/services/applicantService', () => ({
 
 const SIGNED_URL = 'https://storage.example.com/cv.pdf?token=abc';
 
-async function mountWithCv() {
+async function mountWithCv(extra: Record<string, unknown> = {}) {
   vi.mocked(getCandidateById).mockResolvedValue({
     id: 12,
     nombre: 'Ana',
@@ -28,6 +28,7 @@ async function mountWithCv() {
     experiencias: [],
     referencias: [],
     cvs: [{ id: 5, nombreArchivo: 'cv.pdf', descripcion: null }],
+    ...extra,
   } as never);
   vi.mocked(getCandidateCvFileUrl).mockResolvedValue({ url: SIGNED_URL });
 
@@ -74,5 +75,21 @@ describe('CandidateDetailView', () => {
     expect(tab.opener).toBeNull();
     expect(getCandidateCvFileUrl).toHaveBeenCalledWith(12, 5);
     expect(tab.location.replace).toHaveBeenCalledWith(SIGNED_URL);
+  });
+
+  it('a la administración le ofrece una contraseña nueva para el candidato', async () => {
+    const wrapper = await mountWithCv({
+      cuenta: { usuarioId: 30, email: 'ana@correo.uy' },
+    });
+
+    expect(wrapper.text()).toContain('Cuenta de acceso');
+    expect(wrapper.text()).toContain('ana@correo.uy');
+  });
+
+  it('sin la cuenta (un directivo) no muestra esa sección', async () => {
+    const wrapper = await mountWithCv();
+
+    expect(wrapper.text()).not.toContain('Cuenta de acceso');
+    expect(wrapper.text()).not.toContain('Generar contraseña nueva');
   });
 });

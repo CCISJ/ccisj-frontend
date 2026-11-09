@@ -5,6 +5,8 @@ import { RouterLink, useRoute } from 'vue-router';
 
 import { ArrowLeft, ExternalLink } from 'lucide-vue-next';
 
+import AccountAccess from '@/components/users/AccountAccess.vue';
+
 import {
   getCandidateById,
   getCandidateCvFileUrl,
@@ -274,6 +276,14 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
           </button>
         </div>
       </section>
+
+      <!-- Solo a la administración le llega la cuenta del candidato -->
+      <AccountAccess
+        v-if="candidate.cuenta"
+        :usuario-id="candidate.cuenta.usuarioId"
+        :email="candidate.cuenta.email"
+        :nombre="`${candidate.nombre} ${candidate.apellido}`"
+      />
     </template>
   </div>
 </template>

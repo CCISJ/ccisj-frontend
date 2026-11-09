@@ -44,6 +44,12 @@ export type CandidateDetail = {
   direccion: string | null;
   otros: string | null;
 
+  /** Solo para la administración: la cuenta con la que entra. */
+  cuenta?: {
+    usuarioId: number;
+    email: string;
+  };
+
   categorias: {
     categoria: {
       id: number;
