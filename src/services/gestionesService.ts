@@ -114,7 +114,7 @@ export function problemasDeArchivos(files: File[]) {
   }
 
   for (const file of files) {
-    if (file.size > GESTION_MAX_FILE_MB * 1024 * 1024) {
+    if (file.size > GESTION_MAX_FILE_MB * 1_000_000) {
       problemas.push(`"${file.name}" pesa más de ${GESTION_MAX_FILE_MB} MB.`);
     }
   }
