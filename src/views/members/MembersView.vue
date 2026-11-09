@@ -16,7 +16,10 @@ import {
 import { useAuthStore } from '@/stores/auth';
 import { useToastStore } from '@/stores/toast';
 
+import type { MemberFeeState } from '@/types/fee.type';
 import type { MemberDirectoryEntry } from '@/types/member.type';
+
+import { formatMoney } from '@/utils/money';
 
 const auth = useAuthStore();
 const toast = useToastStore();
@@ -29,6 +32,7 @@ const router = useRouter();
 type MemberRow = MemberDirectoryEntry & {
   rut?: string;
   activo?: boolean;
+  estadoCuotas?: MemberFeeState;
 };
 
 const socios = ref<MemberRow[]>([]);
@@ -39,6 +43,7 @@ const loading = ref(true);
 const search = ref('');
 const typeFilter = ref('TODOS');
 const statusFilter = ref('TODOS');
+const feeFilter = ref('TODOS');
 
 const memberToDelete = ref<MemberRow | null>(null);
 const deleting = ref(false);
@@ -72,13 +77,15 @@ const hasFilters = computed(
   () =>
     search.value.trim() !== '' ||
     typeFilter.value !== 'TODOS' ||
-    statusFilter.value !== 'TODOS',
+    statusFilter.value !== 'TODOS' ||
+    feeFilter.value !== 'TODOS',
 );
 
 function clearFilters() {
   search.value = '';
   typeFilter.value = 'TODOS';
   statusFilter.value = 'TODOS';
+  feeFilter.value = 'TODOS';
 }
 
 const filteredSocios = computed(() => {
@@ -101,7 +108,15 @@ const filteredSocios = computed(() => {
       statusFilter.value === 'TODOS' ||
       (statusFilter.value === 'ACTIVO' ? socio.activo : !socio.activo);
 
-    return matchesSearch && matchesType && matchesStatus;
+    // "Con cuotas vencidas" junta a los pendientes (1 o 2) y a los deudores.
+    const fee = socio.estadoCuotas?.estado;
+    const matchesFee =
+      feeFilter.value === 'TODOS' ||
+      (feeFilter.value === 'VENCIDAS'
+        ? fee !== undefined && fee !== 'AL_DIA'
+        : fee === feeFilter.value);
+
+    return matchesSearch && matchesType && matchesStatus && matchesFee;
   });
 });
 
@@ -125,7 +140,7 @@ const rangeEnd = computed(() =>
 
 // Al cambiar los filtros el resultado se acorta:
 // volver siempre a la página 1.
-watch([search, typeFilter, statusFilter], () => {
+watch([search, typeFilter, statusFilter, feeFilter], () => {
   page.value = 1;
 });
 
@@ -255,6 +270,22 @@ async function confirmDelete() {
         <option value="INACTIVO">Inactivo</option>
       </select>
 
+      <select
+        v-if="isAdmin"
+        id="members-fee-filter"
+        v-model="feeFilter"
+        aria-label="Filtrar por estado de cuotas"
+        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 outline-none transition focus:border-ccisj"
+      >
+        <option value="TODOS">Todas las cuotas</option>
+
+        <option value="AL_DIA">Al día</option>
+
+        <option value="VENCIDAS">Con cuotas vencidas</option>
+
+        <option value="DEUDOR">Deudores (3 o más)</option>
+      </select>
+
       <button
         v-if="hasFilters"
         type="button"
@@ -304,6 +335,8 @@ async function confirmDelete() {
               <th class="px-5 py-3">Tipo</th>
 
               <th class="px-5 py-3">Contacto</th>
+
+              <th v-if="isAdmin" class="px-5 py-3">Cuotas</th>
 
               <th v-if="isAdmin" class="px-5 py-3">Estado</th>
 
@@ -372,6 +405,44 @@ async function confirmDelete() {
                 </p>
               </td>
 
+              <!-- Cuotas -->
+              <td
+                v-if="isAdmin"
+                class="whitespace-nowrap px-5 py-3.5 text-sm"
+                data-test="cuotas"
+              >
+                <template v-if="socio.estadoCuotas">
+                  <p
+                    v-if="socio.estadoCuotas.estado === 'AL_DIA'"
+                    class="text-slate-600"
+                  >
+                    Al día
+                  </p>
+
+                  <template v-else>
+                    <p
+                      class="font-semibold"
+                      :class="
+                        socio.estadoCuotas.estado === 'DEUDOR'
+                          ? 'text-red-700'
+                          : 'text-amber-800'
+                      "
+                    >
+                      Debe {{ formatMoney(socio.estadoCuotas.deudaTotal) }}
+                    </p>
+
+                    <p class="text-xs text-slate-500">
+                      {{ socio.estadoCuotas.cuotasVencidas }}
+                      {{
+                        socio.estadoCuotas.cuotasVencidas === 1
+                          ? 'cuota vencida'
+                          : 'cuotas vencidas'
+                      }}
+                    </p>
+                  </template>
+                </template>
+              </td>
+
               <!-- Estado -->
               <td v-if="isAdmin" class="px-5 py-3.5">
                 <span
@@ -415,7 +486,7 @@ async function confirmDelete() {
 
             <!-- Sin resultados para los filtros actuales -->
             <tr v-if="filteredSocios.length === 0">
-              <td :colspan="isAdmin ? 6 : 3" class="px-5 py-12 text-center">
+              <td :colspan="isAdmin ? 7 : 3" class="px-5 py-12 text-center">
                 <p class="text-sm text-slate-500">
                   Ningún socio coincide con esos filtros.
                 </p>
