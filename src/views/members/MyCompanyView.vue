@@ -390,7 +390,7 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
 <template>
   <div class="space-y-5">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900">Mi empresa</h1>
+      <h1 class="text-3xl font-bold text-slate-900">Mi empresa</h1>
 
       <p class="mt-1 text-base text-slate-600">
         Mantené al día los datos de contacto de tu empresa.

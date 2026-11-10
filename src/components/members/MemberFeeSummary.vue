@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { CircleCheck, Clock3, TriangleAlert } from 'lucide-vue-next';
-
 import type { MemberFeeSummary } from '@/types/fee.type';
 
 import { formatMoney } from '@/utils/money';
@@ -11,71 +9,73 @@ const props = defineProps<{
   summary: MemberFeeSummary | null;
 }>();
 
-const statusLabel = computed(() => {
-  if (!props.summary) return 'Sin información';
-  if (props.summary.estado === 'AL_DIA') return 'Al día';
-  if (props.summary.estado === 'PENDIENTE') return 'Pendiente';
-  return 'Deudor';
-});
+/**
+ * Una sola línea con lo que importa: si está al día o cuánto debe en total,
+ * el mismo número que la lista de socios. Debajo, de qué se compone: lo
+ * vencido y lo que todavía no venció.
+ */
+const detail = computed(() => {
+  const s = props.summary;
 
-const statusClass = computed(() => {
-  if (!props.summary) return 'bg-slate-100 text-slate-600';
-  if (props.summary.estado === 'AL_DIA')
-    return 'bg-emerald-50 text-emerald-700';
-  if (props.summary.estado === 'PENDIENTE') return 'bg-amber-50 text-amber-700';
-  return 'bg-red-50 text-red-700';
+  if (!s) return '';
+
+  const porVencer = s.cuotasPendientes - s.cuotasVencidas;
+  const parts: string[] = [];
+
+  if (s.cuotasVencidas > 0) {
+    parts.push(
+      s.cuotasVencidas === 1
+        ? 'Una cuota vencida'
+        : `${s.cuotasVencidas} cuotas vencidas`,
+    );
+  }
+
+  if (porVencer > 0) {
+    parts.push(
+      porVencer === 1
+        ? `una por vencer (${formatMoney(s.deudaTotal - s.deudaVencida)})`
+        : `${porVencer} por vencer (${formatMoney(s.deudaTotal - s.deudaVencida)})`,
+    );
+  }
+
+  const text = parts.join(' y ');
+
+  return text.charAt(0).toUpperCase() + text.slice(1);
 });
 </script>
 
 <template>
-  <section class="rounded-xl border border-slate-200 bg-white p-5">
-    <div class="flex flex-wrap items-start justify-between gap-4">
-      <div>
-        <h2 class="text-sm font-semibold text-slate-600">Estado de cuenta</h2>
-        <p class="mt-1 text-base text-slate-600">
-          Situación actual de las cuotas del socio.
-        </p>
-      </div>
+  <section
+    class="rounded-xl border bg-white px-5 py-4"
+    :class="
+      summary && summary.cuotasVencidas > 0
+        ? 'border-red-200'
+        : 'border-slate-200'
+    "
+    aria-label="Estado de cuenta"
+  >
+    <template v-if="summary">
+      <p class="text-sm text-slate-600">Estado de cuenta</p>
 
-      <span
-        class="inline-flex rounded-full px-2.5 py-1 text-sm font-medium"
-        :class="statusClass"
+      <p
+        class="text-xl font-bold"
+        :class="summary.cuotasVencidas > 0 ? 'text-red-700' : 'text-ccisj'"
       >
-        {{ statusLabel }}
-      </span>
-    </div>
+        <!-- Igual que la lista de socios: al día mientras nada esté vencido. -->
+        {{
+          summary.cuotasVencidas > 0
+            ? `Debe ${formatMoney(summary.deudaTotal)}`
+            : 'Al día'
+        }}
+      </p>
 
-    <div v-if="summary" class="mt-5 grid gap-4 sm:grid-cols-2">
-      <div class="rounded-xl bg-slate-50 p-4">
-        <div class="flex items-center justify-between">
-          <p class="text-sm font-medium text-slate-600">Cuotas pendientes</p>
-          <Clock3 class="h-4 w-4 text-slate-600" />
-        </div>
-        <p class="mt-2 text-xl font-bold text-slate-900">
-          {{ summary.cuotasPendientes }}
-        </p>
-      </div>
+      <p v-if="detail" class="mt-0.5 text-base text-slate-700">
+        {{ detail }}
+      </p>
+    </template>
 
-      <div class="rounded-xl bg-slate-50 p-4">
-        <div class="flex items-center justify-between">
-          <p class="text-sm font-medium text-slate-600">Deuda total</p>
-          <TriangleAlert
-            v-if="summary.deudaTotal > 0"
-            class="h-4 w-4 text-red-700"
-          />
-          <CircleCheck v-else class="h-4 w-4 text-emerald-700" />
-        </div>
-        <p class="mt-2 text-xl font-bold text-slate-900">
-          {{ formatMoney(summary.deudaTotal) }}
-        </p>
-      </div>
-    </div>
-
-    <div
-      v-else
-      class="mt-5 rounded-lg bg-slate-50 p-5 text-center text-base text-slate-600"
-    >
-      No hay información de cuotas disponible para este socio.
-    </div>
+    <p v-else class="text-base text-slate-600">
+      No hay información de cuotas para este socio.
+    </p>
   </section>
 </template>

@@ -194,7 +194,7 @@ const closingLabel = computed(() => {
       <!-- Encabezado -->
       <header class="border-b border-slate-100 p-6">
         <div class="flex flex-wrap items-start justify-between gap-3">
-          <h1 class="text-2xl font-bold text-slate-900">
+          <h1 class="text-3xl font-bold text-slate-900">
             {{ offer.titulo }}
             <span
               v-if="offer.estado === 'CERRADA'"

@@ -2,9 +2,11 @@
 import { computed, onMounted, reactive, ref } from 'vue';
 
 import {
+  Check,
   ExternalLink,
   FileText,
   LoaderCircle,
+  Pencil,
   Plus,
   Save,
   Trash2,
@@ -67,6 +69,8 @@ const today = todayLocal();
 const toDay = (value: string | null) => (value ? value.slice(0, 10) : '');
 
 function fill(cv: Cv) {
+  // Lo guardado se ve resumido; se abre de a uno para editarlo.
+  editing.clear();
   email.value = cv.usuario.email;
   files.value = cv.cvs;
 
@@ -118,6 +122,76 @@ const progress = computed(() => cvProgress(form));
 
 // Listas
 
+/*
+ * Cada estudio, experiencia o referencia ya cargada se ve como una línea
+ * ("Bachillerato · Liceo N°1 · 2011 – 2016"). Los campos aparecen al tocar
+ * Editar, y lo que se agrega nuevo ya viene abierto. Así el CV completo se
+ * lee de un vistazo y no es una pared de formularios.
+ */
+const editing = reactive(new Set<object>());
+
+function isOpen(entry: object) {
+  return editing.has(entry);
+}
+
+function toggle(entry: object) {
+  if (editing.has(entry)) editing.delete(entry);
+  else editing.add(entry);
+}
+
+function openLast<T extends object>(list: T[]) {
+  const last = list.at(-1);
+  if (last) editing.add(last);
+}
+
+function years(desde: string | null, hasta: string | null, ongoing: boolean) {
+  const from = (desde ?? '').slice(0, 4);
+  const to = ongoing ? 'hoy' : (hasta ?? '').slice(0, 4);
+
+  if (!from && !to) return '';
+  if (from === to) return from;
+
+  return [from || '?', to || '?'].join(' – ');
+}
+
+function studySummary(study: CvEducation) {
+  return {
+    title:
+      study.titulo.trim() ||
+      study.institucion.trim() ||
+      'Estudio sin completar',
+    detail: [
+      study.titulo.trim() ? study.institucion.trim() : '',
+      years(study.fechaInicio, study.fechaFin ?? '', study.enCurso),
+    ]
+      .filter(Boolean)
+      .join(' · '),
+  };
+}
+
+function jobSummary(job: CvExperience) {
+  return {
+    title:
+      job.cargo.trim() || job.empresa.trim() || 'Experiencia sin completar',
+    detail: [
+      job.cargo.trim() ? job.empresa.trim() : '',
+      years(job.fechaInicio, job.fechaFin ?? '', job.actual),
+    ]
+      .filter(Boolean)
+      .join(' · '),
+  };
+}
+
+function referenceSummary(reference: CvReference) {
+  return {
+    title: reference.nombre.trim() || 'Referencia sin completar',
+    detail: [reference.relacion, reference.telefono, reference.email]
+      .map((value) => (value ?? '').trim())
+      .filter(Boolean)
+      .join(' · '),
+  };
+}
+
 function addEducation(tipo: EducationType) {
   form.estudios.push({
     tipo,
@@ -128,6 +202,7 @@ function addEducation(tipo: EducationType) {
     enCurso: false,
     descripcion: '',
   } satisfies CvEducation);
+  openLast(form.estudios);
 }
 
 function addExperience() {
@@ -139,6 +214,7 @@ function addExperience() {
     actual: false,
     tareas: '',
   } satisfies CvExperience);
+  openLast(form.experiencias);
 }
 
 function addReference(tipo: ReferenceType) {
@@ -149,6 +225,7 @@ function addReference(tipo: ReferenceType) {
     telefono: '',
     email: '',
   } satisfies CvReference);
+  openLast(form.referencias);
 }
 
 function remove<T>(list: T[], index: number) {
@@ -274,6 +351,10 @@ const addButton =
   'flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-ccisj transition hover:bg-slate-50';
 const removeButton =
   'absolute right-3 top-3 rounded-md p-1 text-slate-600 transition hover:bg-red-50 hover:text-red-600';
+const doneButton =
+  'absolute right-11 top-2 flex items-center gap-1 rounded-md px-2 py-1 text-sm font-semibold text-ccisj transition hover:bg-ccisj-light';
+const iconButton =
+  'rounded-md p-2 text-slate-600 transition hover:bg-slate-100 hover:text-slate-900';
 const empty = 'text-base text-slate-600';
 </script>
 
@@ -282,7 +363,7 @@ const empty = 'text-base text-slate-600';
     <!-- Encabezado -->
     <div class="flex flex-wrap items-start justify-between gap-4">
       <div class="min-w-0">
-        <h1 class="text-2xl font-bold text-slate-900">Mi CV</h1>
+        <h1 class="text-3xl font-bold text-slate-900">Mi CV</h1>
 
         <p class="mt-1 text-base text-slate-600">
           Completá tus datos o subí tu CV en PDF. Las empresas lo ven cuando te
@@ -445,7 +526,57 @@ const empty = 'text-base text-slate-600';
             :key="index"
             :class="item"
           >
+            <!-- Resumida -->
+            <div
+              v-if="!isOpen(study)"
+              class="flex items-center justify-between gap-3"
+            >
+              <div class="min-w-0">
+                <p class="font-semibold text-slate-900">
+                  {{ studySummary(study).title }}
+                </p>
+                <p
+                  v-if="studySummary(study).detail"
+                  class="text-base text-slate-600"
+                >
+                  {{ studySummary(study).detail }}
+                </p>
+              </div>
+
+              <div class="flex shrink-0 items-center gap-1">
+                <button
+                  type="button"
+                  :class="iconButton"
+                  :aria-label="`Editar ${studySummary(study).title}`"
+                  @click="toggle(study)"
+                >
+                  <Pencil class="h-4 w-4" />
+                </button>
+
+                <button
+                  type="button"
+                  :class="[iconButton, 'hover:bg-red-50 hover:text-red-700']"
+                  :aria-label="`Quitar ${studySummary(study).title}`"
+                  @click="remove(form.estudios, index)"
+                >
+                  <Trash2 class="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            <!-- Abierta para editar -->
             <button
+              v-if="isOpen(study)"
+              type="button"
+              :class="doneButton"
+              @click="toggle(study)"
+            >
+              <Check class="h-4 w-4" />
+              Listo
+            </button>
+
+            <button
+              v-if="isOpen(study)"
               type="button"
               :class="removeButton"
               aria-label="Quitar"
@@ -454,7 +585,7 @@ const empty = 'text-base text-slate-600';
               <Trash2 class="h-4 w-4" />
             </button>
 
-            <div class="grid gap-3 pr-8 sm:grid-cols-2">
+            <div v-if="isOpen(study)" class="grid gap-3 pt-6 sm:grid-cols-2">
               <div>
                 <label :for="`estudio-${index}-institucion`" :class="label"
                   >Institución</label
@@ -551,7 +682,57 @@ const empty = 'text-base text-slate-600';
             :key="index"
             :class="item"
           >
+            <!-- Resumida -->
+            <div
+              v-if="!isOpen(job)"
+              class="flex items-center justify-between gap-3"
+            >
+              <div class="min-w-0">
+                <p class="font-semibold text-slate-900">
+                  {{ jobSummary(job).title }}
+                </p>
+                <p
+                  v-if="jobSummary(job).detail"
+                  class="text-base text-slate-600"
+                >
+                  {{ jobSummary(job).detail }}
+                </p>
+              </div>
+
+              <div class="flex shrink-0 items-center gap-1">
+                <button
+                  type="button"
+                  :class="iconButton"
+                  :aria-label="`Editar ${jobSummary(job).title}`"
+                  @click="toggle(job)"
+                >
+                  <Pencil class="h-4 w-4" />
+                </button>
+
+                <button
+                  type="button"
+                  :class="[iconButton, 'hover:bg-red-50 hover:text-red-700']"
+                  :aria-label="`Quitar ${jobSummary(job).title}`"
+                  @click="remove(form.experiencias, index)"
+                >
+                  <Trash2 class="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            <!-- Abierta para editar -->
             <button
+              v-if="isOpen(job)"
+              type="button"
+              :class="doneButton"
+              @click="toggle(job)"
+            >
+              <Check class="h-4 w-4" />
+              Listo
+            </button>
+
+            <button
+              v-if="isOpen(job)"
               type="button"
               :class="removeButton"
               aria-label="Quitar"
@@ -560,7 +741,7 @@ const empty = 'text-base text-slate-600';
               <Trash2 class="h-4 w-4" />
             </button>
 
-            <div class="grid gap-3 pr-8 sm:grid-cols-2">
+            <div v-if="isOpen(job)" class="grid gap-3 pt-6 sm:grid-cols-2">
               <div>
                 <label :for="`experiencia-${index}-empresa`" :class="label"
                   >Empresa</label
@@ -677,7 +858,57 @@ const empty = 'text-base text-slate-600';
             :key="index"
             :class="item"
           >
+            <!-- Resumida -->
+            <div
+              v-if="!isOpen(reference)"
+              class="flex items-center justify-between gap-3"
+            >
+              <div class="min-w-0">
+                <p class="font-semibold text-slate-900">
+                  {{ referenceSummary(reference).title }}
+                </p>
+                <p
+                  v-if="referenceSummary(reference).detail"
+                  class="text-base text-slate-600"
+                >
+                  {{ referenceSummary(reference).detail }}
+                </p>
+              </div>
+
+              <div class="flex shrink-0 items-center gap-1">
+                <button
+                  type="button"
+                  :class="iconButton"
+                  :aria-label="`Editar ${referenceSummary(reference).title}`"
+                  @click="toggle(reference)"
+                >
+                  <Pencil class="h-4 w-4" />
+                </button>
+
+                <button
+                  type="button"
+                  :class="[iconButton, 'hover:bg-red-50 hover:text-red-700']"
+                  :aria-label="`Quitar ${referenceSummary(reference).title}`"
+                  @click="remove(form.referencias, index)"
+                >
+                  <Trash2 class="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            <!-- Abierta para editar -->
             <button
+              v-if="isOpen(reference)"
+              type="button"
+              :class="doneButton"
+              @click="toggle(reference)"
+            >
+              <Check class="h-4 w-4" />
+              Listo
+            </button>
+
+            <button
+              v-if="isOpen(reference)"
               type="button"
               :class="removeButton"
               aria-label="Quitar"
@@ -686,7 +917,10 @@ const empty = 'text-base text-slate-600';
               <Trash2 class="h-4 w-4" />
             </button>
 
-            <div class="grid gap-3 pr-8 sm:grid-cols-2">
+            <div
+              v-if="isOpen(reference)"
+              class="grid gap-3 pt-6 sm:grid-cols-2"
+            >
               <div>
                 <label :for="`referencia-${index}-nombre`" :class="label"
                   >Nombre</label

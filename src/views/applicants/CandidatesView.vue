@@ -200,7 +200,7 @@ onUnmounted(() => {
 <template>
   <div class="mx-auto max-w-6xl space-y-6">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900">Buscar candidatos</h1>
+      <h1 class="text-3xl font-bold text-slate-900">Buscar candidatos</h1>
       <p class="mt-1 text-base text-slate-600">
         Consultá los perfiles laborales de los postulantes registrados.
       </p>

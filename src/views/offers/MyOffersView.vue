@@ -276,7 +276,7 @@ const iconButton =
     <!-- Encabezado -->
     <div class="flex flex-wrap items-start justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-bold text-slate-900">Mis ofertas</h1>
+        <h1 class="text-3xl font-bold text-slate-900">Mis ofertas</h1>
 
         <p class="mt-1 text-base text-slate-600">
           Publicá y administrá las ofertas laborales de tu empresa.

@@ -448,7 +448,7 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
         {{ backLabel }}
       </button>
 
-      <h1 class="text-2xl font-bold text-slate-900">
+      <h1 class="text-3xl font-bold text-slate-900">
         {{ isEdit ? 'Editar oferta' : 'Publicar oferta' }}
       </h1>
 

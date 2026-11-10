@@ -39,6 +39,8 @@ export const feesService = {
       deudaTotal: data.deudaTotal,
       cuotasPendientes: data.cuotasPendientes,
       estado: data.estado,
+      cuotasVencidas: data.cuotasVencidas,
+      deudaVencida: data.deudaVencida,
     };
   },
 

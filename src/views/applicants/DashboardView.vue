@@ -146,7 +146,7 @@ const cardLink = 'text-sm font-medium text-ccisj hover:underline';
     <!-- Encabezado -->
     <div class="flex flex-wrap items-start justify-between gap-4">
       <div class="min-w-0">
-        <h1 class="truncate text-2xl font-bold text-slate-900">
+        <h1 class="truncate text-3xl font-bold text-slate-900">
           {{ firstName ? `Hola, ${firstName}` : 'Inicio' }}
         </h1>
 

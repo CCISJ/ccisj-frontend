@@ -30,7 +30,14 @@ test('la administración genera las cuotas del mes y registra un pago con tarjet
 
   await page.goto(`/socios/${socioId}`);
   await expect(page.getByText(razonSocial).first()).toBeVisible();
-  await expect(page.getByText('Pendiente').first()).toBeVisible();
+
+  // El detalle de las cuotas está en su pestaña. La del mes queda sin pagar:
+  // "Por vencer" hasta el día 15, "Vencida" después.
+  await page.getByRole('tab', { name: 'Cuotas y pagos' }).click();
+  const cuotas = page.getByRole('tabpanel', { name: 'Cuotas y pagos' });
+  await expect(
+    cuotas.getByText(/^(Por vencer|Vencida)$/).first(),
+  ).toBeVisible();
 
   await page.getByRole('button', { name: 'Registrar pago' }).click();
 
@@ -51,12 +58,12 @@ test('la administración genera las cuotas del mes y registra un pago con tarjet
   await confirmar.click();
 
   await expect(modal).toBeHidden();
-  await expect(page.getByText('Pagada').first()).toBeVisible();
+  await expect(cuotas.getByText('Pagada').first()).toBeVisible();
 
   // El comprobante se abre desde el pago, con un enlace firmado de Storage.
   const archivo = await abrirArchivo(
     page,
-    page.getByRole('button', { name: 'Ver comprobante' }).first(),
+    cuotas.getByRole('button', { name: 'Ver comprobante' }).first(),
   );
 
   expect(archivo.status()).toBe(200);

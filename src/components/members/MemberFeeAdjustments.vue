@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Trash2 } from 'lucide-vue-next';
+import { Plus, Trash2 } from 'lucide-vue-next';
 
 import type { FeeAdjustment } from '@/types/fee.type.ts';
 
@@ -10,32 +10,37 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
+  add: [];
   delete: [adjustment: FeeAdjustment];
 }>();
 </script>
 
 <template>
   <section class="rounded-xl border border-slate-200 bg-white p-5">
-    <div class="mb-4 flex items-center justify-between">
+    <div class="flex flex-wrap items-center justify-between gap-3">
       <div>
-        <h2 class="text-base font-semibold text-slate-900">
-          Ajustes programados
-        </h2>
+        <h2 class="text-lg font-semibold text-slate-900">Ajustes</h2>
 
-        <p class="mt-1 text-base text-slate-600">
-          Adicionales y descuentos aplicados a las cuotas del socio.
+        <p class="text-base text-slate-600">
+          Adicionales o descuentos que se suman a sus próximas cuotas.
         </p>
       </div>
+
+      <button
+        type="button"
+        class="flex min-h-10 items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 font-semibold text-slate-800 transition hover:border-ccisj hover:text-ccisj"
+        @click="emit('add')"
+      >
+        <Plus class="h-4 w-4" />
+        Agregar ajuste
+      </button>
     </div>
 
-    <div
-      v-if="adjustments.length === 0"
-      class="rounded-lg bg-slate-50 px-4 py-6 text-center text-base text-slate-600"
-    >
-      No hay ajustes registrados.
-    </div>
+    <p v-if="adjustments.length === 0" class="mt-3 text-base text-slate-600">
+      No tiene ajustes.
+    </p>
 
-    <div v-else class="divide-y divide-slate-100">
+    <div v-else class="mt-3 divide-y divide-slate-100">
       <div
         v-for="adjustment in adjustments"
         :key="adjustment.id"

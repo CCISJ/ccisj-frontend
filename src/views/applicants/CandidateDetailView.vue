@@ -118,7 +118,7 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
 
     <template v-if="candidate && !loading">
       <section class="rounded-2xl border border-slate-200 bg-white p-6">
-        <h1 class="text-2xl font-bold text-slate-900">
+        <h1 class="text-3xl font-bold text-slate-900">
           {{ candidate.nombre }} {{ candidate.apellido }}
         </h1>
 

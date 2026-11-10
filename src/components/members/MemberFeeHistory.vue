@@ -1,117 +1,129 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue';
+
 import type { Fee } from '@/types/fee.type.ts';
 
-import { formatDate } from '@/utils/date';
+import { formatDate, uruguayDay } from '@/utils/date';
 import { formatMoney } from '@/utils/money';
 
-defineProps<{
+const props = defineProps<{
   fees: Fee[];
+  // Cuántas mostrar antes de "Ver todas". Sin límite, todas.
+  limit?: number;
 }>();
 
-function feeStatusLabel(status: Fee['estado']) {
-  if (status === 'PAGADA') return 'Pagada';
-  if (status === 'ANULADA') return 'Anulada';
-  return 'Pendiente';
+const expanded = ref(false);
+
+const visible = computed(() =>
+  props.limit && !expanded.value
+    ? props.fees.slice(0, props.limit)
+    : props.fees,
+);
+
+const hidden = computed(() => props.fees.length - visible.value.length);
+
+/** "Noviembre de 2026": el período se lee como el mes que es. */
+function monthOf(value: string) {
+  const text = new Intl.DateTimeFormat('es-UY', {
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(value));
+
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-function feeStatusClass(status: Fee['estado']) {
-  if (status === 'PAGADA') {
-    return 'bg-emerald-50 text-emerald-700';
-  }
+/** La misma regla que el backend: vencida desde el día siguiente al vencimiento. */
+function isOverdue(fee: Fee) {
+  return (
+    fee.estado === 'PENDIENTE' &&
+    fee.fechaVencimiento.slice(0, 10) < uruguayDay()
+  );
+}
 
-  if (status === 'ANULADA') {
-    return 'bg-slate-100 text-slate-600';
-  }
+/** Pagada y anulada van en texto normal: solo lo que hay que cobrar resalta. */
+function statusLabel(fee: Fee) {
+  if (fee.estado === 'PAGADA') return 'Pagada';
+  if (fee.estado === 'ANULADA') return 'Anulada';
+  return isOverdue(fee) ? 'Vencida' : 'Por vencer';
+}
 
-  return 'bg-amber-50 text-amber-700';
+function statusClass(fee: Fee) {
+  if (fee.estado !== 'PENDIENTE') return 'text-slate-600';
+  return isOverdue(fee)
+    ? 'font-semibold text-red-700'
+    : 'font-semibold text-amber-800';
 }
 </script>
 
 <template>
   <section class="overflow-hidden rounded-xl border border-slate-200 bg-white">
-    <div class="px-5 py-4">
-      <h2 class="text-sm font-semibold text-slate-600">Historial de cuotas</h2>
-
-      <p class="mt-1 text-base text-slate-600">
-        Cuotas generadas para este socio.
-      </p>
-    </div>
+    <h2 class="px-5 py-4 text-lg font-semibold text-slate-900">Cuotas</h2>
 
     <div
       v-if="fees.length === 0"
       class="border-t border-slate-100 p-8 text-center text-base text-slate-600"
     >
-      No hay cuotas registradas para este socio.
+      Todavía no se generaron cuotas.
     </div>
 
     <div v-else class="relative overflow-x-auto">
-      <table class="w-full min-w-180 text-left">
+      <table class="w-full min-w-160 text-left">
         <thead class="border-t border-slate-100 bg-slate-50">
           <tr class="text-sm font-semibold text-slate-600">
-            <th class="px-5 py-3">Período</th>
-            <th class="px-5 py-3">Vencimiento</th>
-            <th class="px-5 py-3">Base</th>
-            <th class="px-5 py-3">Ajustes</th>
-            <th class="px-5 py-3">Total</th>
+            <th class="px-5 py-3">Mes</th>
+            <th class="px-5 py-3">Vence</th>
+            <th class="px-5 py-3 text-right">Importe</th>
             <th class="px-5 py-3">Estado</th>
           </tr>
         </thead>
 
         <tbody>
           <tr
-            v-for="fee in fees"
+            v-for="fee in visible"
             :key="fee.id"
             class="border-t border-slate-100"
           >
-            <td class="whitespace-nowrap px-5 py-3.5 text-base text-slate-700">
-              {{ formatDate(fee.periodoDesde) }}
-              <span class="mx-1 text-slate-300">—</span>
-              {{ formatDate(fee.periodoHasta) }}
+            <td class="whitespace-nowrap px-5 py-3 text-base text-slate-900">
+              {{ monthOf(fee.periodoDesde) }}
             </td>
 
-            <td class="whitespace-nowrap px-5 py-3.5 text-base text-slate-600">
+            <td class="whitespace-nowrap px-5 py-3 text-base text-slate-700">
               {{ formatDate(fee.fechaVencimiento) }}
             </td>
 
-            <td class="whitespace-nowrap px-5 py-3.5 text-base text-slate-600">
-              {{ formatMoney(fee.importeBase) }}
-            </td>
+            <td class="whitespace-nowrap px-5 py-3 text-right text-base">
+              <span class="font-semibold text-slate-900">
+                {{ formatMoney(fee.importeTotal) }}
+              </span>
 
-            <td class="whitespace-nowrap px-5 py-3.5 text-base">
+              <!-- El detalle solo cuando hay un ajuste que explicar. -->
               <span
-                :class="
-                  fee.importeAjustes > 0
-                    ? 'text-red-700'
-                    : fee.importeAjustes < 0
-                      ? 'text-emerald-700'
-                      : 'text-slate-600'
-                "
+                v-if="fee.importeAjustes !== 0"
+                class="block text-sm text-slate-600"
               >
-                {{
-                  fee.importeAjustes > 0
-                    ? `+${formatMoney(fee.importeAjustes)}`
-                    : formatMoney(fee.importeAjustes)
-                }}
+                {{ formatMoney(fee.importeBase) }}
+                {{ fee.importeAjustes > 0 ? '+' : '−' }}
+                {{ formatMoney(Math.abs(fee.importeAjustes)) }} de ajuste
               </span>
             </td>
 
-            <td
-              class="whitespace-nowrap px-5 py-3.5 text-base font-semibold text-slate-800"
-            >
-              {{ formatMoney(fee.importeTotal) }}
-            </td>
-
-            <td class="px-5 py-3.5">
-              <span
-                class="inline-flex rounded-full px-2.5 py-1 text-sm font-medium"
-                :class="feeStatusClass(fee.estado)"
-              >
-                {{ feeStatusLabel(fee.estado) }}
-              </span>
+            <td class="whitespace-nowrap px-5 py-3 text-base">
+              <span :class="statusClass(fee)">{{ statusLabel(fee) }}</span>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <button
+      v-if="hidden > 0 || (limit && expanded)"
+      type="button"
+      class="w-full border-t border-slate-100 px-5 py-3 text-base font-semibold text-ccisj transition hover:bg-slate-50"
+      :aria-expanded="expanded"
+      @click="expanded = !expanded"
+    >
+      {{ expanded ? 'Ver menos' : `Ver las ${fees.length} cuotas` }}
+    </button>
   </section>
 </template>

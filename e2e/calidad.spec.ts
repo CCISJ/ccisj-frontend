@@ -23,6 +23,7 @@ const PANTALLAS = {
     rutas: [
       '/',
       '/socios',
+      '/socios/1',
       '/cuotas',
       '/caja',
       '/notificaciones',
