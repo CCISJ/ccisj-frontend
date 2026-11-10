@@ -77,7 +77,7 @@ onUnmounted(() => {
             <!-- Header -->
             <div
               v-if="title || $slots.header"
-              class="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-4"
+              class="flex items-start justify-between gap-4 border-b border-ccisj-line px-6 py-4"
             >
               <div class="min-w-0 flex-1">
                 <slot name="header">
@@ -105,7 +105,7 @@ onUnmounted(() => {
             <!-- Footer -->
             <div
               v-if="$slots.footer"
-              class="border-t border-slate-200 bg-slate-50 px-6 py-4"
+              class="border-t border-ccisj-line bg-slate-50 px-6 py-4"
             >
               <slot name="footer" />
             </div>

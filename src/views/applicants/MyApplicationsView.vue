@@ -211,7 +211,7 @@ const withdrawMessage = computed(() => {
     <!-- Filtros -->
     <div
       v-if="applications.length > 0"
-      class="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 lg:flex-row lg:items-center"
+      class="flex flex-col gap-3 rounded-xl border border-ccisj-line bg-white shadow-card p-4 lg:flex-row lg:items-center"
     >
       <div class="relative flex-1">
         <Search
@@ -252,7 +252,7 @@ const withdrawMessage = computed(() => {
     <!-- Cargando -->
     <div
       v-if="loading && applications.length === 0"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
+      class="rounded-xl border border-ccisj-line bg-white shadow-card p-10 text-center text-base text-slate-600"
     >
       Cargando postulaciones...
     </div>
@@ -260,7 +260,7 @@ const withdrawMessage = computed(() => {
     <!-- Sin postulaciones -->
     <div
       v-else-if="applications.length === 0"
-      class="rounded-xl border border-slate-200 bg-white p-12 text-center"
+      class="rounded-xl border border-ccisj-line bg-white shadow-card p-12 text-center"
     >
       <p class="text-base font-medium text-slate-600">
         Todavía no te postulaste a ninguna oferta
@@ -282,7 +282,7 @@ const withdrawMessage = computed(() => {
     <!-- Sin resultados para los filtros -->
     <div
       v-else-if="filteredApplications.length === 0"
-      class="rounded-xl border border-slate-200 bg-white p-12 text-center"
+      class="rounded-xl border border-ccisj-line bg-white shadow-card p-12 text-center"
     >
       <p class="text-base text-slate-600">
         Ninguna postulación coincide con esos filtros.
@@ -302,7 +302,7 @@ const withdrawMessage = computed(() => {
       <li
         v-for="item in filteredApplications"
         :key="item.id"
-        class="rounded-xl border border-slate-200 bg-white p-5"
+        class="rounded-xl border border-ccisj-line bg-white shadow-card p-5"
       >
         <div class="flex flex-wrap items-start justify-between gap-3">
           <div class="min-w-0 flex-1">

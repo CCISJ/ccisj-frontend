@@ -136,17 +136,17 @@ onMounted(loadDashboard);
     <!-- El mes en cuatro cifras -->
     <section
       aria-labelledby="mes"
-      class="rounded-2xl border border-slate-200 bg-white"
+      class="rounded-2xl border border-ccisj-line bg-white shadow-card"
     >
       <h2
         id="mes"
-        class="border-b border-slate-200 px-6 py-4 font-bold text-slate-900"
+        class="border-b border-ccisj-line px-6 py-4 font-bold text-slate-900"
       >
         {{ monthLabel }}
       </h2>
 
       <dl class="grid sm:grid-cols-2 xl:grid-cols-4">
-        <div class="border-slate-100 px-6 py-5 sm:border-r">
+        <div class="border-slate-200 px-6 py-5 sm:border-r">
           <dt class="text-slate-600">Cobrado en cuotas</dt>
           <dd class="mt-1 text-3xl font-bold tabular-nums text-slate-900">
             {{ money(fees?.cobradoMes) }}
@@ -156,7 +156,7 @@ onMounted(loadDashboard);
           </dd>
         </div>
 
-        <div class="border-slate-100 px-6 py-5 xl:border-r">
+        <div class="border-slate-200 px-6 py-5 xl:border-r">
           <dt class="text-slate-600">Ingresos de caja</dt>
           <dd class="mt-1 text-3xl font-bold tabular-nums text-slate-900">
             {{ money(cash?.ingresos) }}
@@ -170,7 +170,7 @@ onMounted(loadDashboard);
           </dd>
         </div>
 
-        <div class="border-slate-100 px-6 py-5 sm:border-r">
+        <div class="border-slate-200 px-6 py-5 sm:border-r">
           <dt class="text-slate-600">Balance de caja</dt>
           <dd
             class="mt-1 text-3xl font-bold tabular-nums"
@@ -210,7 +210,7 @@ onMounted(loadDashboard);
       <!-- Lo que hay que atender -->
       <section
         aria-labelledby="deudas"
-        class="min-w-0 rounded-2xl border border-slate-200 bg-white xl:col-span-3"
+        class="min-w-0 rounded-2xl border border-ccisj-line bg-white shadow-card xl:col-span-3"
       >
         <div
           class="flex flex-wrap items-baseline justify-between gap-2 px-6 pt-5"
@@ -295,7 +295,7 @@ onMounted(loadDashboard);
               <tr
                 v-for="member in shownDebtors"
                 :key="member.id"
-                class="border-b border-slate-100 last:border-0"
+                class="border-b border-ccisj-line last:border-0"
               >
                 <td class="px-6 py-3 font-semibold text-slate-900">
                   {{ member.razonSocial }}
@@ -332,7 +332,7 @@ onMounted(loadDashboard);
 
           <p
             v-if="debtors.length > shownDebtors.length"
-            class="border-t border-slate-100 px-6 py-3 text-sm text-slate-600"
+            class="border-t border-ccisj-line px-6 py-3 text-sm text-slate-600"
           >
             Los {{ shownDebtors.length }} que más deben, de
             {{ debtors.length }}.
@@ -343,7 +343,7 @@ onMounted(loadDashboard);
       <div class="min-w-0 space-y-6 xl:col-span-2">
         <section
           aria-labelledby="pagos"
-          class="rounded-2xl border border-slate-200 bg-white px-6 py-5"
+          class="rounded-2xl border border-ccisj-line bg-white shadow-card px-6 py-5"
         >
           <div class="flex flex-wrap items-baseline justify-between gap-2">
             <h2 id="pagos" class="text-xl font-bold text-slate-900">
@@ -372,7 +372,7 @@ onMounted(loadDashboard);
             <li
               v-for="payment in payments"
               :key="payment.id"
-              class="flex items-baseline justify-between gap-4 border-t border-slate-100 py-3 first:border-0"
+              class="flex items-baseline justify-between gap-4 border-t border-ccisj-line py-3 first:border-0"
             >
               <span class="min-w-0">
                 <span class="block truncate font-semibold text-slate-900">
@@ -391,7 +391,7 @@ onMounted(loadDashboard);
 
         <section
           aria-labelledby="tareas"
-          class="rounded-2xl border border-slate-200 bg-white px-6 py-5"
+          class="rounded-2xl border border-ccisj-line bg-white shadow-card px-6 py-5"
         >
           <h2 id="tareas" class="text-xl font-bold text-slate-900">
             ¿Qué querés hacer?

@@ -23,7 +23,37 @@
   --color-ccisj-brand: #009b45;
   --color-ccisj-deep: #0d3b24;
   --color-ccisj-mist: #a9c4b4;
-  --color-ccisj-canvas: #f3f5f2;
+  --color-ccisj-canvas: #edf1ed;
+
+  /*
+   * Separación (10/11): con todo blanco y bordes casi invisibles no se veía
+   * dónde terminaba cada panel ni cada fila. Los paneles llevan un borde
+   * verde grisáceo y una sombra apenas marcada que los despega del fondo; las
+   * tablas, la cabecera con fondo propio y las filas alternadas.
+   */
+  --color-ccisj-line: #d3dcd5;
+  --color-ccisj-head: #e9efea;
+  --color-ccisj-row: #f6f8f6;
+  --shadow-card:
+    0 1px 2px rgb(13 59 36 / 0.06), 0 2px 8px -2px rgb(13 59 36 / 0.07);
+}
+
+/*
+ * En la capa base para que cualquier clase de una fila (una anulada, el
+ * resaltado al pasar el mouse) le gane.
+ */
+@layer base {
+  thead {
+    background-color: var(--color-ccisj-head);
+  }
+
+  thead th {
+    color: var(--color-slate-700);
+  }
+
+  tbody > tr:nth-child(even) {
+    background-color: var(--color-ccisj-row);
+  }
 }
 
 html {

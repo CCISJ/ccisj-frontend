@@ -167,7 +167,7 @@ const closingLabel = computed(() => {
     <!-- Cargando -->
     <div
       v-if="loading"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
+      class="rounded-xl border border-ccisj-line bg-white shadow-card p-10 text-center text-base text-slate-600"
     >
       Cargando oferta...
     </div>
@@ -175,7 +175,7 @@ const closingLabel = computed(() => {
     <!-- Error / no disponible -->
     <div
       v-else-if="error || !offer"
-      class="rounded-xl border border-slate-200 bg-white p-12 text-center"
+      class="rounded-xl border border-ccisj-line bg-white shadow-card p-12 text-center"
     >
       <p class="text-base font-medium text-slate-600">{{ error }}</p>
 
@@ -189,10 +189,10 @@ const closingLabel = computed(() => {
 
     <article
       v-else
-      class="overflow-hidden rounded-xl border border-slate-200 bg-white"
+      class="overflow-hidden rounded-xl border border-ccisj-line bg-white shadow-card"
     >
       <!-- Encabezado -->
-      <header class="border-b border-slate-100 p-6">
+      <header class="border-b border-ccisj-line p-6">
         <div class="flex flex-wrap items-start justify-between gap-3">
           <h1 class="text-3xl font-bold text-slate-900">
             {{ offer.titulo }}
@@ -286,7 +286,7 @@ const closingLabel = computed(() => {
         qué PDF manda (o ninguno, si completó el CV en el portal).
       -->
       <footer
-        class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4"
+        class="flex flex-wrap items-center justify-between gap-3 border-t border-ccisj-line bg-slate-50 px-6 py-4"
       >
         <template v-if="!auth.isAuthenticated">
           <p class="text-base text-slate-600">

@@ -466,7 +466,7 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
     <!-- Loading -->
     <div
       v-if="loading"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
+      class="rounded-xl border border-ccisj-line bg-white shadow-card p-10 text-center text-base text-slate-600"
     >
       Cargando...
     </div>
@@ -516,7 +516,7 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
       <!-- Resumen de la oferta en edición -->
       <div
         v-if="offer"
-        class="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-slate-200 bg-white px-5 py-4 text-base"
+        class="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-ccisj-line bg-white shadow-card px-5 py-4 text-base"
       >
         <span class="text-slate-600">
           Publicada el
@@ -546,7 +546,7 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
       <!-- La empresa (solo la administración, al publicar) -->
       <div
         v-if="isAdminForm && !isEdit"
-        class="rounded-xl border border-slate-200 bg-white p-5"
+        class="rounded-xl border border-ccisj-line bg-white shadow-card p-5"
       >
         <label for="oferta-empresa" :class="labelClass">Empresa</label>
 
@@ -581,7 +581,9 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
       </div>
 
       <!-- El puesto -->
-      <fieldset class="rounded-xl border border-slate-200 bg-white p-5">
+      <fieldset
+        class="rounded-xl border border-ccisj-line bg-white shadow-card p-5"
+      >
         <legend class="px-1 text-sm font-semibold text-slate-600">
           El puesto
         </legend>
@@ -829,7 +831,7 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
       <!-- Estado (solo al editar) -->
       <fieldset
         v-if="isEdit"
-        class="rounded-xl border border-slate-200 bg-white p-5"
+        class="rounded-xl border border-ccisj-line bg-white shadow-card p-5"
       >
         <legend class="px-1 text-sm font-semibold text-slate-600">
           Estado
@@ -886,7 +888,7 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
           v-if="isEdit"
           type="button"
           :disabled="!isDirty || saving"
-          class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-base font-semibold text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+          class="rounded-xl border border-ccisj-line bg-white shadow-card px-4 py-2.5 text-base font-semibold text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
           @click="discardChanges"
         >
           Descartar cambios
@@ -895,7 +897,7 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
         <button
           v-else
           type="button"
-          class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-base font-semibold text-slate-600 transition hover:bg-slate-50"
+          class="rounded-xl border border-ccisj-line bg-white shadow-card px-4 py-2.5 text-base font-semibold text-slate-600 transition hover:bg-slate-50"
           @click="goBack"
         >
           Cancelar

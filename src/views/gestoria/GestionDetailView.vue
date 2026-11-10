@@ -184,7 +184,9 @@ onMounted(load);
     </p>
 
     <template v-if="gestion">
-      <article class="rounded-2xl border border-slate-200 bg-white p-6">
+      <article
+        class="rounded-2xl border border-ccisj-line bg-white shadow-card p-6"
+      >
         <div class="flex flex-wrap items-start justify-between gap-4">
           <div class="min-w-0">
             <p class="font-semibold text-ccisj">{{ gestion.categoria }}</p>
@@ -224,7 +226,7 @@ onMounted(load);
 
       <section
         aria-labelledby="archivos"
-        class="rounded-2xl border border-slate-200 bg-white p-6"
+        class="rounded-2xl border border-ccisj-line bg-white shadow-card p-6"
       >
         <div class="flex flex-wrap items-center justify-between gap-4">
           <h2 id="archivos" class="text-xl font-bold text-slate-900">
@@ -269,7 +271,7 @@ onMounted(load);
           Esta gestión no tiene archivos.
         </p>
 
-        <ul v-else class="mt-4 divide-y divide-slate-100">
+        <ul v-else class="mt-4 divide-y divide-ccisj-line">
           <li
             v-for="archivo in gestion.archivos"
             :key="archivo.id"

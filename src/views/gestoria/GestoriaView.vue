@@ -107,7 +107,7 @@ onMounted(async () => {
 
     <form
       role="search"
-      class="flex flex-wrap items-end gap-4 rounded-2xl border border-slate-200 bg-white p-5"
+      class="flex flex-wrap items-end gap-4 rounded-2xl border border-ccisj-line bg-white shadow-card p-5"
       @submit.prevent="load"
     >
       <div class="min-w-64 flex-[3]">
@@ -172,7 +172,7 @@ onMounted(async () => {
 
     <div
       v-else-if="gestiones.length === 0"
-      class="rounded-2xl border border-slate-200 bg-white p-10 text-center"
+      class="rounded-2xl border border-ccisj-line bg-white shadow-card p-10 text-center"
     >
       <FolderOpen class="mx-auto h-10 w-10 text-slate-500" />
       <p class="mt-3 text-lg font-semibold text-slate-900">
@@ -194,7 +194,7 @@ onMounted(async () => {
       </p>
 
       <ul
-        class="divide-y divide-slate-100 rounded-2xl border border-slate-200 bg-white"
+        class="divide-y divide-ccisj-line rounded-2xl border border-ccisj-line bg-white shadow-card"
       >
         <li v-for="gestion in gestiones" :key="gestion.id">
           <RouterLink

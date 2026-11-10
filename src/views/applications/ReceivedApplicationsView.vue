@@ -324,7 +324,7 @@ async function confirmStatusChange() {
 
     <!-- Filtros -->
     <div
-      class="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 lg:flex-row lg:items-center"
+      class="flex flex-col gap-3 rounded-xl border border-ccisj-line bg-white shadow-card p-4 lg:flex-row lg:items-center"
     >
       <div class="relative flex-1">
         <Search
@@ -376,7 +376,7 @@ async function confirmStatusChange() {
     <!-- Loading -->
     <div
       v-if="loading && applications.length === 0"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
+      class="rounded-xl border border-ccisj-line bg-white shadow-card p-10 text-center text-base text-slate-600"
     >
       Cargando postulaciones...
     </div>
@@ -384,7 +384,7 @@ async function confirmStatusChange() {
     <!-- Sin postulaciones -->
     <div
       v-else-if="applications.length === 0"
-      class="rounded-xl border border-slate-200 bg-white p-12 text-center"
+      class="rounded-xl border border-ccisj-line bg-white shadow-card p-12 text-center"
     >
       <p class="text-base font-medium text-slate-600">
         Todavía no recibiste postulaciones
@@ -405,11 +405,11 @@ async function confirmStatusChange() {
     <!-- Tabla -->
     <div
       v-else
-      class="overflow-hidden rounded-xl border border-slate-200 bg-white"
+      class="overflow-hidden rounded-xl border border-ccisj-line bg-white shadow-card"
     >
       <div class="relative overflow-x-auto">
         <table class="w-full min-w-180 text-left">
-          <thead class="bg-slate-50">
+          <thead>
             <tr class="text-sm font-semibold text-slate-600">
               <th class="px-5 py-3">Postulante</th>
               <th class="px-5 py-3">Oferta</th>
@@ -423,7 +423,7 @@ async function confirmStatusChange() {
             <tr
               v-for="item in visibleApplications"
               :key="item.id"
-              class="cursor-pointer border-t border-slate-100 transition hover:bg-slate-50"
+              class="cursor-pointer border-t border-ccisj-line transition hover:bg-slate-50"
               :class="{ 'bg-ccisj-light/40': item.id === selectedId }"
               tabindex="0"
               @click="openApplication(item)"
@@ -506,7 +506,7 @@ async function confirmStatusChange() {
       <!-- Footer -->
       <div
         v-if="filteredApplications.length > 0"
-        class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-5 py-3 text-sm text-slate-600"
+        class="flex flex-wrap items-center justify-between gap-3 border-t border-ccisj-line px-5 py-3 text-sm text-slate-600"
       >
         <span>
           Mostrando {{ rangeStart }}-{{ rangeEnd }} de

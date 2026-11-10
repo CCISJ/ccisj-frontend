@@ -23,7 +23,7 @@ const { unreadCount } = storeToRefs(useNotificationsStore());
 
 <template>
   <header
-    class="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-slate-200 bg-white px-4 lg:hidden"
+    class="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-ccisj-line bg-white px-4 lg:hidden"
   >
     <button
       type="button"

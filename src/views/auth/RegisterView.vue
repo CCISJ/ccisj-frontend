@@ -73,7 +73,7 @@ const showPassword = ref(false);
 const loading = ref(false);
 
 const inputClass =
-  'w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-base text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70';
+  'w-full rounded-xl border border-ccisj-line bg-white shadow-card py-3 pl-10 pr-4 text-base text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70';
 
 // Las mismas reglas que valida el backend; acá solo para avisar antes de enviar.
 const passwordChecks = computed(() => [

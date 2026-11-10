@@ -134,9 +134,9 @@ function offerDetails(offer: Offer) {
 
 const latestNotifications = computed(() => notifications.value.slice(0, 4));
 
-const card = 'rounded-xl border border-slate-200 bg-white';
+const card = 'rounded-xl border border-ccisj-line bg-white shadow-card';
 const cardHeader =
-  'flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-3.5';
+  'flex items-center justify-between gap-3 border-b border-ccisj-line px-5 py-3.5';
 const cardTitle = 'text-base font-semibold text-slate-800';
 const cardLink = 'text-sm font-medium text-ccisj hover:underline';
 </script>
@@ -289,7 +289,7 @@ const cardLink = 'text-sm font-medium text-ccisj hover:underline';
           </RouterLink>
         </div>
 
-        <ul v-else class="divide-y divide-slate-100">
+        <ul v-else class="divide-y divide-ccisj-line">
           <li v-for="item in latestApplications" :key="item.id">
             <component
               :is="item.oferta.estado === 'ACTIVA' ? RouterLink : 'div'"
@@ -359,7 +359,7 @@ const cardLink = 'text-sm font-medium text-ccisj hover:underline';
           No tenés novedades.
         </p>
 
-        <ul v-else class="divide-y divide-slate-100">
+        <ul v-else class="divide-y divide-ccisj-line">
           <li
             v-for="item in latestNotifications"
             :key="item.id"
@@ -416,7 +416,7 @@ const cardLink = 'text-sm font-medium text-ccisj hover:underline';
           No hay ofertas abiertas en este momento.
         </p>
 
-        <ul v-else class="divide-y divide-slate-100">
+        <ul v-else class="divide-y divide-ccisj-line">
           <li v-for="offer in latestOffers" :key="offer.id">
             <RouterLink
               :to="{ name: 'oferta-detalle', params: { id: offer.id } }"

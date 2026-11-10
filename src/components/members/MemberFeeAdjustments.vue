@@ -16,7 +16,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <section class="rounded-xl border border-slate-200 bg-white p-5">
+  <section class="rounded-xl border border-ccisj-line bg-white shadow-card p-5">
     <div class="flex flex-wrap items-center justify-between gap-3">
       <div>
         <h2 class="text-lg font-semibold text-slate-900">Ajustes</h2>
@@ -40,7 +40,7 @@ const emit = defineEmits<{
       No tiene ajustes.
     </p>
 
-    <div v-else class="mt-3 divide-y divide-slate-100">
+    <div v-else class="mt-3 divide-y divide-ccisj-line">
       <div
         v-for="adjustment in adjustments"
         :key="adjustment.id"

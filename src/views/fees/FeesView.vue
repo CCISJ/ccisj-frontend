@@ -279,7 +279,7 @@ onMounted(loadData);
     <!-- Loading -->
     <div
       v-if="loading"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
+      class="rounded-xl border border-ccisj-line bg-white shadow-card p-10 text-center text-base text-slate-600"
     >
       Cargando información de cuotas...
     </div>
@@ -292,7 +292,7 @@ onMounted(loadData);
         diferencia.
       -->
       <section
-        class="grid divide-slate-100 rounded-xl border border-slate-200 bg-white sm:grid-cols-3 sm:divide-x"
+        class="grid divide-ccisj-line rounded-xl border border-ccisj-line bg-white shadow-card sm:grid-cols-3 sm:divide-x"
         aria-label="Resumen de cuotas"
       >
         <div class="p-5">
@@ -325,7 +325,7 @@ onMounted(loadData);
       <!-- Cómo están los socios: la misma barra que el Inicio -->
       <section
         v-if="totalSocios > 0"
-        class="rounded-xl border border-slate-200 bg-white p-5"
+        class="rounded-xl border border-ccisj-line bg-white shadow-card p-5"
       >
         <div class="flex flex-wrap items-baseline justify-between gap-2">
           <h2 class="text-lg font-semibold text-slate-900">
@@ -380,9 +380,9 @@ onMounted(loadData);
       <div class="grid gap-5 xl:grid-cols-2">
         <!-- Últimos pagos -->
         <section
-          class="overflow-hidden rounded-xl border border-slate-200 bg-white"
+          class="overflow-hidden rounded-xl border border-ccisj-line bg-white shadow-card"
         >
-          <div class="border-b border-slate-100 px-5 py-4">
+          <div class="border-b border-ccisj-line px-5 py-4">
             <h2 class="font-semibold text-slate-900">Últimos pagos</h2>
 
             <p class="mt-0.5 text-sm text-slate-600">
@@ -399,7 +399,7 @@ onMounted(loadData);
 
           <div v-else class="relative overflow-x-auto">
             <table class="w-full text-left">
-              <thead class="bg-slate-50">
+              <thead>
                 <tr class="text-sm font-semibold text-slate-600">
                   <th class="px-5 py-3">Socio</th>
 
@@ -413,7 +413,7 @@ onMounted(loadData);
                 <tr
                   v-for="payment in recentPayments"
                   :key="payment.id"
-                  class="border-t border-slate-100"
+                  class="border-t border-ccisj-line"
                 >
                   <td class="px-5 py-3.5">
                     <p class="text-base font-medium text-slate-800">
@@ -440,9 +440,9 @@ onMounted(loadData);
 
         <!-- Historial valor cuota -->
         <section
-          class="overflow-hidden rounded-xl border border-slate-200 bg-white"
+          class="overflow-hidden rounded-xl border border-ccisj-line bg-white shadow-card"
         >
-          <div class="border-b border-slate-100 px-5 py-4">
+          <div class="border-b border-ccisj-line px-5 py-4">
             <h2 class="font-semibold text-slate-900">
               Historial del valor de cuota
             </h2>
@@ -461,7 +461,7 @@ onMounted(loadData);
 
           <div v-else class="relative overflow-x-auto">
             <table class="w-full text-left">
-              <thead class="bg-slate-50">
+              <thead>
                 <tr class="text-sm font-semibold text-slate-600">
                   <th class="px-5 py-3">Importe</th>
 
@@ -477,7 +477,7 @@ onMounted(loadData);
                 <tr
                   v-for="(item, index) in configurationHistory"
                   :key="item.id"
-                  class="border-t border-slate-100"
+                  class="border-t border-ccisj-line"
                 >
                   <td
                     class="px-5 py-3.5 text-base font-semibold text-slate-800"

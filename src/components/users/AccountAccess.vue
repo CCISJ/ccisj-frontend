@@ -68,7 +68,7 @@ async function copy() {
 
 <template>
   <section
-    class="rounded-xl border border-slate-200 bg-white p-5"
+    class="rounded-xl border border-ccisj-line bg-white shadow-card p-5"
     aria-labelledby="cuenta-acceso"
   >
     <div class="flex flex-wrap items-center justify-between gap-4">

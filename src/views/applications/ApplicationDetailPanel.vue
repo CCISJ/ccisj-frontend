@@ -155,7 +155,7 @@ const sectionTitle = 'mb-2 text-sm font-semibold   text-slate-600';
       >
         <!-- Encabezado -->
         <div
-          class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-100 px-5 py-4"
+          class="flex shrink-0 items-start justify-between gap-3 border-b border-ccisj-line px-5 py-4"
         >
           <div class="min-w-0">
             <p class="truncate text-lg font-semibold text-slate-900">

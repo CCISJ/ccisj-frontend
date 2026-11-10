@@ -194,7 +194,7 @@ watch(
           </div>
         </section>
 
-        <div class="border-t border-slate-100" />
+        <div class="border-t border-ccisj-line" />
 
         <div v-if="loading" class="py-8 text-center text-base text-slate-600">
           Cargando categorías...
