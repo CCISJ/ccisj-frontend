@@ -1,20 +1,13 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 import { useRoute, useRouter } from 'vue-router';
 
 import { useReceiptViewer } from '@/composables/useReceiptViewer';
-import {
-  ArrowLeft,
-  Briefcase,
-  Eye,
-  Pencil,
-  Plus,
-  Trash2,
-  TriangleAlert,
-} from 'lucide-vue-next';
+import { ArrowLeft, Briefcase, Pencil, Plus } from 'lucide-vue-next';
 
 import ConfirmModal from '@/components/ConfirmModal.vue';
+import TabBar from '@/components/TabBar.vue';
 import FeeAdjustmentModal from '@/components/fees/FeeAdjustmentModal.vue';
 import FeePaymentModal from '@/components/fees/FeePaymentModal.vue';
 import CancelPaymentModal from '@/components/members/CancelPaymentModal.vue';
@@ -39,7 +32,7 @@ import type {
 } from '@/types/fee.type.ts';
 import type { Member, MemberDirectoryEntry } from '@/types/member.type';
 
-import { formatDate, formatMonth } from '@/utils/date';
+import { formatDate } from '@/utils/date';
 
 const route = useRoute();
 const router = useRouter();
@@ -116,8 +109,6 @@ async function handleDeleteAdjustment() {
     }
 
     await loadMember();
-
-    await loadMember();
   } catch (err) {
     toast.error(
       err instanceof Error ? err.message : 'No se pudo eliminar el ajuste',
@@ -191,14 +182,21 @@ async function loadMember() {
   try {
     loading.value = true;
 
-    const memberData = await getMember(id);
+    // Las cinco consultas a la vez: no dependen una de otra.
+    const [memberData, summary, fees, adjustments, payments] =
+      await Promise.all([
+        getMember(id),
+        feesService.getMemberFeeSummary(id),
+        feesService.getMemberFees(id),
+        feesService.getMemberAdjustments(id),
+        feesService.getMemberPayments(id),
+      ]);
 
     socio.value = memberData;
-
-    feeSummary.value = await feesService.getMemberFeeSummary(id);
-    memberFees.value = await feesService.getMemberFees(id);
-    feeAdjustments.value = await feesService.getMemberAdjustments(id);
-    feePayments.value = await feesService.getMemberPayments(id);
+    feeSummary.value = summary;
+    memberFees.value = fees;
+    feeAdjustments.value = adjustments;
+    feePayments.value = payments;
   } catch (err) {
     toast.error(
       err instanceof Error ? err.message : 'No se pudo cargar el socio',
@@ -275,6 +273,55 @@ const sections = computed(() => {
   ];
 });
 
+/*
+ * La ficha completa se parte en tres pestañas: lo que se mira casi siempre
+ * (resumen), el detalle de cuotas y pagos, y los datos de la empresa. La
+ * pestaña va en la URL (`?seccion=`) para que volver o compartir el enlace
+ * abra la misma.
+ */
+const TAB_VALUES = ['resumen', 'cuotas', 'datos'] as const;
+type TabValue = (typeof TAB_VALUES)[number];
+
+function tabFrom(value: unknown): TabValue {
+  return TAB_VALUES.includes(value as TabValue)
+    ? (value as TabValue)
+    : 'resumen';
+}
+
+const tab = ref<string>(tabFrom(route.query.seccion));
+
+watch(tab, (value) => {
+  void router.replace({
+    query: { ...route.query, seccion: value === 'resumen' ? undefined : value },
+  });
+});
+
+const tabs = [
+  { value: 'resumen', label: 'Resumen' },
+  { value: 'cuotas', label: 'Cuotas y pagos' },
+  { value: 'datos', label: 'Datos' },
+];
+
+/** Lo que más se busca de un socio: cómo ubicarlo. */
+const contact = computed<Field[]>(() => {
+  const data = socio.value;
+
+  if (!data) return [];
+
+  return [
+    { label: 'Titular', value: data.titular },
+    {
+      label: 'Teléfono',
+      value: [data.telefono, data.celular].filter(Boolean).join(' · '),
+    },
+    { label: 'Email', value: data.email },
+    {
+      label: 'Dirección',
+      value: [data.direccion, data.ciudad].filter(Boolean).join(', '),
+    },
+  ];
+});
+
 function goBack() {
   router.push({ name: 'socios' });
 }
@@ -300,158 +347,216 @@ function goBack() {
     </div>
 
     <template v-if="socio">
-      <!-- Encabezado -->
-      <div
-        class="flex flex-wrap items-center gap-4 rounded-xl border border-slate-200 bg-white p-5"
-      >
-        <div
-          class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ccisj-light text-base font-bold text-ccisj"
-        >
-          {{ socio.razonSocial.slice(0, 2).toUpperCase() }}
-        </div>
-
-        <div class="min-w-0 flex-1">
-          <h1 class="truncate text-2xl font-bold text-slate-900">
+      <!-- Encabezado: quién es y lo que más se hace desde acá -->
+      <header class="flex flex-wrap items-start justify-between gap-4">
+        <div class="min-w-0">
+          <h1 class="text-3xl font-bold text-slate-900">
             {{ socio.razonSocial }}
           </h1>
 
-          <p class="mt-0.5 truncate text-base text-slate-600">
+          <p class="mt-1 text-base text-slate-600">
             {{ socio.giroComercial || 'Sin giro comercial' }}
+            · Socio {{ socio.tipo === 'DIRECTIVO' ? 'directivo' : 'común' }}
+            <template v-if="fullMember">
+              ·
+              <span
+                :class="
+                  fullMember.usuario.activo ? '' : 'font-semibold text-red-700'
+                "
+              >
+                {{ fullMember.usuario.activo ? 'Activo' : 'Dado de baja' }}
+              </span>
+            </template>
           </p>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2">
-          <span
-            class="inline-flex rounded-full px-2.5 py-1 text-sm font-medium"
-            :class="
-              socio.tipo === 'DIRECTIVO'
-                ? 'bg-amber-50 text-amber-700'
-                : 'bg-slate-100 text-slate-600'
-            "
+        <div v-if="fullMember" class="flex flex-wrap items-center gap-2">
+          <RouterLink
+            v-if="fullMember.usuario.activo"
+            :to="{ name: 'oferta-nueva', query: { socio: socio.id } }"
+            class="flex min-h-11 items-center gap-1.5 rounded-xl px-3 font-semibold text-slate-700 transition hover:bg-white hover:text-ccisj"
           >
-            {{ socio.tipo === 'DIRECTIVO' ? 'Directivo' : 'Común' }}
-          </span>
+            <Briefcase class="h-4 w-4" />
+            Publicar oferta
+          </RouterLink>
 
-          <span
-            v-if="fullMember"
-            class="inline-flex rounded-full px-2.5 py-1 text-sm font-medium"
-            :class="
-              fullMember.usuario.activo
-                ? 'bg-emerald-50 text-emerald-700'
-                : 'bg-red-50 text-red-700'
-            "
+          <RouterLink
+            :to="{ name: 'socio-editar', params: { id: socio.id } }"
+            class="flex min-h-11 items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-4 font-semibold text-slate-800 transition hover:border-ccisj hover:text-ccisj"
           >
-            {{ fullMember.usuario.activo ? 'Activo' : 'Inactivo' }}
-          </span>
+            <Pencil class="h-4 w-4" />
+            Editar
+          </RouterLink>
 
           <button
-            v-if="fullMember"
             type="button"
-            class="flex items-center gap-1.5 rounded-lg bg-ccisj px-3 py-1.5 text-base font-medium text-white shadow-sm transition hover:opacity-90"
+            class="flex min-h-11 items-center gap-1.5 rounded-xl bg-ccisj px-4 font-semibold max-sm:order-first text-white transition hover:bg-ccisj-dark"
             @click="paymentModalOpen = true"
           >
             <Plus class="h-4 w-4" />
             Registrar pago
           </button>
-
-          <button
-            v-if="fullMember"
-            type="button"
-            class="flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-base font-medium text-slate-600 shadow-sm transition hover:border-ccisj hover:text-ccisj"
-            @click="adjustmentModalOpen = true"
-          >
-            <Plus class="h-4 w-4" />
-            Agregar ajuste
-          </button>
-
-          <button
-            v-if="fullMember"
-            type="button"
-            class="flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-base font-medium text-slate-600 shadow-sm transition hover:border-ccisj hover:text-ccisj"
-            @click="
-              router.push({ name: 'socio-editar', params: { id: socio.id } })
-            "
-          >
-            <Pencil class="h-4 w-4" />
-            Editar
-          </button>
-
-          <RouterLink
-            v-if="fullMember && fullMember.usuario.activo"
-            :to="{ name: 'oferta-nueva', query: { socio: socio.id } }"
-            class="flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-base font-medium text-slate-600 shadow-sm transition hover:border-ccisj hover:text-ccisj"
-          >
-            <Briefcase class="h-4 w-4" />
-            Publicar oferta
-          </RouterLink>
         </div>
-      </div>
+      </header>
 
-      <!-- Estado de cuenta -->
-      <MemberFeeSummary :summary="feeSummary" />
+      <!-- La ficha completa (administración), por temas -->
+      <template v-if="fullMember">
+        <TabBar
+          v-model="tab"
+          :tabs="tabs"
+          id-prefix="socio"
+          label="Secciones de la ficha del socio"
+        />
 
-      <MemberFeeAdjustments
-        v-if="fullMember"
-        :adjustments="feeAdjustments"
-        @delete="adjustmentToDelete = $event"
-      />
-
-      <!-- Historial de pagos -->
-      <MemberPaymentHistory
-        v-if="fullMember"
-        :payments="feePayments"
-        @view-receipt="viewReceipt"
-        @cancel-payment="
-          paymentToCancel = $event;
-          cancellationReason = '';
-        "
-      />
-
-      <!-- Historial de cuotas -->
-      <MemberFeeHistory :fees="memberFees" />
-
-      <!-- Fichas por tema -->
-      <div
-        v-for="section in sections"
-        :key="section.title"
-        class="rounded-xl border border-slate-200 bg-white p-5"
-      >
-        <h2 class="mb-4 text-sm font-semibold text-slate-600">
-          {{ section.title }}
-        </h2>
-
-        <dl
-          class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3"
+        <!-- Resumen: lo que se mira casi siempre -->
+        <div
+          v-show="tab === 'resumen'"
+          id="socio-panel-resumen"
+          role="tabpanel"
+          aria-labelledby="socio-tab-resumen"
+          class="space-y-5"
         >
-          <div v-for="field in section.fields" :key="field.label">
-            <dt class="text-sm text-slate-600">{{ field.label }}</dt>
+          <MemberFeeSummary :summary="feeSummary" />
 
-            <dd class="mt-0.5 wrap-break-word text-base text-slate-800">
-              {{ field.value || '—' }}
-            </dd>
+          <div class="grid gap-5 lg:grid-cols-[3fr_2fr]">
+            <MemberPaymentHistory
+              class="min-w-0"
+              :payments="feePayments"
+              :limit="3"
+              @view-receipt="viewReceipt"
+              @cancel-payment="
+                paymentToCancel = $event;
+                cancellationReason = '';
+              "
+            />
+
+            <section class="rounded-xl border border-slate-200 bg-white p-5">
+              <h2 class="text-lg font-semibold text-slate-900">Contacto</h2>
+
+              <dl class="mt-3 space-y-3">
+                <div v-for="field in contact" :key="field.label">
+                  <dt class="text-sm text-slate-600">{{ field.label }}</dt>
+                  <dd class="wrap-break-word text-base text-slate-900">
+                    {{ field.value || '—' }}
+                  </dd>
+                </div>
+              </dl>
+
+              <button
+                type="button"
+                class="mt-4 font-semibold text-ccisj hover:underline"
+                @click="tab = 'datos'"
+              >
+                Ver todos los datos
+              </button>
+            </section>
           </div>
-        </dl>
-      </div>
 
-      <!-- Cuenta de acceso: solo la administración recibe la ficha completa -->
-      <AccountAccess
-        v-if="fullMember"
-        :usuario-id="fullMember.usuario.id"
-        :email="fullMember.usuario.email"
-        :nombre="fullMember.razonSocial"
-      />
+          <section
+            v-if="fullMember.observaciones"
+            class="rounded-xl border border-slate-200 bg-white p-5"
+          >
+            <h2 class="text-lg font-semibold text-slate-900">Observaciones</h2>
 
-      <!-- Observaciones: solo si hay algo que mostrar -->
-      <div
-        v-if="fullMember?.observaciones"
-        class="rounded-xl border border-slate-200 bg-white p-5"
-      >
-        <h2 class="mb-2 text-sm font-semibold text-slate-600">Observaciones</h2>
+            <p class="mt-2 whitespace-pre-line text-base text-slate-700">
+              {{ fullMember.observaciones }}
+            </p>
+          </section>
+        </div>
 
-        <p class="whitespace-pre-line text-base text-slate-700">
-          {{ fullMember.observaciones }}
-        </p>
-      </div>
+        <!-- Cuotas y pagos: todo el detalle -->
+        <div
+          v-show="tab === 'cuotas'"
+          id="socio-panel-cuotas"
+          role="tabpanel"
+          aria-labelledby="socio-tab-cuotas"
+          class="space-y-5"
+        >
+          <MemberFeeSummary :summary="feeSummary" />
+
+          <MemberFeeAdjustments
+            :adjustments="feeAdjustments"
+            @add="adjustmentModalOpen = true"
+            @delete="adjustmentToDelete = $event"
+          />
+
+          <MemberPaymentHistory
+            :payments="feePayments"
+            :limit="6"
+            @view-receipt="viewReceipt"
+            @cancel-payment="
+              paymentToCancel = $event;
+              cancellationReason = '';
+            "
+          />
+
+          <MemberFeeHistory :fees="memberFees" :limit="6" />
+        </div>
+
+        <!-- Datos: la ficha de la empresa y su cuenta -->
+        <div
+          v-show="tab === 'datos'"
+          id="socio-panel-datos"
+          role="tabpanel"
+          aria-labelledby="socio-tab-datos"
+          class="space-y-5"
+        >
+          <section
+            v-for="section in sections"
+            :key="section.title"
+            class="rounded-xl border border-slate-200 bg-white p-5"
+          >
+            <h2 class="mb-4 text-lg font-semibold text-slate-900">
+              {{ section.title }}
+            </h2>
+
+            <dl
+              class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              <div v-for="field in section.fields" :key="field.label">
+                <dt class="text-sm text-slate-600">{{ field.label }}</dt>
+
+                <dd class="mt-0.5 wrap-break-word text-base text-slate-900">
+                  {{ field.value || '—' }}
+                </dd>
+              </div>
+            </dl>
+          </section>
+
+          <AccountAccess
+            :usuario-id="fullMember.usuario.id"
+            :email="fullMember.usuario.email"
+            :nombre="fullMember.razonSocial"
+          />
+        </div>
+      </template>
+
+      <!-- Un directivo ve el directorio: los datos públicos y sus cuotas -->
+      <template v-else>
+        <section
+          v-for="section in sections"
+          :key="section.title"
+          class="rounded-xl border border-slate-200 bg-white p-5"
+        >
+          <h2 class="mb-4 text-lg font-semibold text-slate-900">
+            {{ section.title }}
+          </h2>
+
+          <dl
+            class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            <div v-for="field in section.fields" :key="field.label">
+              <dt class="text-sm text-slate-600">{{ field.label }}</dt>
+
+              <dd class="mt-0.5 wrap-break-word text-base text-slate-900">
+                {{ field.value || '—' }}
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <MemberFeeHistory :fees="memberFees" :limit="6" />
+      </template>
     </template>
     <FeeAdjustmentModal
       v-if="fullMember"

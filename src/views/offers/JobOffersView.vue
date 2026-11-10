@@ -224,7 +224,7 @@ function details(offer: Offer) {
     <!-- Encabezado -->
     <div class="flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-bold text-slate-900">Ofertas laborales</h1>
+        <h1 class="text-3xl font-bold text-slate-900">Ofertas laborales</h1>
 
         <p class="mt-1 text-base text-slate-600">
           {{

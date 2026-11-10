@@ -155,7 +155,7 @@ function goBack() {
         Volver a socios
       </button>
 
-      <h1 class="text-2xl font-bold text-slate-900">Editar socio</h1>
+      <h1 class="text-3xl font-bold text-slate-900">Editar socio</h1>
 
       <p v-if="razonSocial" class="mt-1 text-base text-slate-600">
         {{ razonSocial }}

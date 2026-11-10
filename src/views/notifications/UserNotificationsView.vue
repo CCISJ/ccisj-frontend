@@ -47,7 +47,7 @@ onMounted(async () => {
   <div class="space-y-6">
     <div class="flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-semibold text-slate-900">Notificaciones</h1>
+        <h1 class="text-3xl font-bold text-slate-900">Notificaciones</h1>
 
         <p class="mt-1 text-base text-slate-600">
           Notificaciones y avisos del Centro Comercial.

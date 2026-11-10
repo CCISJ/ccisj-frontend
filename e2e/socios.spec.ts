@@ -64,6 +64,9 @@ test('la administración le da una contraseña nueva a un socio que se olvidó l
   await iniciarSesion(delSocio, socio);
 
   await page.goto(`/socios/${socio.socioId}`);
+  // La cuenta de acceso está en la pestaña de los datos de la ficha.
+  await page.getByRole('tab', { name: 'Datos' }).click();
+  await expect(page).toHaveURL(/seccion=datos/);
   const cuenta = page.getByRole('region', { name: 'Cuenta de acceso' });
   await expect(cuenta).toContainText(socio.email);
   await cuenta

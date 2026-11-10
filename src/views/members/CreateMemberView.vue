@@ -85,7 +85,7 @@ function verSocio() {
         Volver a socios
       </button>
 
-      <h1 class="text-2xl font-bold text-slate-900">Agregar socio</h1>
+      <h1 class="text-3xl font-bold text-slate-900">Agregar socio</h1>
 
       <p class="mt-1 text-base text-slate-600">
         Registrá los datos comerciales y de contacto del nuevo socio. Todos los

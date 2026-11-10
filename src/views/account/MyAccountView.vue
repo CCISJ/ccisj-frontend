@@ -143,7 +143,7 @@ const inputClass =
 <template>
   <div class="space-y-5">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900">Mi cuenta</h1>
+      <h1 class="text-3xl font-bold text-slate-900">Mi cuenta</h1>
 
       <p class="mt-1 text-base text-slate-600">
         Datos de acceso y contraseña de tu cuenta.

@@ -203,7 +203,7 @@ async function confirmDelete() {
     <!-- Encabezado -->
     <div class="flex flex-wrap items-start justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-bold text-slate-900">Socios</h1>
+        <h1 class="text-3xl font-bold text-slate-900">Socios</h1>
 
         <p class="mt-1 text-base text-slate-600">
           Empresas socias del Centro Comercial e Industrial de San José

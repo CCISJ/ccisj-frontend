@@ -54,7 +54,7 @@ test('la administración registra un ingreso en caja, le adjunta el comprobante 
 
   const fila = page.getByRole('row').filter({ hasText: concepto });
   await expect(fila).toContainText('Ingreso');
-  await expect(fila).toContainText('+ $1.234');
+  await expect(fila).toContainText('+ $ 1.234');
   await expect
     .poll(async () => importe(await ingresosDelMes.textContent()))
     .toBe(antes + 1234);

@@ -315,7 +315,7 @@ async function confirmStatusChange() {
   <div class="space-y-5">
     <!-- Encabezado -->
     <div>
-      <h1 class="text-2xl font-bold text-slate-900">Postulantes</h1>
+      <h1 class="text-3xl font-bold text-slate-900">Postulantes</h1>
 
       <p class="mt-1 text-base text-slate-600">
         Las personas que se postularon a las ofertas de tu empresa.

@@ -1,16 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 
-import {
-  Banknote,
-  CircleCheck,
-  Clock3,
-  Pencil,
-  Plus,
-  ReceiptText,
-  TriangleAlert,
-  Users,
-} from 'lucide-vue-next';
+import { Pencil, Plus } from 'lucide-vue-next';
 
 import { feesService } from '@/services/feesService';
 
@@ -246,26 +237,44 @@ onMounted(loadData);
 
 <template>
   <div class="space-y-5">
-    <!-- Encabezado -->
-    <!-- Encabezado -->
-    <div class="flex flex-wrap items-center justify-between gap-4">
+    <!-- Encabezado: el valor de la cuota y la acción del mes -->
+    <header class="flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-bold text-slate-900">Cuotas y pagos</h1>
+        <h1 class="text-3xl font-bold text-slate-900">Cuotas y pagos</h1>
 
         <p class="mt-1 text-base text-slate-600">
-          Gestión general de cuotas y seguimiento de pagos de socios.
+          <template v-if="configuration">
+            La cuota vale
+            <strong class="text-slate-900">{{
+              formatMoney(configuration.importeBase)
+            }}</strong>
+            desde el {{ formatDate(configuration.vigenciaDesde) }}.
+          </template>
+          <template v-else>Las cuotas de los socios y sus pagos.</template>
         </p>
       </div>
 
-      <button
-        type="button"
-        class="flex items-center gap-2 rounded-lg bg-ccisj px-4 py-2 text-base font-semibold text-white transition hover:opacity-90"
-        @click="showGenerateModal = true"
-      >
-        <Plus class="h-4 w-4" />
-        Generar cuotas
-      </button>
-    </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <button
+          v-if="configuration"
+          type="button"
+          class="flex min-h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 font-semibold text-slate-800 transition hover:border-ccisj hover:text-ccisj"
+          @click="openConfigurationModal()"
+        >
+          <Pencil class="h-4 w-4" />
+          Cambiar el valor
+        </button>
+
+        <button
+          type="button"
+          class="flex min-h-11 items-center gap-2 rounded-xl bg-ccisj px-4 font-semibold max-sm:order-first text-white transition hover:bg-ccisj-dark"
+          @click="showGenerateModal = true"
+        >
+          <Plus class="h-4 w-4" />
+          Generar cuotas
+        </button>
+      </div>
+    </header>
 
     <!-- Loading -->
     <div
@@ -276,162 +285,96 @@ onMounted(loadData);
     </div>
 
     <template v-else-if="configuration && summary">
-      <!-- Configuración de cuota -->
+      <!--
+        Una franja con lo que importa. "Por cobrar" es todo lo que falta
+        pagar, venza cuando venza; "Vencido" es la parte que ya pasó su fecha:
+        antes se llamaban "Pendiente" y "Deuda total" y no se entendía la
+        diferencia.
+      -->
       <section
-        class="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-5"
+        class="grid divide-slate-100 rounded-xl border border-slate-200 bg-white sm:grid-cols-3 sm:divide-x"
+        aria-label="Resumen de cuotas"
       >
-        <div class="flex items-center gap-4">
-          <div
-            class="flex h-11 w-11 items-center justify-center rounded-xl bg-ccisj-light text-ccisj"
-          >
-            <ReceiptText class="h-5 w-5" />
-          </div>
-
-          <div>
-            <p class="text-base font-medium text-slate-600">
-              Valor general de la cuota
-            </p>
-
-            <div class="mt-0.5 flex flex-wrap items-baseline gap-2">
-              <p class="text-2xl font-bold text-slate-900">
-                {{ formatMoney(configuration.importeBase) }}
-              </p>
-
-              <span class="text-sm text-slate-600">
-                vigente desde {{ formatDate(configuration.vigenciaDesde) }}
-              </span>
-            </div>
-          </div>
+        <div class="p-5">
+          <p class="text-base text-slate-600">Cobrado este mes</p>
+          <p class="mt-1 text-2xl font-bold text-slate-900">
+            {{ formatMoney(summary.cobradoMes) }}
+          </p>
         </div>
 
-        <button
-          type="button"
-          class="flex items-center gap-2 rounded-lg border border-slate-200 px-3.5 py-2 text-base font-semibold text-slate-600 transition hover:border-ccisj hover:bg-ccisj-light hover:text-ccisj"
-          @click="openConfigurationModal()"
-        >
-          <Pencil class="h-4 w-4" />
-          Modificar valor
-        </button>
+        <div class="p-5">
+          <p class="text-base text-slate-600">Por cobrar</p>
+          <p class="mt-1 text-2xl font-bold text-slate-900">
+            {{ formatMoney(summary.pendiente) }}
+          </p>
+          <p class="text-sm text-slate-600">Todo lo que falta pagar</p>
+        </div>
+
+        <div class="p-5">
+          <p class="text-base text-slate-600">Vencido</p>
+          <p
+            class="mt-1 text-2xl font-bold"
+            :class="summary.deudaTotal > 0 ? 'text-red-700' : 'text-slate-900'"
+          >
+            {{ formatMoney(summary.deudaTotal) }}
+          </p>
+          <p class="text-sm text-slate-600">Ya pasó su fecha</p>
+        </div>
       </section>
 
-      <!-- Resumen financiero -->
-      <div class="grid gap-4 md:grid-cols-3">
-        <div class="rounded-xl border border-slate-200 bg-white p-5">
-          <div class="flex items-start justify-between">
-            <div>
-              <p class="text-base text-slate-600">Cobrado este mes</p>
+      <!-- Cómo están los socios: la misma barra que el Inicio -->
+      <section
+        v-if="totalSocios > 0"
+        class="rounded-xl border border-slate-200 bg-white p-5"
+      >
+        <div class="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 class="text-lg font-semibold text-slate-900">
+            {{ totalSocios }} socios activos
+          </h2>
 
-              <p class="mt-2 text-2xl font-bold text-slate-900">
-                {{ formatMoney(summary.cobradoMes) }}
-              </p>
-            </div>
-
-            <div
-              class="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700"
-            >
-              <Banknote class="h-5 w-5" />
-            </div>
-          </div>
+          <RouterLink
+            :to="{ name: 'socios' }"
+            class="font-semibold text-ccisj hover:underline"
+          >
+            Ver quiénes deben
+          </RouterLink>
         </div>
 
-        <div class="rounded-xl border border-slate-200 bg-white p-5">
-          <div class="flex items-start justify-between">
-            <div>
-              <p class="text-base text-slate-600">Pendiente</p>
-
-              <p class="mt-2 text-2xl font-bold text-slate-900">
-                {{ formatMoney(summary.pendiente) }}
-              </p>
-            </div>
-
-            <div
-              class="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-700"
-            >
-              <Clock3 class="h-5 w-5" />
-            </div>
-          </div>
+        <div
+          role="img"
+          :aria-label="`De ${totalSocios} socios activos, ${summary.sociosAlDia} al día, ${summary.sociosPendientes} con 1 o 2 cuotas vencidas y ${summary.sociosDeudores} con 3 o más`"
+          class="mt-3 flex h-3 overflow-hidden rounded-full bg-slate-100"
+        >
+          <span
+            class="bg-ccisj-brand"
+            :style="{ flexGrow: summary.sociosAlDia }"
+          />
+          <span
+            class="bg-amber-500"
+            :style="{ flexGrow: summary.sociosPendientes }"
+          />
+          <span
+            class="bg-red-700"
+            :style="{ flexGrow: summary.sociosDeudores }"
+          />
         </div>
 
-        <div class="rounded-xl border border-slate-200 bg-white p-5">
-          <div class="flex items-start justify-between">
-            <div>
-              <p class="text-base text-slate-600">Deuda total</p>
-
-              <p class="mt-2 text-2xl font-bold text-slate-900">
-                {{ formatMoney(summary.deudaTotal) }}
-              </p>
-            </div>
-
-            <div
-              class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50 text-red-700"
-            >
-              <TriangleAlert class="h-5 w-5" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Estado de socios -->
-      <section class="rounded-xl border border-slate-200 bg-white p-5">
-        <div class="mb-5 flex items-center gap-2">
-          <Users class="h-5 w-5 text-slate-600" />
-
-          <h2 class="font-semibold text-slate-900">Estado de socios</h2>
-        </div>
-
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div class="rounded-lg bg-slate-50 p-4">
-            <p class="text-sm font-medium text-slate-600">Total</p>
-
-            <p class="mt-1 text-xl font-bold text-slate-800">
-              {{ totalSocios }}
-            </p>
-          </div>
-
-          <div class="rounded-lg bg-emerald-50 p-4">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm font-medium text-emerald-700">Al día</p>
-
-                <p class="mt-1 text-xl font-bold text-emerald-700">
-                  {{ summary.sociosAlDia }}
-                </p>
-              </div>
-
-              <CircleCheck class="h-5 w-5 text-emerald-700" />
-            </div>
-          </div>
-
-          <div class="rounded-lg bg-amber-50 p-4">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm font-medium text-amber-800">
-                  1 o 2 cuotas vencidas
-                </p>
-
-                <p class="mt-1 text-xl font-bold text-amber-700">
-                  {{ summary.sociosPendientes }}
-                </p>
-              </div>
-
-              <Clock3 class="h-5 w-5 text-amber-700" />
-            </div>
-          </div>
-
-          <div class="rounded-lg bg-red-50 p-4">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm font-medium text-red-700">3 o más vencidas</p>
-
-                <p class="mt-1 text-xl font-bold text-red-700">
-                  {{ summary.sociosDeudores }}
-                </p>
-              </div>
-
-              <TriangleAlert class="h-5 w-5 text-red-700" />
-            </div>
-          </div>
-        </div>
+        <p class="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-base text-slate-600">
+          <span>
+            <strong class="text-slate-900">{{ summary.sociosAlDia }}</strong>
+            al día
+          </span>
+          <span>
+            <strong class="text-slate-900">{{
+              summary.sociosPendientes
+            }}</strong>
+            con 1 o 2 cuotas vencidas
+          </span>
+          <span>
+            <strong class="text-red-700">{{ summary.sociosDeudores }}</strong>
+            con 3 o más
+          </span>
+        </p>
       </section>
 
       <div class="grid gap-5 xl:grid-cols-2">

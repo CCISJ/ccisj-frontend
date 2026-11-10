@@ -25,6 +25,9 @@ export type MemberFeeSummary = {
   deudaTotal: number;
   cuotasPendientes: number;
   estado: MemberFeeStatus;
+  // Lo que ya venció, dentro de lo pendiente.
+  cuotasVencidas: number;
+  deudaVencida: number;
 };
 
 export type Fee = {
