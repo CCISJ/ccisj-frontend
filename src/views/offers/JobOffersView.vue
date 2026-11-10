@@ -6,6 +6,7 @@ import {
   Building2,
   CalendarClock,
   MapPin,
+  Plus,
   Search,
   Users,
   X,
@@ -52,6 +53,11 @@ const loadError = ref(false);
 
 const search = ref('');
 const categoryFilter = ref<number | 'TODAS'>('TODAS');
+
+// La administración ve también las cerradas (el backend se las manda); por
+// defecto, igual que todos, solo las abiertas.
+const isAdmin = computed(() => auth.isAdmin);
+const statusFilter = ref<'ACTIVA' | 'CERRADA' | 'TODAS'>('ACTIVA');
 const modalityFilter = ref<OfferModality | 'TODAS'>('TODAS');
 
 async function loadOffers() {
@@ -108,14 +114,30 @@ const hasFilters = computed(
   () =>
     search.value.trim() !== '' ||
     categoryFilter.value !== 'TODAS' ||
-    modalityFilter.value !== 'TODAS',
+    modalityFilter.value !== 'TODAS' ||
+    (isAdmin.value && statusFilter.value !== 'ACTIVA'),
 );
 
 function clearFilters() {
   search.value = '';
   categoryFilter.value = 'TODAS';
   modalityFilter.value = 'TODAS';
+  statusFilter.value = 'ACTIVA';
 }
+
+const countLabel = computed(() => {
+  const count = filteredOffers.value.length;
+
+  if (isAdmin.value && statusFilter.value === 'TODAS') {
+    return `${count} ${count === 1 ? 'oferta' : 'ofertas'}`;
+  }
+
+  if (isAdmin.value && statusFilter.value === 'CERRADA') {
+    return `${count} ${count === 1 ? 'oferta cerrada' : 'ofertas cerradas'}`;
+  }
+
+  return `${count} ${count === 1 ? 'oferta abierta' : 'ofertas abiertas'}`;
+});
 
 const filteredOffers = computed(() => {
   const query = search.value.trim().toLowerCase();
@@ -140,6 +162,9 @@ const filteredOffers = computed(() => {
       modalityFilter.value === 'TODAS' ||
       offer.modalidad === modalityFilter.value;
 
+    const matchesStatus =
+      statusFilter.value === 'TODAS' || offer.estado === statusFilter.value;
+
     const matchesPreferences =
       !usingPreferences.value ||
       offer.categorias.some(({ categoria }) =>
@@ -147,7 +172,11 @@ const filteredOffers = computed(() => {
       );
 
     return (
-      matchesSearch && matchesCategory && matchesModality && matchesPreferences
+      matchesSearch &&
+      matchesCategory &&
+      matchesModality &&
+      matchesStatus &&
+      matchesPreferences
     );
   });
 });
@@ -193,12 +222,27 @@ function details(offer: Offer) {
 <template>
   <div class="space-y-5">
     <!-- Encabezado -->
-    <div>
-      <h1 class="text-2xl font-bold text-slate-900">Ofertas laborales</h1>
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">Ofertas laborales</h1>
 
-      <p class="mt-1 text-base text-slate-600">
-        Ofertas abiertas de las empresas socias del Centro Comercial.
-      </p>
+        <p class="mt-1 text-base text-slate-600">
+          {{
+            isAdmin
+              ? 'Las ofertas de las empresas socias. Podés publicar una a nombre de cualquiera de ellas.'
+              : 'Ofertas abiertas de las empresas socias del Centro Comercial.'
+          }}
+        </p>
+      </div>
+
+      <RouterLink
+        v-if="isAdmin"
+        :to="{ name: 'oferta-nueva' }"
+        class="inline-flex min-h-11 items-center gap-2 rounded-xl bg-ccisj px-5 font-semibold text-white transition hover:bg-ccisj-dark"
+      >
+        <Plus class="h-5 w-5" />
+        Publicar oferta
+      </RouterLink>
     </div>
 
     <!-- Filtros -->
@@ -232,6 +276,17 @@ function details(offer: Offer) {
         >
           {{ category.nombre }}
         </option>
+      </select>
+
+      <select
+        v-if="isAdmin"
+        v-model="statusFilter"
+        aria-label="Filtrar por estado"
+        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-base text-slate-600 outline-none transition focus:border-ccisj"
+      >
+        <option value="ACTIVA">Abiertas</option>
+        <option value="CERRADA">Cerradas</option>
+        <option value="TODAS">Abiertas y cerradas</option>
       </select>
 
       <select
@@ -326,11 +381,8 @@ function details(offer: Offer) {
     </div>
 
     <template v-else>
-      <p class="text-base text-slate-600">
-        {{ filteredOffers.length }}
-        {{
-          filteredOffers.length === 1 ? 'oferta abierta' : 'ofertas abiertas'
-        }}
+      <p class="text-base text-slate-600" aria-live="polite">
+        {{ countLabel }}
       </p>
 
       <!-- Sin resultados para los filtros -->
@@ -376,7 +428,14 @@ function details(offer: Offer) {
               <h2 class="font-semibold text-slate-900">{{ offer.titulo }}</h2>
 
               <span
-                v-if="closingLabel(offer)"
+                v-if="offer.estado === 'CERRADA'"
+                class="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-sm font-medium text-slate-700"
+              >
+                Cerrada
+              </span>
+
+              <span
+                v-else-if="closingLabel(offer)"
                 class="shrink-0 rounded-full px-2.5 py-1 text-sm font-medium"
                 :class="
                   closesToday(offer)

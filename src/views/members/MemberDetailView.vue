@@ -6,6 +6,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useReceiptViewer } from '@/composables/useReceiptViewer';
 import {
   ArrowLeft,
+  Briefcase,
   Eye,
   Pencil,
   Plus,
@@ -374,6 +375,15 @@ function goBack() {
             <Pencil class="h-4 w-4" />
             Editar
           </button>
+
+          <RouterLink
+            v-if="fullMember && fullMember.usuario.activo"
+            :to="{ name: 'oferta-nueva', query: { socio: socio.id } }"
+            class="flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-base font-medium text-slate-600 shadow-sm transition hover:border-ccisj hover:text-ccisj"
+          >
+            <Briefcase class="h-4 w-4" />
+            Publicar oferta
+          </RouterLink>
         </div>
       </div>
 

@@ -27,6 +27,7 @@ const PANTALLAS = {
       '/caja',
       '/notificaciones',
       '/ofertas',
+      '/ofertas/nueva',
       '/candidatos',
       '/gestoria',
       '/gestoria/nueva',
