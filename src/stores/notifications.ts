@@ -105,6 +105,17 @@ export const useNotificationsStore = defineStore('notifications', () => {
     onNewNotification();
   }
 
+  /*
+   * El servidor corta la conexión cuando la sesión con la que se abrió deja
+   * de valer: venció, o la contraseña cambió. Si la cambió la misma persona,
+   * el navegador ya tiene la cookie nueva y la reconexión entra; si no, el
+   * servidor la rechaza al conectar y Socket.IO no vuelve a intentar. Socket.IO
+   * no reconecta solo después de un corte del servidor, por eso se pide acá.
+   */
+  function onSocketDisconnect(reason: string) {
+    if (reason === 'io server disconnect') socket?.connect();
+  }
+
   function startRealtime() {
     if (socket) return;
 
@@ -112,6 +123,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
 
     socket.on('notificacion:nueva', onNewNotification);
     socket.on('connect', onSocketConnect);
+    socket.on('disconnect', onSocketDisconnect);
   }
 
   function stopRealtime() {
@@ -119,6 +131,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
 
     socket.off('notificacion:nueva', onNewNotification);
     socket.off('connect', onSocketConnect);
+    socket.off('disconnect', onSocketDisconnect);
 
     disconnectSocket();
     socket = null;
