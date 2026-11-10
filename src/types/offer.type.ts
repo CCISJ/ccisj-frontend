@@ -74,6 +74,10 @@ export type OfferFormData = {
   categoriaIds: number[];
 };
 
-export type CreateOfferData = Omit<OfferFormData, 'estado'>;
+// `socioId` solo lo manda la administración: a la empresa el backend se lo
+// toma de la sesión.
+export type CreateOfferData = Omit<OfferFormData, 'estado'> & {
+  socioId?: number;
+};
 
 export type UpdateOfferData = Partial<OfferFormData>;

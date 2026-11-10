@@ -83,6 +83,9 @@ const ACCESO: Record<string, { url: string; entran: Actor[] }> = {
     url: '/ofertas/12',
     entran: ['anonimo', 'postulante', 'admin'],
   },
+  // La administración publica en nombre de una empresa socia.
+  'oferta-nueva': { url: '/ofertas/nueva', entran: ['admin'] },
+  'oferta-editar': { url: '/ofertas/12/editar', entran: ['admin'] },
   'mis-postulaciones': { url: '/mis-postulaciones', entran: ['postulante'] },
   'mi-perfil': { url: '/mi-perfil', entran: ['postulante'] },
   'mi-cv': { url: '/mi-cv', entran: ['postulante'] },

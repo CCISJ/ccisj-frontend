@@ -91,6 +91,20 @@ const router = createRouter({
             roles: ['POSTULANTE', 'ADMIN'],
           },
         },
+        // La administración publica en nombre de una empresa socia (lo pidió
+        // el cliente): mismo formulario que la empresa, eligiendo la empresa.
+        {
+          path: 'ofertas/nueva',
+          name: 'oferta-nueva',
+          component: () => import('@/views/offers/OfferFormView.vue'),
+          meta: { roles: ['ADMIN'] },
+        },
+        {
+          path: 'ofertas/:id(\\d+)/editar',
+          name: 'oferta-editar',
+          component: () => import('@/views/offers/OfferFormView.vue'),
+          meta: { roles: ['ADMIN'] },
+        },
         {
           path: 'mis-postulaciones',
           name: 'mis-postulaciones',

@@ -13,6 +13,7 @@ import {
   Laptop,
   LoaderCircle,
   MapPin,
+  Pencil,
   Send,
   UserPlus,
   Users,
@@ -192,7 +193,26 @@ const closingLabel = computed(() => {
     >
       <!-- Encabezado -->
       <header class="border-b border-slate-100 p-6">
-        <h1 class="text-2xl font-bold text-slate-900">{{ offer.titulo }}</h1>
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <h1 class="text-2xl font-bold text-slate-900">
+            {{ offer.titulo }}
+            <span
+              v-if="offer.estado === 'CERRADA'"
+              class="ml-2 inline-block rounded-full bg-slate-100 px-2.5 py-1 align-middle text-sm font-medium text-slate-700"
+            >
+              Cerrada
+            </span>
+          </h1>
+
+          <RouterLink
+            v-if="auth.isAdmin"
+            :to="{ name: 'oferta-editar', params: { id: offer.id } }"
+            class="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 font-semibold text-slate-800 transition hover:bg-slate-50"
+          >
+            <Pencil class="h-4 w-4" />
+            Editar oferta
+          </RouterLink>
+        </div>
 
         <p class="mt-2 flex items-center gap-1.5 text-slate-600">
           <Building2 class="h-4 w-4 shrink-0 text-slate-600" />
@@ -291,7 +311,13 @@ const closingLabel = computed(() => {
           </div>
         </template>
 
-        <!-- Socios y administración no se postulan -->
+        <!-- La administración ve con qué empresa sale, no se postula -->
+        <p v-else-if="auth.isAdmin" class="text-base text-slate-600">
+          Los postulantes la ven como una oferta de
+          {{ offer.socio.razonSocial }}.
+        </p>
+
+        <!-- Los socios no se postulan -->
         <p v-else-if="!isApplicant" class="text-base text-slate-600">
           Solo las cuentas de postulante pueden postularse a las ofertas.
         </p>

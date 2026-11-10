@@ -3,16 +3,23 @@ import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 
-import { ArrowLeft, Info, RefreshCw, Save } from 'lucide-vue-next';
+import { ArrowLeft, Building2, Info, RefreshCw, Save } from 'lucide-vue-next';
 
 import { getCategories } from '@/services/categoriesService';
-import { createOffer, getMyOffer, updateOffer } from '@/services/offersService';
+import { getMembers, isFullMember } from '@/services/membersService';
+import {
+  createOffer,
+  getMyOffer,
+  getOffer,
+  updateOffer,
+} from '@/services/offersService';
 
 import { useToastStore } from '@/stores/toast';
 
 import {
   type Category,
   OFFER_MODALITY_LABELS,
+  type Offer,
   type OfferFormData,
   type OfferModality,
   type OwnOffer,
@@ -31,15 +38,34 @@ const LOCATION_MAX = 150;
 const DESCRIPTION_MAX = 5000;
 const VACANCIES_MAX = 999;
 
+/*
+ * El mismo formulario sirve a la empresa (`/mis-ofertas/...`) y a la
+ * administración (`/ofertas/...`), que publica en nombre de una empresa
+ * socia (lo pidió el cliente). El postulante no nota la diferencia: la oferta
+ * sale con el nombre de la empresa.
+ */
+const isAdminForm = computed(
+  () => route.name === 'oferta-nueva' || route.name === 'oferta-editar',
+);
+
 const offerId = computed(() =>
-  route.name === 'mis-ofertas-editar' ? Number(route.params.id) : null,
+  route.name === 'mis-ofertas-editar' || route.name === 'oferta-editar'
+    ? Number(route.params.id)
+    : null,
 );
 const isEdit = computed(() => offerId.value !== null);
+
+type CompanyOption = { id: number; razonSocial: string };
+
+// Solo para la administración: a qué empresa va la oferta.
+const companies = ref<CompanyOption[]>([]);
+const socioId = ref<number | ''>('');
+const companyName = ref('');
 
 // Se llega desde "Reabrir" en la lista cuando la fecha de cierre ya pasó.
 const reopening = route.query.reabrir === '1';
 
-const offer = ref<OwnOffer | null>(null);
+const offer = ref<OwnOffer | Offer | null>(null);
 const categories = ref<Category[]>([]);
 const loading = ref(true);
 const loadError = ref('');
@@ -69,13 +95,13 @@ const form = reactive<Form>({
   categoriaIds: [],
 });
 
-const touched = reactive<Partial<Record<Field, boolean>>>({});
+const touched = reactive<Partial<Record<Field | 'socioId', boolean>>>({});
 const submitted = ref(false);
 
 // Lo guardado, en el formato del formulario, para saber qué cambió.
 const initial = ref<Form | null>(null);
 
-function toForm(data: OwnOffer): Form {
+function toForm(data: OwnOffer | Offer): Form {
   return {
     titulo: data.titulo,
     descripcion: data.descripcion,
@@ -110,11 +136,16 @@ async function load() {
 
     const [allCategories, existing] = await Promise.all([
       getCategories(),
-      isEdit.value ? getMyOffer(offerId.value!) : Promise.resolve(null),
+      loadExisting(),
+      isAdminForm.value && !isEdit.value ? loadCompanies() : null,
     ]);
 
     categories.value = allCategories;
     offer.value = existing;
+
+    if (existing && 'socio' in existing) {
+      companyName.value = existing.socio.razonSocial;
+    }
 
     if (existing) {
       initial.value = toForm(existing);
@@ -132,6 +163,31 @@ async function load() {
       err instanceof Error ? err.message : 'No se pudo cargar la oferta';
   } finally {
     loading.value = false;
+  }
+}
+
+function loadExisting() {
+  if (!isEdit.value) return Promise.resolve(null);
+
+  return isAdminForm.value
+    ? getOffer(offerId.value!)
+    : getMyOffer(offerId.value!);
+}
+
+/** Las empresas activas, para elegir a cuál va la oferta. */
+async function loadCompanies() {
+  const members = await getMembers();
+
+  companies.value = members
+    .filter((member) => isFullMember(member) && member.usuario.activo)
+    .map(({ id, razonSocial }) => ({ id, razonSocial }))
+    .sort((a, b) => a.razonSocial.localeCompare(b.razonSocial, 'es'));
+
+  // Desde la ficha de un socio se llega con la empresa ya elegida.
+  const preset = Number(route.query.socio);
+
+  if (companies.value.some((company) => company.id === preset)) {
+    socioId.value = preset;
   }
 }
 
@@ -212,6 +268,7 @@ const isDirty = computed(() => {
 
   // Una oferta nueva está "sucia" si se escribió algo.
   return (
+    (isAdminForm.value && socioId.value !== '' && !route.query.socio) ||
     form.titulo.trim() !== '' ||
     form.descripcion.trim() !== '' ||
     form.ubicacion.trim() !== '' ||
@@ -226,7 +283,11 @@ const isDirty = computed(() => {
  */
 const errors = computed(() => {
   const data = normalized.value;
-  const result: Partial<Record<Field, string>> = {};
+  const result: Partial<Record<Field | 'socioId', string>> = {};
+
+  if (isAdminForm.value && !isEdit.value && socioId.value === '') {
+    result.socioId = 'Elegí la empresa que publica la oferta';
+  }
 
   if (!data.titulo) result.titulo = 'El título es obligatorio';
   else if (data.titulo.length > TITLE_MAX) {
@@ -277,11 +338,11 @@ const errors = computed(() => {
 
 const hasErrors = computed(() => Object.keys(errors.value).length > 0);
 
-function visibleError(field: Field) {
+function visibleError(field: Field | 'socioId') {
   return touched[field] || submitted.value ? errors.value[field] : '';
 }
 
-function fieldClass(field: Field) {
+function fieldClass(field: Field | 'socioId') {
   return visibleError(field)
     ? 'border-red-300 focus:border-red-400 focus:ring-red-100'
     : 'border-slate-200 focus:border-ccisj focus:ring-emerald-100';
@@ -298,18 +359,28 @@ async function handleSubmit() {
   try {
     saving.value = true;
 
+    let savedId = offerId.value;
+
     if (isEdit.value) {
       await updateOffer(offerId.value!, changes.value);
       toast.success('Oferta actualizada');
     } else {
       const { estado: _estado, ...data } = normalized.value;
 
-      await createOffer(data);
+      const created = await createOffer(
+        isAdminForm.value ? { ...data, socioId: Number(socioId.value) } : data,
+      );
+      savedId = created.id;
       toast.success('Oferta publicada');
     }
 
     leaving = true;
-    router.push({ name: 'mis-ofertas' });
+
+    if (isAdminForm.value) {
+      router.push({ name: 'oferta-detalle', params: { id: savedId } });
+    } else {
+      router.push({ name: 'mis-ofertas' });
+    }
   } catch (err) {
     toast.error(
       err instanceof Error
@@ -325,8 +396,20 @@ function discardChanges() {
   if (initial.value) fillForm(initial.value);
 }
 
+const backLabel = computed(() => {
+  if (!isAdminForm.value) return 'Volver a mis ofertas';
+
+  return isEdit.value ? 'Volver a la oferta' : 'Volver a ofertas laborales';
+});
+
 function goBack() {
-  router.push({ name: 'mis-ofertas' });
+  if (!isAdminForm.value) {
+    router.push({ name: 'mis-ofertas' });
+  } else if (isEdit.value) {
+    router.push({ name: 'oferta-detalle', params: { id: offerId.value } });
+  } else {
+    router.push({ name: 'ofertas' });
+  }
 }
 
 // No perder lo escrito al navegar dentro del sistema o al cerrar la pestaña.
@@ -362,7 +445,7 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
         @click="goBack"
       >
         <ArrowLeft class="h-4 w-4" />
-        Volver a mis ofertas
+        {{ backLabel }}
       </button>
 
       <h1 class="text-2xl font-bold text-slate-900">
@@ -373,7 +456,9 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
         {{
           isEdit
             ? 'Los cambios se ven apenas los guardás.'
-            : 'La oferta queda publicada al guardarla y los postulantes pueden postularse enseguida.'
+            : isAdminForm
+              ? 'Se publica a nombre de la empresa que elijas: los postulantes la ven como una oferta más de esa empresa.'
+              : 'La oferta queda publicada al guardarla y los postulantes pueden postularse enseguida.'
         }}
       </p>
     </div>
@@ -408,7 +493,7 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
           class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-base font-medium text-slate-600 transition hover:bg-slate-50"
           @click="goBack"
         >
-          Volver a mis ofertas
+          {{ backLabel }}
         </button>
       </div>
     </div>
@@ -440,7 +525,15 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
           }}</span>
         </span>
 
-        <span class="text-slate-600">
+        <span
+          v-if="companyName"
+          class="flex items-center gap-1.5 font-medium text-slate-800"
+        >
+          <Building2 class="h-4 w-4 text-slate-600" />
+          {{ companyName }}
+        </span>
+
+        <span v-if="'_count' in offer" class="text-slate-600">
           <span class="font-semibold text-slate-800">{{
             offer._count.postulaciones
           }}</span>
@@ -448,6 +541,43 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
             offer._count.postulaciones === 1 ? 'postulación' : 'postulaciones'
           }}
         </span>
+      </div>
+
+      <!-- La empresa (solo la administración, al publicar) -->
+      <div
+        v-if="isAdminForm && !isEdit"
+        class="rounded-xl border border-slate-200 bg-white p-5"
+      >
+        <label for="oferta-empresa" :class="labelClass">Empresa</label>
+
+        <select
+          id="oferta-empresa"
+          v-model="socioId"
+          :aria-invalid="!!visibleError('socioId')"
+          aria-describedby="oferta-empresa-ayuda"
+          :class="[inputClass, fieldClass('socioId'), 'bg-white']"
+          @blur="touched.socioId = true"
+        >
+          <option value="" disabled>Elegí una empresa socia</option>
+          <option
+            v-for="company in companies"
+            :key="company.id"
+            :value="company.id"
+          >
+            {{ company.razonSocial }}
+          </option>
+        </select>
+
+        <p
+          id="oferta-empresa-ayuda"
+          class="mt-1 text-sm"
+          :class="visibleError('socioId') ? 'text-red-700' : 'text-slate-600'"
+        >
+          {{
+            visibleError('socioId') ||
+            'Solo las empresas activas. Escribí las primeras letras para encontrarla.'
+          }}
+        </p>
       </div>
 
       <!-- El puesto -->
