@@ -117,7 +117,9 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
     </div>
 
     <template v-if="candidate && !loading">
-      <section class="rounded-2xl border border-slate-200 bg-white p-6">
+      <section
+        class="rounded-2xl border border-ccisj-line bg-white shadow-card p-6"
+      >
         <h1 class="text-3xl font-bold text-slate-900">
           {{ candidate.nombre }} {{ candidate.apellido }}
         </h1>
@@ -144,7 +146,9 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
         </p>
       </section>
 
-      <section class="rounded-2xl border border-slate-200 bg-white p-6">
+      <section
+        class="rounded-2xl border border-ccisj-line bg-white shadow-card p-6"
+      >
         <h2 class="mb-4 text-lg font-bold text-slate-900">
           Experiencia laboral
         </h2>
@@ -159,7 +163,7 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
         <div
           v-for="experience in candidate.experiencias"
           :key="experience.id"
-          class="border-b border-slate-100 py-4 first:pt-0 last:border-0 last:pb-0"
+          class="border-b border-ccisj-line py-4 first:pt-0 last:border-0 last:pb-0"
         >
           <h3 class="font-semibold text-slate-800">
             {{ experience.cargo }}
@@ -183,7 +187,9 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
         </div>
       </section>
 
-      <section class="rounded-2xl border border-slate-200 bg-white p-6">
+      <section
+        class="rounded-2xl border border-ccisj-line bg-white shadow-card p-6"
+      >
         <h2 class="mb-4 text-lg font-bold text-slate-900">Formación</h2>
 
         <p v-if="!candidate.estudios.length" class="text-base text-slate-600">
@@ -193,7 +199,7 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
         <div
           v-for="study in candidate.estudios"
           :key="study.id"
-          class="border-b border-slate-100 py-4 first:pt-0 last:border-0 last:pb-0"
+          class="border-b border-ccisj-line py-4 first:pt-0 last:border-0 last:pb-0"
         >
           <h3 class="font-semibold text-slate-800">{{ study.titulo }}</h3>
           <p class="text-base text-slate-600">{{ study.institucion }}</p>
@@ -217,7 +223,9 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
         </div>
       </section>
 
-      <section class="rounded-2xl border border-slate-200 bg-white p-6">
+      <section
+        class="rounded-2xl border border-ccisj-line bg-white shadow-card p-6"
+      >
         <h2 class="mb-4 text-lg font-bold text-slate-900">Referencias</h2>
 
         <p
@@ -230,7 +238,7 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
         <div
           v-for="reference in candidate.referencias"
           :key="reference.id"
-          class="border-b border-slate-100 py-4 first:pt-0 last:border-0 last:pb-0"
+          class="border-b border-ccisj-line py-4 first:pt-0 last:border-0 last:pb-0"
         >
           <h3 class="font-semibold text-slate-800">{{ reference.nombre }}</h3>
           <p class="text-base text-slate-600">
@@ -246,7 +254,9 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
         </div>
       </section>
 
-      <section class="rounded-2xl border border-slate-200 bg-white p-6">
+      <section
+        class="rounded-2xl border border-ccisj-line bg-white shadow-card p-6"
+      >
         <h2 class="mb-4 text-lg font-bold text-slate-900">CV en PDF</h2>
 
         <p v-if="!candidate.cvs.length" class="text-base text-slate-600">
@@ -260,7 +270,7 @@ watch(() => route.params.id, loadCandidate, { immediate: true });
         <div
           v-for="cv in candidate.cvs"
           :key="cv.id"
-          class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 py-3 last:border-0"
+          class="flex flex-wrap items-center justify-between gap-3 border-b border-ccisj-line py-3 last:border-0"
         >
           <div>
             <p class="font-medium text-slate-800">

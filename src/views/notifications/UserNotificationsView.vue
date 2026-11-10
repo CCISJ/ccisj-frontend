@@ -63,7 +63,7 @@ onMounted(async () => {
     </div>
 
     <section
-      class="overflow-hidden rounded-xl border border-slate-200 bg-white"
+      class="overflow-hidden rounded-xl border border-ccisj-line bg-white shadow-card"
     >
       <div v-if="loading" class="p-10 text-center text-base text-slate-600">
         Cargando notificaciones...
@@ -91,7 +91,7 @@ onMounted(async () => {
           v-for="item in notifications"
           :key="item.id"
           type="button"
-          class="group flex w-full cursor-pointer items-start gap-4 border-b border-slate-200 p-5 text-left transition last:border-b-0 hover:bg-slate-50"
+          class="group flex w-full cursor-pointer items-start gap-4 border-b border-ccisj-line p-5 text-left transition last:border-b-0 hover:bg-slate-50"
           :class="{
             'bg-green-50/40': !item.leida,
           }"

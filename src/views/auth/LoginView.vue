@@ -185,7 +185,7 @@ async function handleLogin() {
                 autocomplete="email"
                 autocapitalize="none"
                 :disabled="loading"
-                class="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-base text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70"
+                class="w-full rounded-xl border border-ccisj-line bg-white shadow-card py-3 pl-10 pr-4 text-base text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70"
                 @input="error = ''"
               />
             </div>
@@ -235,7 +235,7 @@ async function handleLogin() {
                 placeholder="••••••••"
                 autocomplete="current-password"
                 :disabled="loading"
-                class="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-11 text-base text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70"
+                class="w-full rounded-xl border border-ccisj-line bg-white shadow-card py-3 pl-10 pr-11 text-base text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70"
                 @input="error = ''"
               />
 

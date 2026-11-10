@@ -341,7 +341,7 @@ function goBack() {
     <!-- Loading -->
     <div
       v-if="loading"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
+      class="rounded-xl border border-ccisj-line bg-white shadow-card p-10 text-center text-base text-slate-600"
     >
       Cargando socio...
     </div>
@@ -430,7 +430,9 @@ function goBack() {
               "
             />
 
-            <section class="rounded-xl border border-slate-200 bg-white p-5">
+            <section
+              class="rounded-xl border border-ccisj-line bg-white shadow-card p-5"
+            >
               <h2 class="text-lg font-semibold text-slate-900">Contacto</h2>
 
               <dl class="mt-3 space-y-3">
@@ -454,7 +456,7 @@ function goBack() {
 
           <section
             v-if="fullMember.observaciones"
-            class="rounded-xl border border-slate-200 bg-white p-5"
+            class="rounded-xl border border-ccisj-line bg-white shadow-card p-5"
           >
             <h2 class="text-lg font-semibold text-slate-900">Observaciones</h2>
 
@@ -504,7 +506,7 @@ function goBack() {
           <section
             v-for="section in sections"
             :key="section.title"
-            class="rounded-xl border border-slate-200 bg-white p-5"
+            class="rounded-xl border border-ccisj-line bg-white shadow-card p-5"
           >
             <h2 class="mb-4 text-lg font-semibold text-slate-900">
               {{ section.title }}
@@ -536,7 +538,7 @@ function goBack() {
         <section
           v-for="section in sections"
           :key="section.title"
-          class="rounded-xl border border-slate-200 bg-white p-5"
+          class="rounded-xl border border-ccisj-line bg-white shadow-card p-5"
         >
           <h2 class="mb-4 text-lg font-semibold text-slate-900">
             {{ section.title }}

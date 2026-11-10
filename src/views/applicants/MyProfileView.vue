@@ -144,9 +144,9 @@ const cvSummary = computed(() => {
 
 const progress = computed(() => (cv.value ? cvProgress(cv.value) : 0));
 
-const card = 'rounded-xl border border-slate-200 bg-white';
+const card = 'rounded-xl border border-ccisj-line bg-white shadow-card';
 const cardHeader =
-  'flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-3.5';
+  'flex flex-wrap items-center justify-between gap-3 border-b border-ccisj-line px-5 py-3.5';
 const cardTitle = 'text-base font-semibold text-slate-800';
 const label = 'mb-1.5 block text-sm font-medium text-slate-600';
 const input =
@@ -291,7 +291,7 @@ const input =
             </span>
           </div>
 
-          <dl class="divide-y divide-slate-100">
+          <dl class="divide-y divide-ccisj-line">
             <div
               v-for="row in cvSummary"
               :key="row.label"
@@ -310,7 +310,7 @@ const input =
             </div>
           </dl>
 
-          <div class="border-t border-slate-100 p-4">
+          <div class="border-t border-ccisj-line p-4">
             <RouterLink
               :to="{ name: 'mi-cv' }"
               class="flex items-center justify-center gap-2 rounded-lg border border-ccisj px-3 py-2 text-base font-semibold text-ccisj transition hover:bg-ccisj-light"

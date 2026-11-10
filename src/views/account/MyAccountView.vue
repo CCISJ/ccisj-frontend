@@ -153,7 +153,7 @@ const inputClass =
     <div class="grid grid-cols-1 gap-5 lg:grid-cols-5">
       <!-- Acceso -->
       <section
-        class="h-fit rounded-xl border border-slate-200 bg-white p-5 lg:col-span-2"
+        class="h-fit rounded-xl border border-ccisj-line bg-white shadow-card p-5 lg:col-span-2"
       >
         <div class="mb-4 flex items-center gap-2">
           <Lock class="h-3.5 w-3.5 text-slate-600" />
@@ -175,7 +175,7 @@ const inputClass =
           </div>
         </dl>
 
-        <p class="mt-5 border-t border-slate-100 pt-4 text-sm text-slate-600">
+        <p class="mt-5 border-t border-ccisj-line pt-4 text-sm text-slate-600">
           El email de acceso no se cambia desde el portal. Si necesitás
           cambiarlo, comunicate con la administración del CCISJ.
         </p>
@@ -183,7 +183,7 @@ const inputClass =
 
       <!-- Cambiar contraseña -->
       <section
-        class="rounded-xl border border-slate-200 bg-white p-5 lg:col-span-3"
+        class="rounded-xl border border-ccisj-line bg-white shadow-card p-5 lg:col-span-3"
       >
         <div class="mb-4 flex items-center gap-2">
           <KeyRound class="h-3.5 w-3.5 text-slate-600" />
@@ -293,7 +293,7 @@ const inputClass =
           </p>
 
           <div
-            class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4"
+            class="flex flex-wrap items-center justify-between gap-3 border-t border-ccisj-line pt-4"
           >
             <p class="text-sm text-slate-600">
               Al cambiarla se cierran tus sesiones en otros dispositivos.

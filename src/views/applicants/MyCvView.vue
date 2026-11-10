@@ -339,14 +339,14 @@ async function removeFile(file: CvFile) {
   }
 }
 
-const card = 'rounded-xl border border-slate-200 bg-white';
+const card = 'rounded-xl border border-ccisj-line bg-white shadow-card';
 const cardHeader =
-  'flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-3.5';
+  'flex flex-wrap items-center justify-between gap-3 border-b border-ccisj-line px-5 py-3.5';
 const cardTitle = 'text-base font-semibold text-slate-800';
 const label = 'mb-1.5 block text-sm font-medium text-slate-600';
 const input =
   'w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-base text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-ccisj focus:ring-2 focus:ring-emerald-100';
-const item = 'relative rounded-lg border border-slate-200 p-4';
+const item = 'relative rounded-lg border border-ccisj-line p-4';
 const addButton =
   'flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-ccisj transition hover:bg-slate-50';
 const removeButton =
@@ -1055,7 +1055,7 @@ const empty = 'text-base text-slate-600';
           Todavía no subiste ningún PDF.
         </p>
 
-        <ul v-else class="divide-y divide-slate-100">
+        <ul v-else class="divide-y divide-ccisj-line">
           <li
             v-for="file in files"
             :key="file.id"

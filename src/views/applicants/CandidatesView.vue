@@ -207,7 +207,7 @@ onUnmounted(() => {
     </div>
 
     <form
-      class="space-y-4 rounded-2xl border border-slate-200 bg-white p-5"
+      class="space-y-4 rounded-2xl border border-ccisj-line bg-white shadow-card p-5"
       @submit.prevent="applyFilters"
     >
       <div class="flex items-center gap-2 font-semibold text-slate-800">
@@ -265,9 +265,9 @@ onUnmounted(() => {
 
           <div
             v-if="categoryDropdownOpen"
-            class="absolute z-30 mt-2 w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg"
+            class="absolute z-30 mt-2 w-full overflow-hidden rounded-xl border border-ccisj-line bg-white shadow-card shadow-lg"
           >
-            <div class="border-b border-slate-100 p-2">
+            <div class="border-b border-ccisj-line p-2">
               <input
                 v-model="categorySearch"
                 type="search"
@@ -408,7 +408,7 @@ onUnmounted(() => {
 
       <div
         v-if="!loading && !error && result && candidates.length === 0"
-        class="rounded-2xl border border-slate-200 bg-white p-10 text-center"
+        class="rounded-2xl border border-ccisj-line bg-white shadow-card p-10 text-center"
       >
         <UserRoundSearch class="mx-auto mb-3 h-10 w-10 text-slate-600" />
         <p class="font-medium text-slate-700">No se encontraron candidatos</p>
@@ -424,7 +424,7 @@ onUnmounted(() => {
           name: 'candidato-detalle',
           params: { id: candidate.id },
         }"
-        class="block rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-emerald-300 hover:shadow-sm"
+        class="block rounded-2xl border border-ccisj-line bg-white shadow-card p-5 transition hover:border-emerald-300 hover:shadow-sm"
       >
         <div class="flex items-start justify-between gap-3">
           <div>

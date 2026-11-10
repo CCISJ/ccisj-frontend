@@ -270,7 +270,7 @@ onMounted(loadCash);
 
     <!-- El mes en una franja: lo mismo que el Inicio, sin cuatro tarjetas -->
     <section
-      class="grid grid-cols-2 divide-slate-100 rounded-xl border border-slate-200 bg-white lg:grid-cols-4 lg:divide-x"
+      class="grid grid-cols-2 divide-ccisj-line rounded-xl border border-ccisj-line bg-white shadow-card lg:grid-cols-4 lg:divide-x"
       aria-label="Resumen del mes"
     >
       <div class="p-5">
@@ -306,9 +306,9 @@ onMounted(loadCash);
     </section>
 
     <section
-      class="overflow-hidden rounded-xl border border-slate-200 bg-white"
+      class="overflow-hidden rounded-xl border border-ccisj-line bg-white shadow-card"
     >
-      <div class="space-y-3 border-b border-slate-100 p-5">
+      <div class="space-y-3 border-b border-ccisj-line p-5">
         <div class="flex flex-wrap items-center gap-3">
           <h2 class="mr-auto text-lg font-semibold text-slate-900">
             Movimientos
@@ -453,7 +453,7 @@ onMounted(loadCash);
 
       <div v-else class="relative overflow-x-auto">
         <table class="w-full min-w-200 text-left">
-          <thead class="bg-slate-50">
+          <thead>
             <tr class="text-sm font-semibold text-slate-600">
               <th class="px-5 py-3">Fecha</th>
 
@@ -473,7 +473,7 @@ onMounted(loadCash);
             <tr
               v-for="movement in visibleMovements"
               :key="movement.id"
-              class="border-t border-slate-100"
+              class="border-t border-ccisj-line"
             >
               <td
                 class="whitespace-nowrap px-5 py-3.5 text-base text-slate-600"
@@ -571,7 +571,7 @@ onMounted(loadCash);
       <button
         v-if="movements.length > visibleCount"
         type="button"
-        class="w-full border-t border-slate-100 px-5 py-3 text-base font-semibold text-ccisj transition hover:bg-slate-50"
+        class="w-full border-t border-ccisj-line px-5 py-3 text-base font-semibold text-ccisj transition hover:bg-slate-50"
         @click="visibleCount += PAGE"
       >
         Ver más movimientos ({{ movements.length - visibleCount }} más)

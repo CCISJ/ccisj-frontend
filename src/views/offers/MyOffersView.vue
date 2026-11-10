@@ -295,7 +295,7 @@ const iconButton =
 
     <!-- Filtros -->
     <div
-      class="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 lg:flex-row lg:items-center"
+      class="flex flex-col gap-3 rounded-xl border border-ccisj-line bg-white shadow-card p-4 lg:flex-row lg:items-center"
     >
       <div class="relative flex-1">
         <Search
@@ -335,7 +335,7 @@ const iconButton =
     <!-- Loading -->
     <div
       v-if="loading && offers.length === 0"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
+      class="rounded-xl border border-ccisj-line bg-white shadow-card p-10 text-center text-base text-slate-600"
     >
       Cargando ofertas...
     </div>
@@ -343,7 +343,7 @@ const iconButton =
     <!-- Sin ofertas -->
     <div
       v-else-if="offers.length === 0"
-      class="rounded-xl border border-slate-200 bg-white p-12 text-center"
+      class="rounded-xl border border-ccisj-line bg-white shadow-card p-12 text-center"
     >
       <p class="text-base font-medium text-slate-600">
         Todavía no publicaste ofertas
@@ -366,11 +366,11 @@ const iconButton =
     <!-- Tabla -->
     <div
       v-else
-      class="overflow-hidden rounded-xl border border-slate-200 bg-white"
+      class="overflow-hidden rounded-xl border border-ccisj-line bg-white shadow-card"
     >
       <div class="relative overflow-x-auto">
         <table class="w-full min-w-200 text-left">
-          <thead class="bg-slate-50">
+          <thead>
             <tr class="text-sm font-semibold text-slate-600">
               <th class="px-5 py-3">Oferta</th>
               <th class="px-5 py-3">Publicada</th>
@@ -385,7 +385,7 @@ const iconButton =
             <tr
               v-for="offer in visibleOffers"
               :key="offer.id"
-              class="cursor-pointer border-t border-slate-100 transition hover:bg-slate-50"
+              class="cursor-pointer border-t border-ccisj-line transition hover:bg-slate-50"
               @click="editOffer(offer)"
             >
               <!-- Oferta -->
@@ -565,7 +565,7 @@ const iconButton =
       <!-- Footer -->
       <div
         v-if="filteredOffers.length > 0"
-        class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-5 py-3 text-sm text-slate-600"
+        class="flex flex-wrap items-center justify-between gap-3 border-t border-ccisj-line px-5 py-3 text-sm text-slate-600"
       >
         <span>
           Mostrando {{ rangeStart }}-{{ rangeEnd }} de

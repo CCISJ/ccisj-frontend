@@ -400,7 +400,7 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
     <!-- Loading -->
     <div
       v-if="loading"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
+      class="rounded-xl border border-ccisj-line bg-white shadow-card p-10 text-center text-base text-slate-600"
     >
       Cargando datos de la empresa...
     </div>
@@ -427,7 +427,7 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
     <template v-else>
       <!-- Encabezado -->
       <div
-        class="flex flex-wrap items-center gap-4 rounded-xl border border-slate-200 bg-white p-5"
+        class="flex flex-wrap items-center gap-4 rounded-xl border border-ccisj-line bg-white shadow-card p-5"
       >
         <div
           class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ccisj-light text-base font-bold text-ccisj"
@@ -458,7 +458,9 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
       </div>
 
       <!-- Estado de cuenta -->
-      <section class="rounded-xl border border-slate-200 bg-white p-5">
+      <section
+        class="rounded-xl border border-ccisj-line bg-white shadow-card p-5"
+      >
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-2">
             <Wallet class="h-3.5 w-3.5 text-slate-600" />
@@ -531,7 +533,9 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
             </div>
           </div>
 
-          <p class="mt-5 border-t border-slate-100 pt-4 text-sm text-slate-600">
+          <p
+            class="mt-5 border-t border-ccisj-line pt-4 text-sm text-slate-600"
+          >
             {{ feeStatusHint }} Las cuotas y los pagos los registra la
             administración.
           </p>
@@ -540,7 +544,7 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
 
       <!-- Datos editables -->
       <form
-        class="rounded-xl border border-slate-200 bg-white p-5"
+        class="rounded-xl border border-ccisj-line bg-white shadow-card p-5"
         novalidate
         @submit.prevent="handleSubmit"
       >
@@ -602,7 +606,7 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
         </div>
 
         <div
-          class="mt-6 flex flex-wrap items-center justify-end gap-3 border-t border-slate-100 pt-4"
+          class="mt-6 flex flex-wrap items-center justify-end gap-3 border-t border-ccisj-line pt-4"
         >
           <p v-if="isDirty" class="mr-auto text-sm text-slate-600">
             Tenés cambios sin guardar.
@@ -611,7 +615,7 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
           <button
             type="button"
             :disabled="!isDirty || saving"
-            class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-base font-semibold text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            class="rounded-xl border border-ccisj-line bg-white shadow-card px-4 py-2.5 text-base font-semibold text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
             @click="discardChanges"
           >
             Descartar cambios
@@ -630,7 +634,7 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
       </form>
 
       <!-- Datos de solo lectura -->
-      <div class="rounded-xl border border-slate-200 bg-white p-5">
+      <div class="rounded-xl border border-ccisj-line bg-white shadow-card p-5">
         <div class="mb-4 flex items-center gap-2">
           <Lock class="h-3.5 w-3.5 text-slate-600" />
 
@@ -651,7 +655,7 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
           </div>
         </dl>
 
-        <p class="mt-5 border-t border-slate-100 pt-4 text-sm text-slate-600">
+        <p class="mt-5 border-t border-ccisj-line pt-4 text-sm text-slate-600">
           Estos datos los gestiona la administración del Centro Comercial. Si
           alguno no es correcto, comunicate con la administración para
           corregirlo.

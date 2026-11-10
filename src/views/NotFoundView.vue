@@ -8,7 +8,7 @@ const router = useRouter();
 
 <template>
   <div
-    class="flex flex-col items-center rounded-xl border border-slate-200 bg-white px-6 py-16 text-center"
+    class="flex flex-col items-center rounded-xl border border-ccisj-line bg-white shadow-card px-6 py-16 text-center"
   >
     <div
       class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-slate-600"

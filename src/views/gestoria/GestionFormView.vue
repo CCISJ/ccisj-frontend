@@ -152,7 +152,7 @@ onMounted(async () => {
 
     <form
       v-else
-      class="space-y-5 rounded-2xl border border-slate-200 bg-white p-6"
+      class="space-y-5 rounded-2xl border border-ccisj-line bg-white shadow-card p-6"
       @submit.prevent="submit"
     >
       <div>

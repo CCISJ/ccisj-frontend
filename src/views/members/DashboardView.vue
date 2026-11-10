@@ -194,9 +194,9 @@ const shortcuts = computed(() => {
   });
 });
 
-const card = 'rounded-xl border border-slate-200 bg-white';
+const card = 'rounded-xl border border-ccisj-line bg-white shadow-card';
 const cardHeader =
-  'flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-3.5';
+  'flex items-center justify-between gap-3 border-b border-ccisj-line px-5 py-3.5';
 const cardTitle = 'text-base font-semibold text-slate-800';
 const cardLink = 'text-sm font-medium text-ccisj hover:underline';
 </script>
@@ -373,7 +373,7 @@ const cardLink = 'text-sm font-medium text-ccisj hover:underline';
           Todavía no recibiste postulaciones.
         </p>
 
-        <ul v-else class="divide-y divide-slate-100">
+        <ul v-else class="divide-y divide-ccisj-line">
           <li v-for="item in latestApplications" :key="item.id">
             <RouterLink
               :to="{
@@ -437,7 +437,7 @@ const cardLink = 'text-sm font-medium text-ccisj hover:underline';
           No tenés novedades.
         </p>
 
-        <ul v-else class="divide-y divide-slate-100">
+        <ul v-else class="divide-y divide-ccisj-line">
           <li
             v-for="item in latestNotifications"
             :key="item.id"
@@ -501,7 +501,7 @@ const cardLink = 'text-sm font-medium text-ccisj hover:underline';
           </RouterLink>
         </div>
 
-        <ul v-else class="divide-y divide-slate-100">
+        <ul v-else class="divide-y divide-ccisj-line">
           <li v-for="offer in upcomingOffers" :key="offer.id">
             <RouterLink
               :to="{ name: 'mis-ofertas-editar', params: { id: offer.id } }"
@@ -548,7 +548,7 @@ const cardLink = 'text-sm font-medium text-ccisj hover:underline';
           <h2 :class="cardTitle">Accesos</h2>
         </div>
 
-        <ul class="divide-y divide-slate-100">
+        <ul class="divide-y divide-ccisj-line">
           <li v-for="shortcut in shortcuts" :key="shortcut.to">
             <RouterLink
               :to="shortcut.to"

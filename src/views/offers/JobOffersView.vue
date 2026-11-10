@@ -247,7 +247,7 @@ function details(offer: Offer) {
 
     <!-- Filtros -->
     <div
-      class="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 lg:flex-row lg:items-center"
+      class="flex flex-col gap-3 rounded-xl border border-ccisj-line bg-white shadow-card p-4 lg:flex-row lg:items-center"
     >
       <div class="relative flex-1">
         <Search
@@ -340,7 +340,7 @@ function details(offer: Offer) {
     <!-- Cargando -->
     <div
       v-if="loading && offers.length === 0"
-      class="rounded-xl border border-slate-200 bg-white p-10 text-center text-base text-slate-600"
+      class="rounded-xl border border-ccisj-line bg-white shadow-card p-10 text-center text-base text-slate-600"
     >
       Cargando ofertas...
     </div>
@@ -348,7 +348,7 @@ function details(offer: Offer) {
     <!-- Error -->
     <div
       v-else-if="loadError && offers.length === 0"
-      class="rounded-xl border border-slate-200 bg-white p-12 text-center"
+      class="rounded-xl border border-ccisj-line bg-white shadow-card p-12 text-center"
     >
       <p class="text-base font-medium text-slate-600">
         No se pudieron cargar las ofertas
@@ -366,7 +366,7 @@ function details(offer: Offer) {
     <!-- Sin ofertas -->
     <div
       v-else-if="offers.length === 0"
-      class="rounded-xl border border-slate-200 bg-white p-12 text-center"
+      class="rounded-xl border border-ccisj-line bg-white shadow-card p-12 text-center"
     >
       <Briefcase class="mx-auto h-8 w-8 text-slate-300" />
 
@@ -388,7 +388,7 @@ function details(offer: Offer) {
       <!-- Sin resultados para los filtros -->
       <div
         v-if="filteredOffers.length === 0"
-        class="rounded-xl border border-slate-200 bg-white p-12 text-center"
+        class="rounded-xl border border-ccisj-line bg-white shadow-card p-12 text-center"
       >
         <p class="text-base text-slate-600">
           {{
@@ -422,7 +422,7 @@ function details(offer: Offer) {
         <li v-for="offer in filteredOffers" :key="offer.id">
           <RouterLink
             :to="{ name: 'oferta-detalle', params: { id: offer.id } }"
-            class="flex h-full flex-col rounded-xl border border-slate-200 bg-white p-5 transition hover:border-ccisj hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200"
+            class="flex h-full flex-col rounded-xl border border-ccisj-line bg-white shadow-card p-5 transition hover:border-ccisj hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200"
           >
             <div class="flex items-start justify-between gap-3">
               <h2 class="font-semibold text-slate-900">{{ offer.titulo }}</h2>

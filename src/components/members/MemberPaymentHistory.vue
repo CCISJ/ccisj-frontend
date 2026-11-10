@@ -38,19 +38,21 @@ const hidden = computed(() => props.payments.length - visible.value.length);
 </script>
 
 <template>
-  <section class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+  <section
+    class="overflow-hidden rounded-xl border border-ccisj-line bg-white shadow-card"
+  >
     <h2 class="px-5 py-4 text-lg font-semibold text-slate-900">Pagos</h2>
 
     <div
       v-if="payments.length === 0"
-      class="border-t border-slate-100 p-8 text-center text-base text-slate-600"
+      class="border-t border-ccisj-line p-8 text-center text-base text-slate-600"
     >
       Todavía no hay pagos registrados.
     </div>
 
     <div v-else class="relative overflow-x-auto">
       <table class="w-full min-w-160 text-left">
-        <thead class="border-t border-slate-100 bg-slate-50">
+        <thead class="border-t border-ccisj-line">
           <tr class="text-sm font-semibold text-slate-600">
             <th class="px-5 py-3">Fecha</th>
             <th class="px-5 py-3 text-right">Importe</th>
@@ -66,7 +68,7 @@ const hidden = computed(() => props.payments.length - visible.value.length);
           <tr
             v-for="payment in visible"
             :key="payment.id"
-            class="border-t border-slate-100"
+            class="border-t border-ccisj-line"
             :class="{ 'bg-slate-50/70': payment.anulado }"
           >
             <td class="whitespace-nowrap px-5 py-3 text-base text-slate-700">
@@ -145,7 +147,7 @@ const hidden = computed(() => props.payments.length - visible.value.length);
     <button
       v-if="hidden > 0 || (limit && expanded)"
       type="button"
-      class="w-full border-t border-slate-100 px-5 py-3 text-base font-semibold text-ccisj transition hover:bg-slate-50"
+      class="w-full border-t border-ccisj-line px-5 py-3 text-base font-semibold text-ccisj transition hover:bg-slate-50"
       :aria-expanded="expanded"
       @click="expanded = !expanded"
     >

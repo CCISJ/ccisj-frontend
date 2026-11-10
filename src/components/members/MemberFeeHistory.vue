@@ -57,19 +57,21 @@ function statusClass(fee: Fee) {
 </script>
 
 <template>
-  <section class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+  <section
+    class="overflow-hidden rounded-xl border border-ccisj-line bg-white shadow-card"
+  >
     <h2 class="px-5 py-4 text-lg font-semibold text-slate-900">Cuotas</h2>
 
     <div
       v-if="fees.length === 0"
-      class="border-t border-slate-100 p-8 text-center text-base text-slate-600"
+      class="border-t border-ccisj-line p-8 text-center text-base text-slate-600"
     >
       Todavía no se generaron cuotas.
     </div>
 
     <div v-else class="relative overflow-x-auto">
       <table class="w-full min-w-160 text-left">
-        <thead class="border-t border-slate-100 bg-slate-50">
+        <thead class="border-t border-ccisj-line">
           <tr class="text-sm font-semibold text-slate-600">
             <th class="px-5 py-3">Mes</th>
             <th class="px-5 py-3">Vence</th>
@@ -82,7 +84,7 @@ function statusClass(fee: Fee) {
           <tr
             v-for="fee in visible"
             :key="fee.id"
-            class="border-t border-slate-100"
+            class="border-t border-ccisj-line"
           >
             <td class="whitespace-nowrap px-5 py-3 text-base text-slate-900">
               {{ monthOf(fee.periodoDesde) }}
@@ -119,7 +121,7 @@ function statusClass(fee: Fee) {
     <button
       v-if="hidden > 0 || (limit && expanded)"
       type="button"
-      class="w-full border-t border-slate-100 px-5 py-3 text-base font-semibold text-ccisj transition hover:bg-slate-50"
+      class="w-full border-t border-ccisj-line px-5 py-3 text-base font-semibold text-ccisj transition hover:bg-slate-50"
       :aria-expanded="expanded"
       @click="expanded = !expanded"
     >

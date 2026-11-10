@@ -15,7 +15,7 @@ const route = useRoute();
     que no pierda la oferta que estaba mirando.
   -->
   <div class="flex min-h-screen flex-col bg-slate-50">
-    <header class="border-b border-slate-200 bg-white">
+    <header class="border-b border-ccisj-line bg-white">
       <div
         class="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 md:px-6"
       >
@@ -56,7 +56,7 @@ const route = useRoute();
       <RouterView />
     </main>
 
-    <footer class="border-t border-slate-200 bg-white">
+    <footer class="border-t border-ccisj-line bg-white">
       <div
         class="mx-auto w-full max-w-7xl px-4 py-4 text-sm text-slate-600 md:px-6"
       >

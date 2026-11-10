@@ -273,7 +273,7 @@ watch(
       </div>
 
       <!-- Acciones -->
-      <div class="flex justify-end gap-3 border-t border-slate-100 pt-5">
+      <div class="flex justify-end gap-3 border-t border-ccisj-line pt-5">
         <button
           type="button"
           class="rounded-lg border border-slate-200 px-4 py-2 text-base font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-50"

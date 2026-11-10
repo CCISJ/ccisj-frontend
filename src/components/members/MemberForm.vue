@@ -27,7 +27,7 @@ const inputClass =
 const labelClass = 'mb-2 block text-base font-medium text-slate-700';
 
 const fieldsetClass =
-  'rounded-2xl border border-slate-200 bg-white p-6 shadow-sm';
+  'rounded-2xl border border-ccisj-line bg-white shadow-card p-6 shadow-sm';
 
 const legendClass = 'px-1 text-sm font-semibold   text-slate-600';
 
@@ -286,7 +286,7 @@ const id = (field: string) => `socio-${props.mode}-${field}`;
     <div class="flex justify-end gap-3">
       <button
         type="button"
-        class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-base font-semibold text-slate-600 transition hover:bg-slate-50"
+        class="rounded-xl border border-ccisj-line bg-white shadow-card px-4 py-2.5 text-base font-semibold text-slate-600 transition hover:bg-slate-50"
         :disabled="loading"
         @click="emit('cancel')"
       >

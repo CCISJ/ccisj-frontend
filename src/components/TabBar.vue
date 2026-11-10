@@ -37,7 +37,7 @@ async function move(from: number, step: number) {
   <div
     role="tablist"
     :aria-label="label"
-    class="flex gap-1 overflow-x-auto border-b border-slate-200"
+    class="flex gap-1 overflow-x-auto border-b border-ccisj-line"
   >
     <button
       v-for="(tab, index) in tabs"
