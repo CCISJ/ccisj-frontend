@@ -533,12 +533,12 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
           {{ companyName }}
         </span>
 
-        <span v-if="'_count' in offer" class="text-slate-600">
+        <span v-if="'postulacionesActivas' in offer" class="text-slate-600">
           <span class="font-semibold text-slate-800">{{
-            offer._count.postulaciones
+            offer.postulacionesActivas
           }}</span>
           {{
-            offer._count.postulaciones === 1 ? 'postulación' : 'postulaciones'
+            offer.postulacionesActivas === 1 ? 'postulación' : 'postulaciones'
           }}
         </span>
       </div>
@@ -584,10 +584,6 @@ const labelClass = 'mb-2 block text-base font-medium text-slate-700';
       <fieldset
         class="rounded-xl border border-ccisj-line bg-white shadow-card p-5"
       >
-        <legend class="px-1 text-sm font-semibold text-slate-600">
-          El puesto
-        </legend>
-
         <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div class="md:col-span-2">
             <label for="oferta-titulo" :class="labelClass">Título</label>

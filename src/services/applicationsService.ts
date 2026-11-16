@@ -23,11 +23,15 @@ export function applyToOffer(data: {
   });
 }
 
-/** Retira (borra) una postulación propia. */
+/**
+ * Retira una postulación propia. No se borra: queda como RETIRADA y la
+ * empresa recibe un aviso.
+ */
 export function withdrawApplication(id: number) {
-  return apiFetch<void>(`/postulaciones/${id}`, {
-    method: 'DELETE',
-  });
+  return apiFetch<{ id: number; estado: 'RETIRADA' }>(
+    `/postulaciones/${id}/retirar`,
+    { method: 'PATCH' },
+  );
 }
 
 export function getReceivedApplications() {

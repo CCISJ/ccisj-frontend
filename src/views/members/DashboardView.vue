@@ -102,11 +102,14 @@ const newApplications = computed(
   () => applications.value.filter((item) => item.estado === 'ENVIADA').length,
 );
 
+// Las retiradas no cuentan: el postulante se dio de baja.
 const applicationsLast30Days = computed(() => {
   const since = Date.now() - 30 * DAY_MS;
 
   return applications.value.filter(
-    (item) => new Date(item.fechaPostulacion).getTime() >= since,
+    (item) =>
+      item.estado !== 'RETIRADA' &&
+      new Date(item.fechaPostulacion).getTime() >= since,
   ).length;
 });
 
@@ -528,11 +531,11 @@ const cardLink = 'text-sm font-medium text-ccisj hover:underline';
 
               <span
                 class="shrink-0 text-sm tabular-nums text-slate-600"
-                :title="`${offer._count.postulaciones} postulaciones`"
+                :title="`${offer.postulacionesActivas} postulaciones`"
               >
-                {{ offer._count.postulaciones }}
+                {{ offer.postulacionesActivas }}
                 {{
-                  offer._count.postulaciones === 1
+                  offer.postulacionesActivas === 1
                     ? 'postulación'
                     : 'postulaciones'
                 }}

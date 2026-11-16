@@ -47,13 +47,8 @@ const STATUS_ORDER: ApplicationStatus[] = [
   'SELECCIONADO',
   'NO_SELECCIONADO',
   'FINALIZADA',
+  'RETIRADA',
 ];
-
-/**
- * Se puede retirar mientras la empresa no decidió. Una vez seleccionado o
- * descartado, retirarla borraría el historial sin cambiar nada.
- */
-const WITHDRAWABLE: ApplicationStatus[] = ['ENVIADA', 'EN_REVISION'];
 
 async function loadApplications() {
   try {
@@ -125,8 +120,12 @@ const filteredApplications = computed(() => {
   });
 });
 
+/**
+ * Se puede retirar en cualquier estado: incluso si ya fue seleccionado, es
+ * darse de baja de ese trabajo (lo confirmó el cliente).
+ */
 function canWithdraw(item: OwnApplication) {
-  return WITHDRAWABLE.includes(item.estado);
+  return item.estado !== 'RETIRADA';
 }
 
 // Retirar una postulación, pendiente de confirmar.
@@ -154,8 +153,9 @@ async function confirmWithdraw() {
 
     await withdrawApplication(item.id);
 
-    applications.value = applications.value.filter(
-      (current) => current.id !== item.id,
+    // Queda en la lista como retirada: no se borra.
+    applications.value = applications.value.map((current) =>
+      current.id === item.id ? { ...current, estado: 'RETIRADA' } : current,
     );
 
     toast.success('Retiraste tu postulación');
@@ -178,12 +178,19 @@ const withdrawMessage = computed(() => {
 
   if (!item) return '';
 
+  const empresa = item.oferta.socio.razonSocial;
+
+  const selected =
+    item.estado === 'SELECCIONADO'
+      ? ` Ya fuiste seleccionado: retirarte le avisa a ${empresa} que te das de baja de este trabajo.`
+      : '';
+
   const reapply =
     item.oferta.estado === 'ACTIVA'
       ? ' Mientras la oferta siga abierta, vas a poder volver a postularte.'
       : ' La oferta ya cerró, así que no vas a poder volver a postularte.';
 
-  return `Tu postulación a "${item.oferta.titulo}" se va a eliminar y ${item.oferta.socio.razonSocial} ya no la va a ver.${reapply}`;
+  return `Tu postulación a "${item.oferta.titulo}" va a quedar como retirada y ${empresa} va a recibir un aviso.${selected}${reapply}`;
 });
 </script>
 

@@ -59,7 +59,10 @@ export type OwnOffer = {
   fechaCierre: string | null;
   estado: OfferStatus;
   categorias: { categoriaId: number; categoria: Category }[];
+  // Todas, incluidas las retiradas: decide si la oferta se puede borrar.
   _count: { postulaciones: number };
+  // Las que siguen vigentes (sin las retiradas): es el número que se muestra.
+  postulacionesActivas: number;
 };
 
 export type OfferFormData = {

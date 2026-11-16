@@ -116,6 +116,7 @@ async function openCvFile(cvId: number) {
 }
 
 const isFinal = computed(() => props.application.estado === 'FINALIZADA');
+const isWithdrawn = computed(() => props.application.estado === 'RETIRADA');
 
 const STATUS_ICONS = {
   EN_REVISION: Eye,
@@ -200,6 +201,11 @@ const sectionTitle = 'mb-2 text-sm font-semibold   text-slate-600';
 
             <p v-if="isFinal" class="text-base text-slate-600">
               La postulación está finalizada y ya no se puede cambiar.
+            </p>
+
+            <p v-else-if="isWithdrawn" class="text-base text-slate-600">
+              {{ application.postulante.nombre }} retiró su postulación, así que
+              ya no se puede cambiar.
             </p>
 
             <template v-else>

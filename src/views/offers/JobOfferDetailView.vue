@@ -69,8 +69,9 @@ async function loadApplicantData(offerId: number) {
     ]);
 
     cv.value = myCv;
+    // Una postulación retirada no cuenta: puede volver a postularse.
     alreadyApplied.value = applications.some(
-      (item) => item.oferta.id === offerId,
+      (item) => item.oferta.id === offerId && item.estado !== 'RETIRADA',
     );
     // Sin PDF no hay nada que elegir: va el formulario.
     selectedCv.value = myCv.cvs.length === 0 ? 'NINGUNO' : '';
