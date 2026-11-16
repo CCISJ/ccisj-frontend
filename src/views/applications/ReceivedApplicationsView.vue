@@ -46,6 +46,7 @@ const STATUS_ORDER: ApplicationStatus[] = [
   'SELECCIONADO',
   'NO_SELECCIONADO',
   'FINALIZADA',
+  'RETIRADA',
 ];
 
 /** Un ID positivo de la query (`?oferta=3`), o null. */

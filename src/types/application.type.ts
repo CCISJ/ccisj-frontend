@@ -2,7 +2,13 @@ import type { Cv, CvFile } from './cv.type';
 import type { OfferModality, OfferStatus } from './offer.type';
 
 export type ApplicationStatus =
-  'ENVIADA' | 'EN_REVISION' | 'SELECCIONADO' | 'NO_SELECCIONADO' | 'FINALIZADA';
+  | 'ENVIADA'
+  | 'EN_REVISION'
+  | 'SELECCIONADO'
+  | 'NO_SELECCIONADO'
+  | 'FINALIZADA'
+  // El postulante se dio de baja; la empresa la sigue viendo.
+  | 'RETIRADA';
 
 /** Cómo ve la empresa cada estado. ENVIADA es una postulación que nadie miró. */
 export const APPLICATION_STATUS_LABELS: Record<ApplicationStatus, string> = {
@@ -11,6 +17,7 @@ export const APPLICATION_STATUS_LABELS: Record<ApplicationStatus, string> = {
   SELECCIONADO: 'Seleccionado',
   NO_SELECCIONADO: 'No seleccionado',
   FINALIZADA: 'Finalizada',
+  RETIRADA: 'Retirada',
 };
 
 /** Cómo ve el postulante cada estado de sus propias postulaciones. */
@@ -20,6 +27,7 @@ export const APPLICANT_STATUS_LABELS: Record<ApplicationStatus, string> = {
   SELECCIONADO: 'Seleccionado',
   NO_SELECCIONADO: 'No seleccionado',
   FINALIZADA: 'Finalizada',
+  RETIRADA: 'Retirada',
 };
 
 /**

@@ -17,6 +17,7 @@ const STATUS_CLASSES: Record<ApplicationStatus, string> = {
   SELECCIONADO: 'bg-emerald-50 text-emerald-700',
   NO_SELECCIONADO: 'bg-slate-100 text-slate-600',
   FINALIZADA: 'bg-slate-100 text-slate-600',
+  RETIRADA: 'bg-red-50 text-red-700',
 };
 </script>
 

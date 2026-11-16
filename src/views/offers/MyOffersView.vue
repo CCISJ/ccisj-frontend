@@ -456,7 +456,7 @@ const iconButton =
                   class="rounded-md px-2 py-1 text-ccisj transition hover:bg-ccisj-light hover:underline"
                   :title="`Ver las postulaciones a ${offer.titulo}`"
                 >
-                  {{ offer._count.postulaciones }}
+                  {{ offer.postulacionesActivas }}
                 </RouterLink>
 
                 <span v-else class="text-slate-600">0</span>
