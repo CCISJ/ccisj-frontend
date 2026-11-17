@@ -74,6 +74,8 @@ export type OwnApplication = {
   estado: ApplicationStatus;
   // El mensaje que dejó al postularse.
   observaciones: string | null;
+  // El PDF que mandó; null si mandó el CV del formulario (o borró el PDF).
+  cv: CvFile | null;
   oferta: {
     id: number;
     titulo: string;
