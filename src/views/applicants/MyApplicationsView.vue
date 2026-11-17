@@ -7,6 +7,7 @@ import {
   Building2,
   Calendar,
   ExternalLink,
+  FileText,
   MapPin,
   Search,
   Trash2,
@@ -20,6 +21,7 @@ import {
   getMyApplications,
   withdrawApplication,
 } from '@/services/applicationsService';
+import { getMyCvFileUrl, openSignedFile } from '@/services/cvService';
 
 import { useToastStore } from '@/stores/toast';
 
@@ -124,6 +126,15 @@ const filteredApplications = computed(() => {
  * Se puede retirar en cualquier estado: incluso si ya fue seleccionado, es
  * darse de baja de ese trabajo (lo confirmó el cliente).
  */
+/** Abre el PDF que mandó a esa postulación. */
+async function openCv(cvId: number) {
+  try {
+    await openSignedFile(() => getMyCvFileUrl(cvId));
+  } catch (err) {
+    toast.error(err instanceof Error ? err.message : 'No se pudo abrir el CV');
+  }
+}
+
 function canWithdraw(item: OwnApplication) {
   return item.estado !== 'RETIRADA';
 }
@@ -355,6 +366,28 @@ const withdrawMessage = computed(() => {
             <ApplicationStatusBadge :status="item.estado" applicant />
           </div>
         </div>
+
+        <!-- Con qué CV se postuló -->
+        <p
+          class="mt-3 flex flex-wrap items-center gap-1.5 text-base text-slate-600"
+        >
+          <FileText class="h-4 w-4 shrink-0" />
+          Te postulaste con
+
+          <button
+            v-if="item.cv"
+            type="button"
+            class="font-medium text-ccisj hover:underline"
+            :title="`Abrir ${item.cv.nombreArchivo ?? 'el PDF'}`"
+            @click="openCv(item.cv.id)"
+          >
+            {{ item.cv.nombreArchivo ?? 'tu CV en PDF' }}
+          </button>
+
+          <span v-else class="font-medium text-slate-700">
+            el CV del formulario
+          </span>
+        </p>
 
         <p
           v-if="item.observaciones"

@@ -5,6 +5,7 @@ import {
   Briefcase,
   Building2,
   CalendarClock,
+  CheckCircle2,
   MapPin,
   Plus,
   Search,
@@ -12,6 +13,7 @@ import {
   X,
 } from 'lucide-vue-next';
 
+import { getMyApplications } from '@/services/applicationsService';
 import { getMyCv } from '@/services/cvService';
 import { getOffers } from '@/services/offersService';
 
@@ -44,6 +46,27 @@ async function loadPreferences() {
   } catch {
     // Sin preferencias se ve todo, como antes.
     preferred.value = [];
+  }
+}
+
+// Ofertas a las que el postulante ya se postuló (las retiradas no cuentan:
+// puede volver a postularse).
+const appliedOfferIds = ref(new Set<number>());
+
+async function loadMyApplications() {
+  if (auth.user?.role !== 'POSTULANTE') return;
+
+  try {
+    const applications = await getMyApplications();
+
+    appliedOfferIds.value = new Set(
+      applications
+        .filter((item) => item.estado !== 'RETIRADA')
+        .map((item) => item.oferta.id),
+    );
+  } catch {
+    // Sin la marca se ve el listado igual.
+    appliedOfferIds.value = new Set();
   }
 }
 
@@ -80,6 +103,7 @@ async function loadOffers() {
 onMounted(() => {
   void loadOffers();
   void loadPreferences();
+  void loadMyApplications();
 });
 
 // Si elige una categoría en el filtro, manda esa elección.
@@ -451,6 +475,14 @@ function details(offer: Offer) {
               <Building2 class="h-4 w-4 shrink-0 text-slate-600" />
               {{ offer.socio.razonSocial }}
             </p>
+
+            <span
+              v-if="appliedOfferIds.has(offer.id)"
+              class="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-sm font-medium text-emerald-700"
+            >
+              <CheckCircle2 class="h-3.5 w-3.5" />
+              Ya te postulaste
+            </span>
 
             <div
               class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-600"
