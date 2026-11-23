@@ -1,0 +1,25 @@
+name: Deploy frontend
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on:
+      group: ccisj-production
+      labels: ccisj-deploy
+
+    timeout-minutes: 20
+
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v4
+
+      - name: Desplegar frontend
+        run: |
+          /opt/ccisj/deploy/deploy.sh web "$GITHUB_WORKSPACE"
