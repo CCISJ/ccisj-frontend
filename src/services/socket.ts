@@ -8,7 +8,7 @@ export function connectSocket(): Socket {
   if (socket) return socket;
 
   socket = io(new URL(API_URL).origin, {
-    path:'/socket.io',
+    path: '/socket.io',
     withCredentials: true,
     autoConnect: false,
     transports: ['websocket', 'polling'],
