@@ -44,20 +44,20 @@ describe('Sidebar', () => {
       'Inicio',
       'Notificaciones',
       'Socios',
-      'Buscar candidatos',
       'Gestoría',
       'Mi empresa',
       'Mis ofertas',
       'Postulantes',
+      'Buscar candidatos',
     ]);
   });
 
-  it('a un socio común no le muestra el directorio ni la búsqueda de candidatos', () => {
+  it('a un socio común le permite buscar candidatos sin acceso a la directiva', () => {
     const items = labels(mountAs({ ...SOCIO, memberType: 'COMUN' }));
 
     expect(items).not.toContain('Socios');
-    expect(items).not.toContain('Buscar candidatos');
     expect(items).not.toContain('Gestoría');
     expect(items).toContain('Mi empresa');
+    expect(items).toContain('Buscar candidatos');
   });
 });
