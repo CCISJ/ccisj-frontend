@@ -56,7 +56,7 @@ const SESIONES: Record<Actor, MeResponse['user'] | null> = {
 
 const SOCIOS: Actor[] = ['empresa', 'directivo'];
 const CON_SESION: Actor[] = ['postulante', 'empresa', 'directivo', 'admin'];
-const ADMIN_DIRECTIVOS: Actor[] = ['directivo', 'admin'];
+const ADMIN_SOCIOS: Actor[] = ['empresa', 'directivo', 'admin'];
 
 // Ruta → una URL concreta para navegar y quiénes pueden entrar.
 const ACCESO: Record<string, { url: string; entran: Actor[] }> = {
@@ -93,11 +93,11 @@ const ACCESO: Record<string, { url: string; entran: Actor[] }> = {
   // Buscador de candidatos: administración y socios directivos.
   candidatos: {
     url: '/candidatos',
-    entran: ADMIN_DIRECTIVOS,
+    entran: ADMIN_SOCIOS,
   },
   'candidato-detalle': {
     url: '/candidatos/12',
-    entran: ADMIN_DIRECTIVOS,
+    entran: ADMIN_SOCIOS,
   },
 
   'mis-ofertas': { url: '/mis-ofertas', entran: SOCIOS },

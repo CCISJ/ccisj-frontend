@@ -117,11 +117,6 @@ const groups = computed<NavGroup[]>(() => {
                 title: 'Directiva',
                 items: [
                   { label: 'Socios', icon: Users, to: '/socios' },
-                  {
-                    label: 'Buscar candidatos',
-                    icon: UserRoundSearch,
-                    to: '/candidatos',
-                  },
                   { label: 'Gestoría', icon: FolderOpen, to: '/gestoria' },
                 ],
               },
@@ -149,6 +144,11 @@ const groups = computed<NavGroup[]>(() => {
               label: 'Postulantes',
               icon: UserRoundSearch,
               to: '/postulaciones-recibidas',
+            },
+            {
+              label: 'Buscar candidatos',
+              icon: UserRoundSearch,
+              to: '/candidatos',
             },
           ],
         },

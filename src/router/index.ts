@@ -135,7 +135,6 @@ const router = createRouter({
           component: () => import('@/views/applicants/CandidatesView.vue'),
           meta: {
             roles: ['ADMIN', 'SOCIO'],
-            directivoOnly: true,
           },
         },
         {
@@ -144,7 +143,6 @@ const router = createRouter({
           component: () => import('@/views/applicants/CandidateDetailView.vue'),
           meta: {
             roles: ['ADMIN', 'SOCIO'],
-            directivoOnly: true,
           },
         },
         {
