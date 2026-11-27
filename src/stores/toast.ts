@@ -22,6 +22,7 @@ export const useToastStore = defineStore('toast', {
 
       this.timeoutId = setTimeout(() => {
         this.visible = false;
+        this.timeoutId = null;
       }, 3000);
     },
 
@@ -44,6 +45,27 @@ export const useToastStore = defineStore('toast', {
         clearTimeout(this.timeoutId);
         this.timeoutId = null;
       }
+    },
+
+    /**
+     * Con el mouse encima, el aviso no se cierra: quien lo está leyendo (o va
+     * a tocar la X) no lo pierde a mitad de camino.
+     */
+    pause() {
+      if (this.timeoutId) {
+        clearTimeout(this.timeoutId);
+        this.timeoutId = null;
+      }
+    },
+
+    /** Al sacar el mouse, el aviso queda unos segundos más y se cierra. */
+    resume() {
+      if (!this.visible || this.timeoutId) return;
+
+      this.timeoutId = setTimeout(() => {
+        this.visible = false;
+        this.timeoutId = null;
+      }, 2000);
     },
   },
 });

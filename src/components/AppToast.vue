@@ -28,32 +28,53 @@ const toastClasses = computed(() => {
 </script>
 
 <template>
-  <Transition
-    enter-active-class="transition duration-200 ease-out"
-    enter-from-class="-translate-y-2 opacity-0"
-    enter-to-class="translate-y-0 opacity-100"
-    leave-active-class="transition duration-150 ease-in"
-    leave-from-class="-translate-y-0 opacity-100"
-    leave-to-class="translate-y-2 opacity-0"
+  <!--
+    La región `aria-live` está siempre en la página, aunque no haya aviso: un
+    lector de pantalla anuncia lo que cambia adentro de una región que ya
+    existía, no una que aparece junto con el mensaje. Un error va como
+    `alert` (se anuncia enseguida); el resto, como `status`.
+  -->
+  <div
+    aria-live="polite"
+    aria-atomic="true"
+    class="pointer-events-none fixed inset-x-4 top-4 z-200 flex justify-end sm:inset-x-auto sm:top-6 sm:right-6"
   >
-    <div
-      v-if="toast.visible"
-      class="fixed top-6 right-6 z-200 flex min-w-80 max-w-md items-center gap-3 rounded-xl border px-4 py-3 shadow-lg"
-      :class="toastClasses"
+    <!--
+      Entra y sale por el mismo lado (de arriba), con la curva fuerte de
+      salida; la salida es más corta que la entrada. Con "reducir movimiento"
+      solo cambia la opacidad.
+    -->
+    <Transition
+      enter-active-class="transition duration-200 ease-out"
+      enter-from-class="-translate-y-2 opacity-0 motion-reduce:translate-y-0"
+      enter-to-class="translate-y-0 opacity-100"
+      leave-active-class="transition duration-150 ease-out"
+      leave-from-class="translate-y-0 opacity-100"
+      leave-to-class="-translate-y-2 opacity-0 motion-reduce:translate-y-0"
     >
-      <component :is="icon" class="h-5 w-5 shrink-0" />
-
-      <p class="flex-1 text-base font-medium">
-        {{ toast.message }}
-      </p>
-
-      <button
-        type="button"
-        class="rounded-md p-1 opacity-60 transition hover:opacity-100"
-        @click="toast.close"
+      <div
+        v-if="toast.visible"
+        :role="toast.type === 'error' ? 'alert' : 'status'"
+        class="pointer-events-auto flex w-full items-center gap-3 rounded-xl border px-4 py-3 shadow-lg sm:w-auto sm:min-w-80 sm:max-w-md"
+        :class="toastClasses"
+        @mouseenter="toast.pause"
+        @mouseleave="toast.resume"
       >
-        <X class="h-4 w-4" />
-      </button>
-    </div>
-  </Transition>
+        <component :is="icon" class="h-5 w-5 shrink-0" aria-hidden="true" />
+
+        <p class="flex-1 text-base font-medium">
+          {{ toast.message }}
+        </p>
+
+        <button
+          type="button"
+          class="rounded-md p-1 opacity-60 transition hover:opacity-100"
+          aria-label="Cerrar aviso"
+          @click="toast.close"
+        >
+          <X class="h-4 w-4" aria-hidden="true" />
+        </button>
+      </div>
+    </Transition>
+  </div>
 </template>
