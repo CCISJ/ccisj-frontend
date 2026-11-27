@@ -3,6 +3,9 @@ export type Candidate = {
   nombre: string;
   apellido: string;
   direccion: string | null;
+  // Si eligió que las empresas lo encuentren. Una empresa solo recibe a los
+  // que sí; la administración, a todos.
+  visibleParaEmpresas: boolean;
   categorias: {
     categoria: { id: number; nombre: string };
   }[];
@@ -43,6 +46,7 @@ export type CandidateDetail = {
   apellido: string;
   direccion: string | null;
   otros: string | null;
+  visibleParaEmpresas: boolean;
 
   /** Solo para la administración: la cuenta con la que entra. */
   cuenta?: {

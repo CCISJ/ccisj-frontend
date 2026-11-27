@@ -43,8 +43,9 @@ export const MEMBER_APPLICATION_STATES = [
 export type MemberApplicationStatus =
   (typeof MEMBER_APPLICATION_STATES)[number];
 
-// El CV del formulario del postulante, como lo ve la empresa (sin sus PDF).
-export type ApplicantCv = Omit<Cv, 'cvs'>;
+// El CV del formulario del postulante, como lo ve la empresa (sin sus PDF ni
+// su elección de aparecer en la bolsa, que es solo de él).
+export type ApplicantCv = Omit<Cv, 'cvs' | 'visibleParaEmpresas'>;
 
 /**
  * Una postulación a una oferta de la empresa del socio

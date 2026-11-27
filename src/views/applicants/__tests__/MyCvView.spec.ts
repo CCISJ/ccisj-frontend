@@ -49,12 +49,16 @@ const CV: Cv = {
   referencias: [],
   categorias: [],
   cvs: [],
+  visibleParaEmpresas: false,
 };
 
 async function mountCv() {
   setActivePinia(createPinia());
 
-  const wrapper = mount(MyCvView);
+  // El enlace a Mi perfil no necesita un router de verdad.
+  const wrapper = mount(MyCvView, {
+    global: { stubs: { RouterLink: true } },
+  });
   await flushPromises();
 
   return wrapper;

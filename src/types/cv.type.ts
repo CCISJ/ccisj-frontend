@@ -57,9 +57,15 @@ export type Cv = {
   categorias: { categoria: { id: number; nombre: string } }[];
   // El más reciente primero.
   cvs: CvFile[];
+  // Si las empresas socias lo pueden encontrar en la bolsa de candidatos sin
+  // que se postule. Lo elige en "Mi perfil"; apagado por defecto.
+  visibleParaEmpresas: boolean;
 };
 
-export type CvData = Omit<Cv, 'id' | 'usuario' | 'cvs' | 'categorias'>;
+export type CvData = Omit<
+  Cv,
+  'id' | 'usuario' | 'cvs' | 'categorias' | 'visibleParaEmpresas'
+>;
 
 /** Lo que se edita en "Mi perfil" (`PATCH /postulantes/me/perfil`). */
 export type ProfileData = {
@@ -70,4 +76,5 @@ export type ProfileData = {
   fechaNacimiento: string;
   // Vacía = todas.
   categoriaIds: number[];
+  visibleParaEmpresas: boolean;
 };

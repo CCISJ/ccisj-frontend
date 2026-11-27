@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
 
+import { RouterLink } from 'vue-router';
+
 import {
   Check,
   ExternalLink,
@@ -367,7 +369,12 @@ const empty = 'text-base text-slate-600';
 
         <p class="mt-1 text-base text-slate-600">
           Completá tus datos o subí tu CV en PDF. Las empresas lo ven cuando te
-          postulás a sus ofertas.
+          postulás a sus ofertas y, si lo elegiste en
+          <RouterLink
+            :to="{ name: 'mi-perfil' }"
+            class="font-medium text-ccisj underline"
+            >Mi perfil</RouterLink
+          >, también te pueden encontrar en la bolsa de candidatos.
         </p>
       </div>
 
