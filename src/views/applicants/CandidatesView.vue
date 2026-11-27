@@ -8,7 +8,13 @@ import { Check, ChevronDown, Search, UserRoundSearch } from 'lucide-vue-next';
 import { searchCandidates } from '@/services/applicantService';
 import { getActiveCategories } from '@/services/categoriesService';
 
+import { useAuthStore } from '@/stores/auth';
+
 import type { CandidateResponse, Category } from '@/types/applicants.type';
+
+// La administración ve a todos los postulantes; una empresa socia, solo a los
+// que eligieron que las empresas los encuentren (lo filtra el backend).
+const isAdmin = computed(() => useAuthStore().role === 'ADMIN');
 
 const categories = ref<Category[]>([]);
 const categoriesError = ref(false);
@@ -202,7 +208,14 @@ onUnmounted(() => {
     <div>
       <h1 class="text-3xl font-bold text-slate-900">Buscar candidatos</h1>
       <p class="mt-1 text-base text-slate-600">
-        Consultá los perfiles laborales de los postulantes registrados.
+        <template v-if="isAdmin">
+          Ves a todos los postulantes. Las empresas socias solo ven a los que
+          eligieron aparecer en la bolsa de candidatos.
+        </template>
+        <template v-else>
+          Consultá los perfiles de los postulantes que eligieron que las
+          empresas socias puedan encontrarlos.
+        </template>
       </p>
     </div>
 
@@ -454,6 +467,14 @@ onUnmounted(() => {
         </div>
 
         <div class="mt-4 flex flex-wrap gap-2 text-sm text-slate-600">
+          <span
+            v-if="isAdmin && !candidate.visibleParaEmpresas"
+            data-test="no-visible"
+            class="rounded-lg bg-amber-50 px-2 py-1 font-medium text-amber-800"
+          >
+            Las empresas no lo ven
+          </span>
+
           <span class="rounded-lg bg-slate-100 px-2 py-1">
             {{ candidate._count.estudios }} estudios
           </span>

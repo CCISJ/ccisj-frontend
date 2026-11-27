@@ -40,6 +40,7 @@ const form = reactive<ProfileData>({
   direccion: '',
   fechaNacimiento: '',
   categoriaIds: [],
+  visibleParaEmpresas: false,
 });
 
 function fill(data: Cv) {
@@ -52,6 +53,7 @@ function fill(data: Cv) {
     direccion: data.direccion ?? '',
     fechaNacimiento: data.fechaNacimiento?.slice(0, 10) ?? '',
     categoriaIds: data.categorias.map(({ categoria }) => categoria.id),
+    visibleParaEmpresas: data.visibleParaEmpresas,
   });
 }
 
@@ -264,6 +266,41 @@ const input =
               :categories="categories"
               :disabled="saving"
             />
+          </div>
+        </section>
+
+        <!-- Bolsa de candidatos: lo elige el postulante, apagado por defecto -->
+        <section :class="card">
+          <div :class="cardHeader">
+            <h2 :class="cardTitle">Bolsa de candidatos</h2>
+          </div>
+
+          <div class="space-y-3 p-5">
+            <label
+              for="perfil-visible-empresas"
+              class="flex cursor-pointer items-start gap-3"
+            >
+              <input
+                id="perfil-visible-empresas"
+                v-model="form.visibleParaEmpresas"
+                type="checkbox"
+                aria-describedby="perfil-visible-empresas-ayuda"
+                class="mt-1 h-5 w-5 shrink-0 cursor-pointer accent-ccisj"
+              />
+              <span class="text-base font-medium text-slate-800">
+                Quiero que las empresas socias puedan encontrarme
+              </span>
+            </label>
+
+            <p
+              id="perfil-visible-empresas-ayuda"
+              class="pl-8 text-sm text-slate-600"
+            >
+              Si la activás, las empresas socias del Centro pueden buscarte y
+              ver tu CV (estudios, experiencia, referencias y tus PDF) aunque no
+              te hayas postulado a sus ofertas. Si no, solo lo ve la empresa de
+              cada oferta a la que te postulás. La podés cambiar cuando quieras.
+            </p>
           </div>
         </section>
 
