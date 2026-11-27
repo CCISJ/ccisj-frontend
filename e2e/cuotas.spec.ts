@@ -31,13 +31,11 @@ test('la administración genera las cuotas del mes y registra un pago con tarjet
   await page.goto(`/socios/${socioId}`);
   await expect(page.getByText(razonSocial).first()).toBeVisible();
 
-  // El detalle de las cuotas está en su pestaña. La del mes queda sin pagar:
-  // "Por vencer" hasta el día 15, "Vencida" después.
+  // El detalle de las cuotas está en su pestaña. La del mes queda sin pagar y
+  // "Por vencer": vence el último día del mes siguiente.
   await page.getByRole('tab', { name: 'Cuotas y pagos' }).click();
   const cuotas = page.getByRole('tabpanel', { name: 'Cuotas y pagos' });
-  await expect(
-    cuotas.getByText(/^(Por vencer|Vencida)$/).first(),
-  ).toBeVisible();
+  await expect(cuotas.getByText(/^Por vencer$/).first()).toBeVisible();
 
   await page.getByRole('button', { name: 'Registrar pago' }).click();
 
@@ -48,9 +46,11 @@ test('la administración genera las cuotas del mes y registra un pago con tarjet
   await modal.getByLabel('Importe').fill('760');
   await modal.getByLabel('Medio de pago').selectOption('TARJETA');
 
-  // Con tarjeta el comprobante es obligatorio: sin él no se puede confirmar.
+  // El comprobante es opcional con cualquier medio de pago, también con
+  // tarjeta: sin él ya se puede confirmar. Acá se adjunta igual, para probar
+  // que se guarda y se puede abrir.
   const confirmar = modal.getByRole('button', { name: 'Registrar pago' });
-  await expect(confirmar).toBeDisabled();
+  await expect(confirmar).toBeEnabled();
 
   await modal
     .getByLabel('Comprobante')

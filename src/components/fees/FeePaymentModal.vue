@@ -26,8 +26,7 @@ const valid = computed(() => {
     importe.value !== null &&
     importe.value > 0 &&
     fechaPago.value !== '' &&
-    medioPago.value !== '' &&
-    (medioPago.value !== 'TARJETA' || comprobante.value !== null)
+    medioPago.value !== ''
   );
 });
 
@@ -143,11 +142,8 @@ watch(
           </select>
         </div>
 
-        <ReceiptFileInput
-          id="payment-proof"
-          v-model="comprobante"
-          :required="medioPago === 'TARJETA'"
-        />
+        <!-- Opcional con cualquier medio de pago -->
+        <ReceiptFileInput id="payment-proof" v-model="comprobante" />
 
         <div>
           <label

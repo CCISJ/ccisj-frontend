@@ -13,12 +13,19 @@ import { useAuthStore } from '@/stores/auth';
 import type { MemberFeeState } from '@/types/fee.type';
 import type { Member, MemberDirectoryEntry } from '@/types/member.type';
 
+import { downloadCsv } from '@/utils/csv';
+import { uruguayDay } from '@/utils/date';
 import { formatMoney } from '@/utils/money';
 
 vi.mock('@/services/membersService', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/services/membersService')>()),
   getMembers: vi.fn(),
   deleteMember: vi.fn(),
+}));
+
+vi.mock('@/utils/csv', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/utils/csv')>()),
+  downloadCsv: vi.fn(),
 }));
 
 const AL_DIA: MemberFeeState = {
@@ -132,30 +139,100 @@ describe('MembersView', () => {
     const wrapper = await mountAs('ADMIN', SOCIOS);
 
     expect(cuotasDe(wrapper, 'Ferretería del Sur')).toBe(
-      `Debe ${pesos(6840)} 11 cuotas vencidas`,
+      `Deudor Debe ${pesos(6840)} · 11 cuotas vencidas`,
     );
     expect(cuotasDe(wrapper, 'Óptica Visión')).toBe(
-      `Debe ${pesos(760)} 1 cuota vencida`,
+      `Pendiente Debe ${pesos(760)} · 1 cuota vencida`,
     );
     expect(cuotasDe(wrapper, 'Farmacia San José')).toBe('Al día');
   });
 
-  it('filtra por estado de cuotas', async () => {
+  it('filtra por estado de cuotas: al día, pendiente y deudor', async () => {
     const wrapper = await mountAs('ADMIN', SOCIOS);
     const filtro = wrapper.get('#members-fee-filter');
 
-    await filtro.setValue('VENCIDAS');
-    expect(wrapper.text()).toContain('Ferretería del Sur');
+    await filtro.setValue('PENDIENTE');
     expect(wrapper.text()).toContain('Óptica Visión');
+    expect(wrapper.text()).not.toContain('Ferretería del Sur');
     expect(wrapper.text()).not.toContain('Farmacia San José');
 
     await filtro.setValue('DEUDOR');
     expect(wrapper.text()).toContain('Ferretería del Sur');
     expect(wrapper.text()).not.toContain('Óptica Visión');
+    expect(wrapper.text()).not.toContain('Farmacia San José');
 
     await filtro.setValue('AL_DIA');
     expect(wrapper.text()).toContain('Farmacia San José');
     expect(wrapper.text()).not.toContain('Ferretería del Sur');
+    expect(wrapper.text()).not.toContain('Óptica Visión');
+
+    await filtro.setValue('VENCIDAS');
+    expect(wrapper.text()).toContain('Ferretería del Sur');
+    expect(wrapper.text()).toContain('Óptica Visión');
+    expect(wrapper.text()).not.toContain('Farmacia San José');
+  });
+
+  it('exporta a Excel lo filtrado, todas las páginas: por ejemplo, las deudoras', async () => {
+    // 12 deudoras: más de una página (10 por página), y se exportan todas.
+    const deudoras = Array.from({ length: 12 }, (_, i) =>
+      member(10 + i, `Deudora ${i + 1}`, SOCIOS[0]!.estadoCuotas!),
+    );
+    const wrapper = await mountAs('ADMIN', [...SOCIOS, ...deudoras]);
+
+    await wrapper.get('#members-fee-filter').setValue('DEUDOR');
+    await wrapper.get('#members-export').trigger('click');
+
+    expect(downloadCsv).toHaveBeenCalledTimes(1);
+
+    const [filename, rows] = vi.mocked(downloadCsv).mock.calls[0]!;
+
+    expect(filename).toBe(`socios-deudores-${uruguayDay()}.csv`);
+    expect(rows[0]).toEqual([
+      'Empresa',
+      'RUT',
+      'Titular',
+      'Giro comercial',
+      'Tipo',
+      'Email',
+      'Teléfono',
+      'Celular',
+      'Dirección',
+      'Ciudad',
+      'Estado',
+      'Estado de cuotas',
+      'Cuotas vencidas',
+      'Deuda vencida',
+      'Deuda total',
+    ]);
+
+    // Encabezado + Ferretería del Sur + las 12 deudoras; nadie al día ni pendiente.
+    expect(rows).toHaveLength(14);
+    expect(rows.slice(1).every((row) => row[11] === 'Deudor')).toBe(true);
+    expect(rows[1]).toEqual([
+      'Ferretería del Sur',
+      '219900000001',
+      'Titular',
+      'Comercio',
+      'Común',
+      'socio1@ccisj.uy',
+      '43421234',
+      '099123456',
+      '25 de Mayo 123',
+      'San José de Mayo',
+      'Activo',
+      'Deudor',
+      11,
+      6460,
+      6840,
+    ]);
+  });
+
+  it('no deja exportar si ningún socio coincide con los filtros', async () => {
+    const wrapper = await mountAs('ADMIN', [SOCIOS[1]]);
+
+    await wrapper.get('#members-fee-filter').setValue('DEUDOR');
+
+    expect(wrapper.get('#members-export').attributes('disabled')).toBeDefined();
   });
 
   it('al directivo no le muestra las cuotas de los demás', async () => {
@@ -177,6 +254,7 @@ describe('MembersView', () => {
 
     expect(wrapper.find('[data-test="cuotas"]').exists()).toBe(false);
     expect(wrapper.find('#members-fee-filter').exists()).toBe(false);
+    expect(wrapper.find('#members-export').exists()).toBe(false);
     expect(wrapper.text()).not.toContain('Debe');
   });
 });

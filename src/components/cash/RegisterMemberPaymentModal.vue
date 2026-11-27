@@ -123,11 +123,6 @@ async function submit() {
     return;
   }
 
-  if (medioPago.value === 'TARJETA' && !comprobante.value) {
-    toast.error('El comprobante es obligatorio para pagos con tarjeta');
-    return;
-  }
-
   submitting.value = true;
 
   try {
@@ -310,12 +305,8 @@ watch(
         </select>
       </div>
 
-      <!-- Comprobante: obligatorio con tarjeta, opcional con efectivo -->
-      <ReceiptFileInput
-        id="member-payment-comprobante"
-        v-model="comprobante"
-        :required="medioPago === 'TARJETA'"
-      />
+      <!-- Comprobante: opcional con cualquier medio de pago -->
+      <ReceiptFileInput id="member-payment-comprobante" v-model="comprobante" />
 
       <!-- Observaciones -->
       <div>
