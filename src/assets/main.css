@@ -36,6 +36,20 @@
   --color-ccisj-row: #f6f8f6;
   --shadow-card:
     0 1px 2px rgb(13 59 36 / 0.06), 0 2px 8px -2px rgb(13 59 36 / 0.07);
+
+  /*
+   * Movimiento (28/11, reglas de diseño de Emil Kowalski). Las curvas de CSS
+   * (`ease`, `ease-out`) son flojas: arrancan despacio y la interfaz parece
+   * tardar en responder. Estas arrancan rápido y frenan suave. Pisan las de
+   * Tailwind, así que `ease-out` e `ease-in-out` ya las usan.
+   *
+   * - `ease-out`: lo que entra o sale (avisos, modales).
+   * - `ease-in-out`: lo que se mueve dentro de la pantalla.
+   * - Nunca `ease-in` en la interfaz: demora justo el momento en que la
+   *   persona está mirando.
+   */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 /*
@@ -71,6 +85,28 @@ table {
 
 button {
   cursor: pointer;
+}
+
+/*
+ * Al presionar, el botón se achica apenas (97 %): confirma que la interfaz
+ * escuchó el clic antes de que llegue la respuesta del servidor. Se usa la
+ * propiedad `scale` y no `transform`, para no pisar el `translate` que
+ * Tailwind 4 pone en otra propiedad (los botones centrados con
+ * `-translate-y-1/2`). La clase `transition` de Tailwind ya incluye `scale`;
+ * esta regla cubre los botones que no la tienen.
+ *
+ * Con "reducir movimiento" activado en el sistema, no se achica.
+ */
+@layer base {
+  button {
+    transition: scale 160ms var(--ease-out);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  button:not(:disabled):active {
+    scale: 0.97;
+  }
 }
 
 /* El foco siempre visible al navegar con teclado. */

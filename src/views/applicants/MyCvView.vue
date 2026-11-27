@@ -406,10 +406,21 @@ const empty = 'text-base text-slate-600';
           <span class="font-semibold text-ccisj">{{ progress }}%</span>
         </div>
 
-        <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
+        <!--
+          La barra se corre con `transform` y no cambiando el ancho: no obliga
+          al navegador a recalcular el diseño de la página en cada cuadro.
+        -->
+        <div
+          role="progressbar"
+          aria-label="CV completo"
+          :aria-valuenow="progress"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100"
+        >
           <div
-            class="h-full rounded-full bg-ccisj transition-all"
-            :style="{ width: `${progress}%` }"
+            class="h-full w-full rounded-full bg-ccisj transition-transform duration-300 ease-out"
+            :style="{ transform: `translateX(-${100 - progress}%)` }"
           />
         </div>
       </div>
