@@ -3,7 +3,15 @@ import { computed, onMounted, ref, watch } from 'vue';
 
 import { useRouter } from 'vue-router';
 
-import { Pencil, Plus, RefreshCw, Search, UserX, X } from 'lucide-vue-next';
+import {
+  Download,
+  Pencil,
+  Plus,
+  RefreshCw,
+  Search,
+  UserX,
+  X,
+} from 'lucide-vue-next';
 
 import ConfirmModal from '@/components/ConfirmModal.vue';
 
@@ -16,10 +24,32 @@ import {
 import { useAuthStore } from '@/stores/auth';
 import { useToastStore } from '@/stores/toast';
 
-import type { MemberFeeState } from '@/types/fee.type';
+import type { MemberFeeState, MemberFeeStatus } from '@/types/fee.type';
 import type { MemberDirectoryEntry } from '@/types/member.type';
 
+import { downloadCsv } from '@/utils/csv';
+import { uruguayDay } from '@/utils/date';
 import { formatMoney } from '@/utils/money';
+
+/**
+ * Estado de cuotas del socio, que calcula el backend a partir de sus cuotas
+ * vencidas: al día si no tiene ninguna, pendiente si tiene una o dos y deudor
+ * si tiene más.
+ */
+const FEE_STATE_LABEL: Record<MemberFeeStatus, string> = {
+  AL_DIA: 'Al día',
+  PENDIENTE: 'Pendiente',
+  DEUDOR: 'Deudor',
+};
+
+/** Cómo se llama el archivo exportado según el filtro de cuotas. */
+const FEE_FILTER_FILENAME: Record<string, string> = {
+  TODOS: 'socios',
+  AL_DIA: 'socios-al-dia',
+  PENDIENTE: 'socios-pendientes',
+  DEUDOR: 'socios-deudores',
+  VENCIDAS: 'socios-con-cuotas-vencidas',
+};
 
 const auth = useAuthStore();
 const toast = useToastStore();
@@ -144,6 +174,53 @@ watch([search, typeFilter, statusFilter, feeFilter], () => {
   page.value = 1;
 });
 
+/**
+ * Exporta a un archivo que abre Excel lo que muestra la lista con los filtros
+ * actuales, todas las páginas. Por ejemplo, con el filtro "Deudores", las
+ * empresas deudoras.
+ */
+function exportMembers() {
+  const header = [
+    'Empresa',
+    'RUT',
+    'Titular',
+    'Giro comercial',
+    'Tipo',
+    'Email',
+    'Teléfono',
+    'Celular',
+    'Dirección',
+    'Ciudad',
+    'Estado',
+    'Estado de cuotas',
+    'Cuotas vencidas',
+    'Deuda vencida',
+    'Deuda total',
+  ];
+
+  const rows = filteredSocios.value.map((socio) => [
+    socio.razonSocial,
+    socio.rut,
+    socio.titular,
+    socio.giroComercial,
+    socio.tipo === 'DIRECTIVO' ? 'Directivo' : 'Común',
+    socio.email,
+    socio.telefono,
+    socio.celular,
+    socio.direccion,
+    socio.ciudad,
+    socio.activo ? 'Activo' : 'Dado de baja',
+    socio.estadoCuotas ? FEE_STATE_LABEL[socio.estadoCuotas.estado] : null,
+    socio.estadoCuotas?.cuotasVencidas,
+    socio.estadoCuotas?.deudaVencida,
+    socio.estadoCuotas?.deudaTotal,
+  ]);
+
+  const name = FEE_FILTER_FILENAME[feeFilter.value] ?? 'socios';
+
+  downloadCsv(`${name}-${uruguayDay()}.csv`, [header, ...rows]);
+}
+
 function goToPage(next: number) {
   page.value = Math.min(Math.max(next, 1), totalPages.value);
 }
@@ -210,14 +287,26 @@ async function confirmDelete() {
         </p>
       </div>
 
-      <button
-        v-if="isAdmin"
-        class="flex items-center gap-2 rounded-xl bg-ccisj px-4 py-2.5 text-base font-semibold text-white transition hover:opacity-90"
-        @click="handleAddMember"
-      >
-        <Plus class="h-4 w-4" />
-        Agregar socio
-      </button>
+      <div v-if="isAdmin" class="flex flex-wrap items-center gap-2">
+        <button
+          id="members-export"
+          type="button"
+          :disabled="loading || filteredSocios.length === 0"
+          class="flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-base font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+          @click="exportMembers"
+        >
+          <Download class="h-4 w-4" />
+          Exportar a Excel
+        </button>
+
+        <button
+          class="flex items-center gap-2 rounded-xl bg-ccisj px-4 py-2.5 text-base font-semibold text-white transition hover:opacity-90"
+          @click="handleAddMember"
+        >
+          <Plus class="h-4 w-4" />
+          Agregar socio
+        </button>
+      </div>
     </div>
 
     <!-- Filtros -->
@@ -281,9 +370,13 @@ async function confirmDelete() {
 
         <option value="AL_DIA">Al día</option>
 
-        <option value="VENCIDAS">Con cuotas vencidas</option>
+        <option value="PENDIENTE">Pendientes (1 o 2 vencidas)</option>
 
-        <option value="DEUDOR">Deudores (3 o más)</option>
+        <option value="DEUDOR">Deudores (3 o más vencidas)</option>
+
+        <option value="VENCIDAS">
+          Con cuotas vencidas (pendientes y deudores)
+        </option>
       </select>
 
       <button
@@ -413,10 +506,11 @@ async function confirmDelete() {
                           : 'text-amber-800'
                       "
                     >
-                      Debe {{ formatMoney(socio.estadoCuotas.deudaTotal) }}
+                      {{ FEE_STATE_LABEL[socio.estadoCuotas.estado] }}
                     </p>
 
                     <p class="text-sm text-slate-600">
+                      Debe {{ formatMoney(socio.estadoCuotas.deudaTotal) }} ·
                       {{ socio.estadoCuotas.cuotasVencidas }}
                       {{
                         socio.estadoCuotas.cuotasVencidas === 1
